@@ -1,25 +1,31 @@
+@file:OptIn(InternalAPI::class)
+
 package com.foodsaver.app.data.data_source.remote.interceptor
 
-import com.foodsaver.app.data.data_source.remote.manager.TokenManager
-import io.ktor.client.plugins.api.createClientPlugin
-import io.ktor.client.request.HttpRequest
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.cookie
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
+import com.foodsaver.app.data.data_source.remote.manager.RefreshTokenManager
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.plugin
 import io.ktor.http.HttpStatusCode
+import io.ktor.utils.io.InternalAPI
 
-class AuthInterceptor(
-    private val tokenManager: TokenManager
+internal class AuthInterceptor(
+    private val refreshTokenManager: RefreshTokenManager,
 ) {
 
-    suspend fun intercept(request: HttpRequestBuilder) = createClientPlugin("JWTTokenPlugin") {
-        onResponse { response ->
-            if (response.status.value == HttpStatusCode.Unauthorized.value) {
-                tokenManager.getToken()?.let { refreshToken ->
+    fun HttpClient.withAuth(): HttpClient {
+        plugin(HttpSend).intercept { request ->
+            val response = execute(request)
 
-                }
+            if (response.response.status == HttpStatusCode.Unauthorized) {
+
+                println("Intercept Unauthorize exception! Try to refresh token...")
+                refreshTokenManager.refreshToken()
+                return@intercept execute(request)
             }
+
+            return@intercept response
         }
+        return this
     }
 }
