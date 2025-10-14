@@ -20,7 +20,7 @@ actual class TokenManager {
     private val mainTokenDir = Paths.get(
         System.getProperty("user.home"),
         ".foodsaver",
-        "secure_token"
+        "secure_tokens"
     )
     private val tokenFile = mainTokenDir.resolve("refresh_token.enc")
     private val saltFile = mainTokenDir.resolve("salt.bin")
@@ -44,14 +44,14 @@ actual class TokenManager {
             val file = Files.readAllBytes(tokenFile)
             if (file.size < 13) return null
 
-             val iv = file.copyOfRange(0, 12)
-            val encryptedFile = file.copyOfRange(0, file.size)
+            val iv = file.copyOfRange(0, 12)
+            val encryptedFile = file.copyOfRange(12, file.size)
 
             val cipher = Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE, getOrCreateSecureKey(), GCMParameterSpec(128, iv))
 
             String(cipher.doFinal(encryptedFile), Charsets.UTF_8)
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             clearStorage()
             null
         }
@@ -125,6 +125,7 @@ actual class TokenManager {
         val digest = MessageDigest.getInstance("SHA-256").digest(base.toByteArray())
         return digest.joinToString("") { "%02x".format(it) }
     }
+
     private fun Path.setPermission() {
         if (!isWindows()) {
             this.toFile().setReadable(true, true)

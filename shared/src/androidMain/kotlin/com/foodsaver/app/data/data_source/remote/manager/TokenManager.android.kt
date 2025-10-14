@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 
 actual class TokenManager(
-    private val context: Context
+    context: Context,
 ) {
     private val key = "SHARED_JWT_TOKEN_PREFS"
     private val sp = context.getSharedPreferences(key, Context.MODE_PRIVATE)

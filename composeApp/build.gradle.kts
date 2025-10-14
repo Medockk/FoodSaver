@@ -16,20 +16,20 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm()
-    
+
     js {
         browser()
         binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -48,6 +48,7 @@ kotlin {
 
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
+            implementation(libs.koin.compose.navigation)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -3,11 +3,6 @@
 package com.foodsaver.app
 
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,12 +22,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App() {
+fun App(viewModel: AppViewModel = koinViewModel()) {
     val navController = rememberNavController()
-    MaterialExpressiveTheme (
+    MaterialExpressiveTheme(
         motionScheme = MotionScheme.expressive()
     ) {
         val animationSpec = MaterialTheme.motionScheme.slowSpatialSpec<IntSize>()
