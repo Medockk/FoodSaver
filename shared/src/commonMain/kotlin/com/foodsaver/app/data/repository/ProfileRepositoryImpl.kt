@@ -11,7 +11,12 @@ class ProfileRepositoryImpl(
 ) : ProfileRepository {
 
     override suspend fun getAllUsers(): Result<List<String>> {
-        val result: List<String> = client.get("${HttpConstants.BASE_URL}users/all").body()
-        return Result.success(result)
+        try {
+            val result: List<String> = client.get("${HttpConstants.BASE_URL}users/all").body()
+
+            return Result.success(result)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
     }
 }

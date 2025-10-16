@@ -37,9 +37,8 @@ internal class KtorClientFactory(
                 }
                 install(HttpRequestRetry) {
                     maxRetries = 3
-                    retryOnExceptionIf { request, cause ->
-                        cause is HttpRequestTimeoutException || cause is ConnectTimeoutException
-                    }
+                    retryOnException(3, true)
+
                     delayMillis { it * 1500L }
                 }
                 install(HttpSend)

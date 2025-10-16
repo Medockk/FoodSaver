@@ -41,6 +41,17 @@ kotlin {
         browser()
     }
 
+    sqldelight {
+        databases {
+            create("user.db") {
+                packageName.set("org.foodsaver.db")
+                schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
+                verifyMigrations.set(true)
+                generateAsync.set(true)
+            }
+        }
+    }
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.koin.android)

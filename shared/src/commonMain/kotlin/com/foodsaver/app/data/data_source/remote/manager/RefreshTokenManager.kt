@@ -13,6 +13,7 @@ internal class RefreshTokenManager(
 
     suspend fun refreshToken() {
         val refreshToken = tokenManager.getToken()
+        println(refreshToken)
         if (refreshToken != null) {
             client.post("${HttpConstants.BASE_URL}auth/refresh") {
                 val body = RefreshTokenRequest(refreshToken)
