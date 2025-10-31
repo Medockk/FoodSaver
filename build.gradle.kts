@@ -10,4 +10,6 @@ plugins {
 
     alias(libs.plugins.jetbrains.kotlin.serialization) apply false
     alias(libs.plugins.sqldelight) apply false
+//    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+//    alias(libs.plugins.android.lint) apply false
 }
