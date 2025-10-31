@@ -22,9 +22,6 @@ internal class AuthRepositoryImpl(
     private val accessTokenManager: AccessTokenManager
 ): AuthRepository {
 
-    init {
-        Result
-    }
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
         val body = signInModel.toDto()
 
