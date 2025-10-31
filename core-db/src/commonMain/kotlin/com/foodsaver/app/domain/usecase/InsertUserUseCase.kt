@@ -9,7 +9,7 @@ class InsertUserUseCase(
 
     suspend operator fun invoke(userModel: UserModel): Result<UserModel> {
         return try {
-            Result.success(repo.insertUser(userModel))
+            runCatching { repo.insertUser(userModel) }
         } catch (e: Exception) {
             Result.failure(e)
         }
