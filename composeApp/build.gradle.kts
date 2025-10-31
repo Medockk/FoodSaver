@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -24,7 +26,6 @@ kotlin {
         binaries.executable()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
@@ -44,18 +45,24 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(projects.shared)
 
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
             implementation(libs.koin.compose.navigation)
+            implementation(libs.kotlinx.coroutinesSwing)
+
+            implementation(projects.shared)
+            implementation(projects.coreDi)
+            implementation(projects.coreDb)
+            implementation(projects.coreNetwork)
+            implementation(projects.featureAuth)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+//        commonTest.dependencies {
+//            implementation(libs.kotlin.test)
+//        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
         }
     }
 }

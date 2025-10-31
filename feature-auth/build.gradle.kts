@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias { libs.plugins.jetbrains.kotlin.serialization }
 }
 
 kotlin {
@@ -44,15 +45,20 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(projects.coreDi)
+            implementation(projects.coreDb)
+            implementation(projects.coreNetwork)
 
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.koin.compose.viewmodel)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
         jvmMain.dependencies {
 
         }
         nativeMain.dependencies {
+
+        }
+        webMain.dependencies {
 
         }
         wasmJsMain.dependencies {
@@ -65,7 +71,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.foodsaver.feature.auth"
+    namespace = "com.foodsaver.app.feature.auth"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

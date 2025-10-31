@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -41,67 +40,35 @@ kotlin {
         browser()
     }
 
-    sqldelight {
-        databases {
-            create("user.db") {
-                packageName.set("org.foodsaver.db")
-                schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
-                verifyMigrations.set(true)
-                generateAsync.set(true)
-            }
-        }
-    }
-
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.koin.android)
-            implementation(libs.koin.androidx.compose)
-            implementation(libs.ktor.client.okhttp)
 
-            implementation(libs.sqldelight.android.driver)
         }
 
         commonMain.dependencies {
             // put your Multiplatform dependencies here
-            implementation(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.coroutinesSwing)
 
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.navigation)
-
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.negotiation)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.ktor.client.serialization)
-
-            implementation(libs.sqldelight.runtime)
-            implementation(libs.sqldelight.coroutines.extensions)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(projects.coreDi)
+            implementation(projects.coreDb)
+            implementation(projects.coreNetwork)
+            implementation(projects.featureAuth)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
         jvmMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.sqldelight.jvm.driver)
-            implementation(libs.ktor.client.cio)
+
         }
         nativeMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-            implementation(libs.sqldelight.native.driver)
+
         }
         webMain.dependencies {
-            implementation(libs.ktor.client.js)
-            implementation(libs.sqldelight.web.driver)
+
         }
         wasmJsMain.dependencies {
-            implementation(libs.sqldelight.web.driver)
-            implementation(libs.ktor.client.js)
+
         }
         jsMain.dependencies {
-            implementation(libs.sqldelight.web.driver)
-            implementation(libs.ktor.client.js)
+
         }
     }
 }

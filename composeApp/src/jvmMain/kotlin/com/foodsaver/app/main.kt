@@ -2,10 +2,10 @@ package com.foodsaver.app
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.foodsaver.app.di.initKoin
+import com.foodsaver.app.di.initSharedKoin
 
 fun main() {
-    initKoin()
+    initSharedKoin()
     application {
         Window(
             onCloseRequest = ::exitApplication,

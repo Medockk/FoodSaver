@@ -3,6 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        maven("https://plugins.gradle.org/m2/")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -12,6 +13,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://repo1.maven.org/maven2/")
+        maven("https://mirrors.aliyun.com/maven/")
     }
 }
 
@@ -25,6 +29,9 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://repo1.maven.org/maven2/")
+        maven("https://mirrors.aliyun.com/maven/")
     }
 }
 
@@ -34,4 +41,7 @@ plugins {
 
 include(":composeApp")
 include(":shared")
+include(":core-di")
+include(":core-db")
+include(":core-network")
 include(":feature-auth")

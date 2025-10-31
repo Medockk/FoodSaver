@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "copy-webpack-plugin": "^13.0.1",
+    "crypto-browserify": "^3.12.1",
+    "events": "^3.3.0",
+    "path": "^0.12.7",
+    "path-browserify": "^1.0.1",
+    "stream-browserify": "^3.0.0",
+    "vm-browserify": "^1.1.2"
+  },
+  "dependencies": {
+    "@cashapp/sqldelight-sqljs-worker": "^2.1.0",
+    "sql.js": "^1.13.0"
+  }
+}
