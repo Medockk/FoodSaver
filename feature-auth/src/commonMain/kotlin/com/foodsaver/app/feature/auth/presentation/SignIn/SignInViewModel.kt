@@ -64,8 +64,7 @@ class SignInViewModel(
                         )
 
                         _state.value = state.value.copy(isLoading = true)
-                        val result = signInUseCase.invoke(request)
-                        when (result) {
+                        when (val result = signInUseCase.invoke(request)) {
                             is ApiResult.Error -> {
                                 _state.value = state.value.copy(isLoading = false)
                                 _channel.send(SignInAction.OnError(result.error.message))
