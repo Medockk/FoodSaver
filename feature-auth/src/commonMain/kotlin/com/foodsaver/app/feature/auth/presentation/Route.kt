@@ -16,6 +16,13 @@ sealed class Route {
     }
 
     @Serializable
+    data object ResetGraph: Route() {
+
+        @Serializable
+        data class ResetPassword(val token: String): Route()
+    }
+
+    @Serializable
     data object MainGraph: Route() {
 
         @Serializable

@@ -64,6 +64,10 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
         }
+
+        webMain.dependencies {
+            implementation(libs.kotlinx.browser)
+        }
     }
 }
 
