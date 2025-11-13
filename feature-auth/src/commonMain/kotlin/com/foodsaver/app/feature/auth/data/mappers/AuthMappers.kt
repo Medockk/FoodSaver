@@ -8,18 +8,16 @@ import com.foodsaver.app.feature.auth.domain.model.SignInModel
 import com.foodsaver.app.feature.auth.domain.model.SignUpModel
 
 internal fun SignInModel.toDto() =
-    SignInModelDto(email, password)
+    SignInModelDto(username, password)
 
 internal fun SignInModelDto.toModel() =
-    SignInModel(email, password)
+    SignInModel(username, password)
 
 internal fun SignUpModel.toDto() =
-    SignUpModelDto(email, password)
+    SignUpModelDto(username, password)
 
 internal fun SignUpModelDto.toModel() =
-    SignUpModel(email, password)
+    SignUpModel(username, password)
 
 internal fun AuthResponseModelDto.toModel() =
-    AuthResponseModel(
-        uid, email, roles
-    )
+    AuthResponseModel(uid, username, roles)

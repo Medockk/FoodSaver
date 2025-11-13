@@ -59,7 +59,7 @@ class SignInViewModel(
                 if (EmailValidator.validate(_state.value.email)) {
                     viewModelScope.launch(Dispatchers.InputOutput + SupervisorJob()) {
                         val request = SignInModel(
-                            email = _state.value.email,
+                            username = _state.value.email,
                             password = _state.value.password
                         )
 
@@ -84,7 +84,7 @@ class SignInViewModel(
                                 val insertResult = insertUserUseCase.invoke(
                                     UserModel(
                                         result.data.uid,
-                                        result.data.email
+                                        result.data.username
                                     )
                                 )
                                 insertResult.onFailure {

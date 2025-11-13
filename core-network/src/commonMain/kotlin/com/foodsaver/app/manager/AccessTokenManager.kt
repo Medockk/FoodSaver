@@ -8,5 +8,8 @@ expect class AccessTokenManager() {
     suspend fun getJwtToken(): String?
     suspend fun setJwtToken(jwtToken: String)
 
+    suspend fun getCsrfToken(): String?
+    suspend fun setCsrfToken(csrfToken: String)
+
     suspend fun clearTokens()
 }

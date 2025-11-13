@@ -33,6 +33,6 @@ private fun getRoute(): Route {
 
     return when(path) {
         "reset-password" -> Route.ResetGraph.ResetPassword(params["id"].orEmpty())
-        else -> Route.AuthGraph.SignInScreen
+        else -> Route.AuthGraph
     }
 }

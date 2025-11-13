@@ -1,6 +1,6 @@
 package com.foodsaver.app.feature.auth.domain.model
 
 data class SignUpModel(
-    val email: String,
+    val username: String,
     val password: String
 )
