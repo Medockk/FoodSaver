@@ -7,5 +7,6 @@ sealed interface SignInEvent {
 
     data object OnPasswordVisibilityChange: SignInEvent
     data object OnSignInClick: SignInEvent
+    data object OnSignInWithGoogleClick: SignInEvent
     data object OnResetExceptionClick: SignInEvent
 }

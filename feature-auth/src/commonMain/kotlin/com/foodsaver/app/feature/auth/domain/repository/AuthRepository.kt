@@ -9,4 +9,6 @@ interface AuthRepository {
 
     suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel>
     suspend fun signUp(signUpModel: SignUpModel): ApiResult<AuthResponseModel>
+
+    suspend fun authenticateWithGoogle(): ApiResult<AuthResponseModel>
 }
