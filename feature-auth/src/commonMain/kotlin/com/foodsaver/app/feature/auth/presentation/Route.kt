@@ -9,10 +9,7 @@ sealed class Route {
     data object AuthGraph: Route() {
 
         @Serializable
-        data object SignInScreen: Route()
-
-        @Serializable
-        data object SignUpScreen: Route()
+        data object AuthScreen: Route()
     }
 
     @Serializable

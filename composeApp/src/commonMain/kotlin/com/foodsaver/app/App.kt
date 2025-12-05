@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package com.foodsaver.app
 
 import androidx.compose.foundation.background
@@ -7,8 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,28 +19,26 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.foodsaver.app.feature.auth.presentation.Route
-import com.foodsaver.app.presentation.SignIn.SignInRoot
-import com.foodsaver.app.presentation.SignUp.SignUpRoot
+import com.foodsaver.app.presentation.Auth.AuthScreenRoot
+import com.foodsaver.app.ui.colorScheme
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
     initialRoute: Route = Route.AuthGraph,
 ) {
-
-    MaterialExpressiveTheme {
+    MaterialTheme(
+        colorScheme = colorScheme()
+    ) {
         Scaffold(
             contentWindowInsets = WindowInsets.statusBars
-        ) { paddingValues ->
+        ) { _ ->
             NavHost(navController, startDestination = initialRoute) {
                 navigation<Route.AuthGraph>(
-                    startDestination = Route.AuthGraph.SignInScreen
+                    startDestination = Route.AuthGraph.AuthScreen
                 ) {
-                    composable<Route.AuthGraph.SignInScreen> {
-                        SignInRoot(navController)
-                    }
-                    composable<Route.AuthGraph.SignUpScreen> {
-                        SignUpRoot(navController)
+                    composable<Route.AuthGraph.AuthScreen> {
+                        AuthScreenRoot(navController)
                     }
                 }
 

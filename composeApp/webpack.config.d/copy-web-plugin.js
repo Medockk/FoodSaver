@@ -1,7 +1,6 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
-// Копируем sql.js файлы прямо в финальную директорию сборки
 config.plugins.push(
   new CopyWebpackPlugin({
     patterns: [

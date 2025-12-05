@@ -26,7 +26,7 @@ suspend inline fun<reified T> saveNetworkCall(
                     error = GlobalErrorResponse(
                         error = "Server error: ${result.status.value}",
                         message = "Failed to serialize body with ${it.message}",
-                        code = 0
+                        httpCode = 0
                     )
                 )
             }
@@ -37,7 +37,7 @@ suspend inline fun<reified T> saveNetworkCall(
             GlobalErrorResponse(
                 error = "Unknown Error",
                 message = e.message ?: "",
-                code = 0
+                httpCode = 0
             )
         )
     }

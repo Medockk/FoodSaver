@@ -1,8 +1,10 @@
 package com.foodsaver.app.manager
 
 import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.DosFileAttributeView
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Properties
@@ -25,6 +27,7 @@ actual class AccessTokenManager actual constructor() {
 
     private val jwtTokenFile = mainTokenDir.resolve("jwt_token.enc")
     private val refreshTokenFile = mainTokenDir.resolve("refresh_token.enc")
+    private val csrfTokenFile = mainTokenDir.resolve("csrf_token.enc")
 
     private val saltFile = mainTokenDir.resolve("salt.bin")
     private val configFile = mainTokenDir.resolve("config.properties")
@@ -36,13 +39,18 @@ actual class AccessTokenManager actual constructor() {
     init {
         if (!mainTokenDir.exists()) {
             mainTokenDir.createDirectories()
+
+            val dosView = Files.getFileAttributeView(mainTokenDir, DosFileAttributeView::class.java,
+                LinkOption.NOFOLLOW_LINKS)
+            dosView?.setHidden(true)
+
             mainTokenDir.setDirectoryPermission()
         }
     }
 
     actual suspend fun getRefreshToken(): String? {
         return try {
-            if (!refreshTokenFile.exists()) null
+            if (!refreshTokenFile.exists()) return null
 
             val file = Files.readAllBytes(refreshTokenFile)
             if (file.size < 13) return null
@@ -73,7 +81,7 @@ actual class AccessTokenManager actual constructor() {
 
     actual suspend fun getJwtToken(): String? {
         return try {
-            if (!jwtTokenFile.exists()) null
+            if (!jwtTokenFile.exists()) return null
 
             val file = Files.readAllBytes(jwtTokenFile)
             if (file.size < 13) return null
@@ -108,6 +116,9 @@ actual class AccessTokenManager actual constructor() {
         }
         if (jwtTokenFile.exists()) {
             Files.delete(jwtTokenFile)
+        }
+        if (csrfTokenFile.exists()) {
+            Files.delete(csrfTokenFile)
         }
     }
 
@@ -168,5 +179,36 @@ actual class AccessTokenManager actual constructor() {
             this.toFile().setReadable(true, true)
             this.toFile().setWritable(true, true)
         }
+    }
+
+    actual suspend fun getCsrfToken(): String? {
+        return try {
+            if (!csrfTokenFile.exists()) return null
+
+            val file = Files.readAllBytes(csrfTokenFile)
+            if (file.size < 13) return null
+
+            val iv = file.copyOfRange(0, 12)
+            val encryptedFile = file.copyOfRange(12, file.size)
+
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, getOrCreateSecureKey(), GCMParameterSpec(128, iv))
+
+            String(cipher.doFinal(encryptedFile), Charsets.UTF_8)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    actual suspend fun setCsrfToken(csrfToken: String) {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
+        cipher.init(Cipher.ENCRYPT_MODE, getOrCreateSecureKey(), GCMParameterSpec(128, iv))
+
+        val encryptedData = cipher.doFinal(csrfToken.toByteArray(Charsets.UTF_8))
+
+        Files.write(csrfTokenFile, iv + encryptedData)
+        csrfTokenFile.setPermission()
     }
 }
