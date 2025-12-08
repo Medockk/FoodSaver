@@ -54,6 +54,7 @@ kotlin {
             implementation(projects.coreDb)
             implementation(projects.coreNetwork)
             implementation(projects.featureAuth)
+            implementation(projects.featureMain)
         }
         jvmMain.dependencies {
 

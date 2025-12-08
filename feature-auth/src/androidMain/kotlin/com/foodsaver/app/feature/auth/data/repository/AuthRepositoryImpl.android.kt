@@ -15,7 +15,7 @@ actual suspend fun getGoogleIdToken(): String? {
 
     val option = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
-        .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID_ANDROID)
+        .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID_WEB)
         .setAutoSelectEnabled(true)
         .build()
 

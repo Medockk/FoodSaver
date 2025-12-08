@@ -9,7 +9,7 @@ class Paginator<Key, Item>(
     private val onLoadUpdated: (Boolean) -> Unit,
     private val onRequest: suspend (nextKey: Key) -> ApiResult<Item>,
     private val onNextKey: (currentKey: Key, result: Item) -> Key,
-    private val onError: (GlobalErrorResponse?) -> Unit,
+    private val onError: suspend (GlobalErrorResponse?) -> Unit,
     private val onSuccess: suspend (nextKey: Key, result: Item) -> Unit,
     private val endReached: (currentKey: Key, result: Item) -> Boolean
 ) {

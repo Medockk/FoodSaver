@@ -60,7 +60,6 @@ import com.foodsaver.app.feature.auth.presentation.Auth.AuthEvent
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthPage
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthState
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
-import com.foodsaver.app.feature.auth.presentation.Route
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.authenticate_with_google
@@ -81,6 +80,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AuthScreenRoot(
     navController: NavController,
+    onSuccessAuthentication: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
 
@@ -95,9 +95,7 @@ fun AuthScreenRoot(
             }
 
             AuthAction.OnSuccessAuthentication -> {
-                navController.navigate(Route.MainGraph) {
-                    popUpTo(Route.AuthGraph)
-                }
+                onSuccessAuthentication()
             }
         }
     }

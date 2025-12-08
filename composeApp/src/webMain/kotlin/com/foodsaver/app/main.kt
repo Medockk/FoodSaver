@@ -4,7 +4,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.di.initSharedKoin
-import com.foodsaver.app.feature.auth.presentation.Route
+import com.foodsaver.app.feature.auth.presentation.AuthRoute
 import kotlinx.browser.window
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -17,7 +17,7 @@ fun main() {
     }
 }
 
-private fun getRoute(): Route {
+private fun getRoute(): AuthRoute {
     val path = window.location.pathname.removePrefix("/")
     println("Path is $path")
     val query = window.location.search.removePrefix("?")
@@ -32,7 +32,7 @@ private fun getRoute(): Route {
     println("Params is $params")
 
     return when(path) {
-        "reset-password" -> Route.ResetGraph.ResetPassword(params["id"].orEmpty())
-        else -> Route.AuthGraph
+        "reset-password" -> AuthRoute.ResetPasswordScreen(params["id"].orEmpty())
+        else -> AuthRoute.AuthScreen
     }
 }

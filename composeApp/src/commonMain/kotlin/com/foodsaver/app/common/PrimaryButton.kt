@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,12 +19,13 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.primary
+    background: Color = MaterialTheme.colorScheme.primary,
+    shape: Shape = RoundedCornerShape(7.dp)
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(7.dp),
+        shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = background
         )
@@ -42,12 +44,13 @@ fun PrimaryButton(
     content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.primary
+    background: Color = MaterialTheme.colorScheme.primary,
+    shape: Shape = RoundedCornerShape(7.dp)
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(7.dp),
+        shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = background
         ),

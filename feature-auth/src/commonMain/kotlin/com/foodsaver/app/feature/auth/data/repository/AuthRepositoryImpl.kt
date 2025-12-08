@@ -38,7 +38,7 @@ internal class AuthRepositoryImpl(
         val body = signInModel.toDto()
 
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/signIn"){
+            httpClient.post("${HttpConstants.AUTH_URL}/signIn"){
                 setBody(body)
             }
         }.onSuccess {
@@ -52,7 +52,7 @@ internal class AuthRepositoryImpl(
     override suspend fun signUp(signUpModel: SignUpModel): ApiResult<AuthResponseModel> {
         val body = signUpModel.toDto()
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/signUp") {
+            httpClient.post("${HttpConstants.AUTH_URL}/signUp") {
                 setBody(body)
             }
         }.onSuccess {
@@ -70,9 +70,9 @@ internal class AuthRepositoryImpl(
 
         val requestBody = GoogleAuthRequestDto(googleIdToken)
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/google") {
+            httpClient.post("${HttpConstants.AUTH_URL}/google") {
                 setBody(requestBody)
-            }.body()
+            }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
             it.saveAuthData()

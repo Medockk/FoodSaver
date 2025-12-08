@@ -32,8 +32,8 @@ buildConfig {
     )
     buildConfigField(
         type = "String",
-        name = "GOOGLE_CLIENT_ID_JS",
-        value = "\"${localProperties.getProperty("GOOGLE_CLIENT_ID_JS")}\""
+        name = "GOOGLE_CLIENT_ID_WEB",
+        value = "\"${localProperties.getProperty("GOOGLE_CLIENT_ID_WEB")}\""
     )
     buildConfigField(
         type = "String",

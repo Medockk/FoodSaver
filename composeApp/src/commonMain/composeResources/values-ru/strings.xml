@@ -11,4 +11,6 @@
     <string name="create_account">Создать аккаунт</string>
     <string name="create">Создать</string>
     <string name="authenticate_with_google">Войти с помощью Google</string>
+
+    <string name="search">Поиск</string>
 </resources>

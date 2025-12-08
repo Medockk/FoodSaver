@@ -22,6 +22,7 @@ suspend inline fun<reified T> saveNetworkCall(
             val errorResult = runCatching {
                 Json.decodeFromString<GlobalErrorResponse>(errorBodyText)
             }.getOrElse {
+                it.printStackTrace()
                 return ApiResult.Error(
                     error = GlobalErrorResponse(
                         error = "Server error: ${result.status.value}",
@@ -33,6 +34,7 @@ suspend inline fun<reified T> saveNetworkCall(
             ApiResult.Error(errorResult)
         }
     } catch (e: Exception) {
+        e.printStackTrace()
         ApiResult.Error(
             GlobalErrorResponse(
                 error = "Unknown Error",

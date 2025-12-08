@@ -1,3 +1,5 @@
+@file:OptIn(InternalAPI::class)
+
 package com.foodsaver.app.manager
 
 import com.foodsaver.app.dto.RefreshRequestDto
@@ -7,80 +9,147 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.cookies.CookiesStorage
-import io.ktor.client.plugins.plugin
+import io.ktor.client.plugins.expectSuccess
+import io.ktor.client.plugins.pluginOrNull
+import io.ktor.client.request.cookie
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.Cookie
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
+import io.ktor.http.isSuccess
+import io.ktor.utils.io.InternalAPI
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 internal class AuthInterceptor(
     private val accessTokenManager: AccessTokenManager,
-    private val cookiesStorage: CookiesStorage
+    private val cookiesStorage: CookiesStorage,
 ) {
 
+    private val mutex = Mutex()
+    private val bearerHeader = "Bearer"
+
     internal fun HttpClient.intercept(): HttpClient {
-        plugin(HttpSend).intercept { request ->
+        pluginOrNull(HttpSend)?.intercept { originalRequest ->
 
-            val jwt = cookiesStorage.getTokenFromCookies("jwt")
-
-            if (jwt == null) {
-                accessTokenManager.getJwtToken()?.let { jwtToken ->
-                    request.header(HttpHeaders.Authorization, "Bearer $jwtToken")
-                }
+            // setup JWT-token before executing original request
+            accessTokenManager.getJwtToken()?.let { localJwtToken ->
+                originalRequest.header(HttpHeaders.Authorization, "$bearerHeader $localJwtToken")
+                println("Jwt token append in headers of original request")
             }
 
-            val csrf = cookiesStorage.getTokenFromCookies(HttpConstants.CSRF_COOKIE_NAME)
-
-            if (csrf == null) {
-                accessTokenManager.getCsrfToken()?.let { csrfToken ->
-                    request.header(HttpConstants.CSRF_HEADER_NAME, csrfToken)
-                }
+            // setup CSRF-token before executing original request
+            accessTokenManager.getCsrfToken()?.let { csrf ->
+                cookiesStorage.addCookie(originalRequest.url.build(), Cookie(
+                    name = HttpConstants.CSRF_COOKIE_NAME,
+                    value = csrf,
+                    path = "/"
+                ))
+                originalRequest.header(HttpConstants.CSRF_HEADER_NAME, csrf)
+                println("CSRF token append")
             }
 
-            val response = execute(request)
+            val originalResponse = execute(originalRequest)
 
-            if (response.response.status == HttpStatusCode.Unauthorized) {
-                println("Intercept unauthorized exception...\nTry to refresh jwt token")
+            // If jwt token expires or original request does not have jwt token
+            if (originalResponse.response.status == HttpStatusCode.Unauthorized) {
+                mutex.withLock {
+                    val currentLocalJwtToken = accessTokenManager.getJwtToken()
+                    val currentRequestJwtToken =
+                        originalRequest.headers[HttpHeaders.Authorization]?.removePrefix("$bearerHeader ")
 
-                val refreshToken = accessTokenManager.getRefreshToken()
-                val jwtToken = accessTokenManager.getJwtToken()
+                    // If other thread do refresh request
+                    if (currentLocalJwtToken != currentRequestJwtToken && currentLocalJwtToken != null) {
+                        println("Other thread already execute refresh request")
+                        originalRequest.header(
+                            HttpHeaders.Authorization,
+                            "$bearerHeader $currentLocalJwtToken"
+                        )
+                        return@intercept execute(originalRequest)
+                    }
 
-                if (refreshToken != null) {
-                    val refreshRequestDto = RefreshRequestDto(refreshToken, jwtToken)
-                    val refreshResponse = post("${HttpConstants.BASE_URL}${HttpConstants.REFRESH}") {
-                        setBody(refreshRequestDto)
-                    }.body<RefreshResponseDto>()
+                    println("Intercept unauthorized exception")
 
-                    accessTokenManager.setJwtToken(refreshResponse.jwtToken)
-                    cookiesStorage.addTokenToLocalStorage(
-                        tokenName = HttpConstants.CSRF_COOKIE_NAME,
-                        onSave = { csrfToken ->
-                            accessTokenManager.setCsrfToken(csrfToken)
+                    try {
+                        val currentRefreshToken = accessTokenManager.getRefreshToken()
+                            ?: return@intercept originalResponse
+                        val refreshRequestDto = RefreshRequestDto(
+                            refreshToken = currentRefreshToken,
+                            accessToken = currentLocalJwtToken
+                        )
+
+                        val refreshResponse = post(HttpConstants.REFRESH_URL) {
+                            setBody(refreshRequestDto)
+                            expectSuccess = false
                         }
-                    )
 
-                    return@intercept execute(request)
+                        if (refreshResponse.status.isSuccess()) {
+                            val refreshResponseDto = refreshResponse.body<RefreshResponseDto>()
+                            println("Success refresh request $refreshResponseDto")
+
+                            val newJwtToken = refreshResponseDto.jwtToken
+                            accessTokenManager.setJwtToken(newJwtToken)
+
+                            originalRequest.header(
+                                HttpHeaders.Authorization,
+                                "$bearerHeader $newJwtToken"
+                            )
+                            return@intercept execute(originalRequest)
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        return@intercept originalResponse
+                    }
                 }
             }
+
+            // If original request does not have CSRF-token in headers AND in cookies
+            if (originalResponse.response.status == HttpStatusCode.Forbidden) {
+                val localCsrfToken = accessTokenManager.getCsrfToken()
+                    ?: return@intercept originalResponse
+
+                originalRequest.header(HttpConstants.CSRF_HEADER_NAME, localCsrfToken)
+                originalRequest.cookie(HttpConstants.CSRF_COOKIE_NAME, localCsrfToken)
+
+                return@intercept execute(originalRequest)
+            }
+
             cookiesStorage.addTokenToLocalStorage(
                 tokenName = HttpConstants.CSRF_COOKIE_NAME,
-                onSave = { csrfToken ->
-                    accessTokenManager.setCsrfToken(csrfToken)
+                onSave = { csrf ->
+                    accessTokenManager.setCsrfToken(csrf)
                 }
             )
 
-            return@intercept response
+            return@intercept originalResponse
         }
         return this
     }
+
+    /**
+     * Method to find from [CookiesStorage] the [Cookie] with special [tokenName]
+     * @param tokenName The cookie-name
+     * @return The value of [Cookie] with name [tokenName]
+     */
     private suspend fun CookiesStorage.getTokenFromCookies(tokenName: String): String? {
-        val csrfToken = this.get(Url(HttpConstants.ROOT_URL))
+        val token = this.get(Url(HttpConstants.ROOT_URL))
             .find { it.name == tokenName }
-        return csrfToken?.value
+        return token?.value
     }
-    private suspend fun CookiesStorage.addTokenToLocalStorage(tokenName: String, onSave: suspend (token: String) -> Unit) {
+
+    /**
+     * Method to save token to local storage
+     * @param tokenName The name of [Cookie] to exact value
+     * @param onSave lambda to save token to local storage
+     */
+    private suspend fun CookiesStorage.addTokenToLocalStorage(
+        tokenName: String,
+        onSave: suspend (token: String) -> Unit,
+    ) {
         val token = getTokenFromCookies(tokenName) ?: return
         onSave(token)
     }
