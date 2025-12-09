@@ -5,6 +5,9 @@ package com.foodsaver.app.presentation.FeatureMain.Product
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -95,7 +98,10 @@ private fun SharedTransitionScope.ProductScreen(
                             .weight(1f)
                             .sharedElement(
                                 sharedContentState = rememberSharedContentState("product_btn_${productId}"),
-                                animatedVisibilityScope = animatedVisibilityScope
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    spring(Spring.DampingRatioMediumBouncy)
+                                }
                             )
                     ){
                         Text("Add to cart")

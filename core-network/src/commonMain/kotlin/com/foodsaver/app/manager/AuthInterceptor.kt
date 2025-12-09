@@ -1,5 +1,3 @@
-@file:OptIn(InternalAPI::class)
-
 package com.foodsaver.app.manager
 
 import com.foodsaver.app.dto.RefreshRequestDto
@@ -11,7 +9,7 @@ import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.plugins.pluginOrNull
-import io.ktor.client.request.cookie
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -20,7 +18,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
 import io.ktor.http.isSuccess
-import io.ktor.utils.io.InternalAPI
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -37,45 +35,43 @@ internal class AuthInterceptor(
 
             // setup JWT-token before executing original request
             accessTokenManager.getJwtToken()?.let { localJwtToken ->
-                originalRequest.header(HttpHeaders.Authorization, "$bearerHeader $localJwtToken")
-                println("Jwt token append in headers of original request")
+                originalRequest.replaceAuthorizationHeader(localJwtToken)
             }
 
             // setup CSRF-token before executing original request
-            accessTokenManager.getCsrfToken()?.let { csrf ->
-                cookiesStorage.addCookie(originalRequest.url.build(), Cookie(
-                    name = HttpConstants.CSRF_COOKIE_NAME,
-                    value = csrf,
-                    path = "/"
-                ))
-                originalRequest.header(HttpConstants.CSRF_HEADER_NAME, csrf)
-                println("CSRF token append")
+            accessTokenManager.getCsrfToken()?.let { csrfToken ->
+                originalRequest.replaceCsrfHeader(csrfToken)
             }
 
             val originalResponse = execute(originalRequest)
 
             // If jwt token expires or original request does not have jwt token
             if (originalResponse.response.status == HttpStatusCode.Unauthorized) {
+                println("Response with Unauthorized status")
                 mutex.withLock {
                     val currentLocalJwtToken = accessTokenManager.getJwtToken()
-                    val currentRequestJwtToken =
-                        originalRequest.headers[HttpHeaders.Authorization]?.removePrefix("$bearerHeader ")
 
                     // If other thread do refresh request
-                    if (currentLocalJwtToken != currentRequestJwtToken && currentLocalJwtToken != null) {
-                        println("Other thread already execute refresh request")
-                        originalRequest.header(
-                            HttpHeaders.Authorization,
-                            "$bearerHeader $currentLocalJwtToken"
-                        )
-                        return@intercept execute(originalRequest)
+                    if (originalRequest.isTokenAlreadyUpdated(currentLocalJwtToken)) {
+                        try {
+                            ensureActive()
+                            println("Other thread already execute refresh request")
+                            currentLocalJwtToken?.let {
+                                originalRequest.replaceAuthorizationHeader(it)
+                            }
+                            mutex.tryUnlock()
+                            return@intercept execute(originalRequest)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            return@intercept originalResponse
+                        }
                     }
 
                     println("Intercept unauthorized exception")
 
                     try {
                         val currentRefreshToken = accessTokenManager.getRefreshToken()
-                            ?: return@intercept originalResponse
+                            ?: return@withLock
                         val refreshRequestDto = RefreshRequestDto(
                             refreshToken = currentRefreshToken,
                             accessToken = currentLocalJwtToken
@@ -88,32 +84,32 @@ internal class AuthInterceptor(
 
                         if (refreshResponse.status.isSuccess()) {
                             val refreshResponseDto = refreshResponse.body<RefreshResponseDto>()
-                            println("Success refresh request $refreshResponseDto")
 
                             val newJwtToken = refreshResponseDto.jwtToken
                             accessTokenManager.setJwtToken(newJwtToken)
 
-                            originalRequest.header(
-                                HttpHeaders.Authorization,
-                                "$bearerHeader $newJwtToken"
-                            )
+                            originalRequest.replaceAuthorizationHeader(newJwtToken)
+                            mutex.tryUnlock()
                             return@intercept execute(originalRequest)
                         }
 
-                    } catch (e: Exception) {
+                    }
+                    catch (e: Exception) {
                         e.printStackTrace()
                         return@intercept originalResponse
                     }
                 }
+
+                return@intercept originalResponse
             }
 
             // If original request does not have CSRF-token in headers AND in cookies
             if (originalResponse.response.status == HttpStatusCode.Forbidden) {
-                val localCsrfToken = accessTokenManager.getCsrfToken()
+                val localCsrfToken = cookiesStorage.getTokenFromCookies(HttpConstants.CSRF_COOKIE_NAME)
+                    ?: accessTokenManager.getCsrfToken()
                     ?: return@intercept originalResponse
 
-                originalRequest.header(HttpConstants.CSRF_HEADER_NAME, localCsrfToken)
-                originalRequest.cookie(HttpConstants.CSRF_COOKIE_NAME, localCsrfToken)
+                originalRequest.replaceCsrfHeader(localCsrfToken)
 
                 return@intercept execute(originalRequest)
             }
@@ -152,5 +148,43 @@ internal class AuthInterceptor(
     ) {
         val token = getTokenFromCookies(tokenName) ?: return
         onSave(token)
+    }
+
+    private fun HttpRequestBuilder.isTokenAlreadyUpdated(localToken: String?): Boolean {
+        val currentRequestToken = this.headers[HttpHeaders.Authorization]?.removePrefix("$bearerHeader ")
+
+        return currentRequestToken != localToken && localToken != null
+    }
+
+    private fun HttpRequestBuilder.replaceAuthorizationHeader(token: String) {
+        val headerName = HttpHeaders.Authorization
+        if (this.headers.contains(headerName)) {
+            this.headers.remove(headerName)
+        }
+        this.header(headerName, "$bearerHeader $token")
+    }
+
+    private suspend fun HttpRequestBuilder.replaceCsrfHeader(token: String) {
+        val headerName = HttpConstants.CSRF_HEADER_NAME
+        val cookie = Cookie(
+            name = HttpConstants.CSRF_COOKIE_NAME,
+            value = token,
+            path = "/",
+            domain = null,
+            httpOnly = false
+        )
+        cookiesStorage.addCookie(this.url.build(), cookie)
+
+        if (this.headers.contains(headerName)) {
+            this.headers.remove(headerName)
+        }
+
+        this.header(headerName, token)
+    }
+
+    private fun Mutex.tryUnlock(owner: Any? = null) = try {
+        unlock(owner)
+    } catch (_: Exception) {
+
     }
 }

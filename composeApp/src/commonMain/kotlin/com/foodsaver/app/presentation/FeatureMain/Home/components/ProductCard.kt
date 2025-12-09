@@ -4,15 +4,20 @@ package com.foodsaver.app.presentation.FeatureMain.Home.components
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
+import com.foodsaver.app.common.CircularPrimaryButton
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.domain.model.ProductModel
 import foodsaver.composeapp.generated.resources.Res
@@ -47,22 +53,24 @@ fun SharedTransitionScope.ProductCard(
     modifier: Modifier = Modifier,
 ) {
 
-    val plusIconRotationValue = 0f
+    val plusIconRotationValue = 180f
+    val centerRotateValue = plusIconRotationValue / 2
     val minusIconRotationValue = 0f
 
     val animatedIconRotation by animateFloatAsState(
         targetValue = if (isInCart) minusIconRotationValue
         else plusIconRotationValue,
-        animationSpec = tween(durationMillis = 450, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 250, easing = LinearEasing)
     )
 
     Card(
-        elevation = CardDefaults.cardElevation(8.dp),
+        //elevation = CardDefaults.cardElevation(8.dp),
         modifier = modifier
+            .padding(5.dp)
             .dropShadow(
                 shape = RoundedCornerShape(10.dp),
                 shadow = Shadow(radius = 8.dp, color = Color(0x1F000000))
-            ).padding(10.dp),
+            ),
         onClick = {
             onProductClick(product.productId)
         },
@@ -70,21 +78,26 @@ fun SharedTransitionScope.ProductCard(
             containerColor = MaterialTheme.colorScheme.background
         )
     ) {
-        Row {
-            Icon(
-                painter = painterResource(Res.drawable.ic_expires_icon),
-                contentDescription = "expires at",
-                tint = MaterialTheme.colorScheme.surfaceDim
-            )
-            Text(
-                text = product.expiresAt,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_expiresAt_${product.productId}"),
-                        animatedVisibilityScope = scope
-                    ),
-                color = MaterialTheme.colorScheme.surfaceDim
-            )
+        Column(Modifier.padding(10.dp)) {
+            Row {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_expires_icon),
+                    contentDescription = "expires at",
+                    tint = MaterialTheme.colorScheme.surfaceDim
+                )
+                Text(
+                    text = product.expiresAt,
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState("product_expiresAt_${product.productId}"),
+                            animatedVisibilityScope = scope,
+                            boundsTransform = { _, _ ->
+                                tween()
+                            }
+                        ),
+                    color = MaterialTheme.colorScheme.surfaceDim
+                )
+            }
         }
         Spacer(Modifier.height(5.dp))
 
@@ -93,7 +106,10 @@ fun SharedTransitionScope.ProductCard(
             modifier = Modifier
                 .sharedElement(
                     sharedContentState = rememberSharedContentState("product_name_${product.productId}"),
-                    animatedVisibilityScope = scope
+                    animatedVisibilityScope = scope,
+                    boundsTransform = { _, _ ->
+                        tween()
+                    }
                 ),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -103,7 +119,10 @@ fun SharedTransitionScope.ProductCard(
             modifier = Modifier
                 .sharedElement(
                     sharedContentState = rememberSharedContentState("product_desc_${product.productId}"),
-                    animatedVisibilityScope = scope
+                    animatedVisibilityScope = scope,
+                    boundsTransform = { _, _ ->
+                        tween()
+                    }
                 ),
             color = MaterialTheme.colorScheme.secondaryFixedDim
         )
@@ -121,32 +140,37 @@ fun SharedTransitionScope.ProductCard(
             )
             Spacer(Modifier.width(40.dp))
 
-            PrimaryButton(
+            CircularPrimaryButton(
                 content = {
                     Icon(
                         painter = painterResource(
-                            resource = if (animatedIconRotation == plusIconRotationValue) {
+                            resource = if (animatedIconRotation in centerRotateValue..plusIconRotationValue) {
                                 Res.drawable.ic_plus_icon
                             } else {
                                 Res.drawable.ic_minus_icon
                             }
                         ),
                         modifier = Modifier
+                            .size(15.dp)
                             .graphicsLayer {
-                                this.rotationY = animatedIconRotation
+                                this.rotationZ = animatedIconRotation
+                                this.alpha = if (animatedIconRotation in 45f..centerRotateValue || animatedIconRotation in centerRotateValue..135f) 0.8f
+                                else 1f
                             },
                         contentDescription = null,
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 },
                 onClick = {
                     onAddProductClick(product.productId)
                 },
-                shape = CircleShape,
                 modifier = Modifier
                     .sharedElement(
                         sharedContentState = rememberSharedContentState("product_btn_${product.productId}"),
-                        animatedVisibilityScope = scope
+                        animatedVisibilityScope = scope,
+                        boundsTransform = { _, _ ->
+                            spring(Spring.DampingRatioLowBouncy)
+                        }
                     )
             )
         }

@@ -42,7 +42,7 @@ internal class HttpClientFactory(
                 install(HttpSend)
                 install(HttpRequestRetry) {
                     maxRetries = 3
-                    delayMillis { it * 1_500L }
+                    delayMillis { it * 3_000L }
                 }
             }.intercept()
         }
