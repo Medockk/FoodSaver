@@ -22,22 +22,24 @@ suspend inline fun<reified T> saveNetworkCall(
             val errorResult = runCatching {
                 Json.decodeFromString<GlobalErrorResponse>(errorBodyText)
             }.getOrElse {
+                it.printStackTrace()
                 return ApiResult.Error(
                     error = GlobalErrorResponse(
                         error = "Server error: ${result.status.value}",
                         message = "Failed to serialize body with ${it.message}",
-                        code = 0
+                        httpCode = 0
                     )
                 )
             }
             ApiResult.Error(errorResult)
         }
     } catch (e: Exception) {
+        e.printStackTrace()
         ApiResult.Error(
             GlobalErrorResponse(
                 error = "Unknown Error",
                 message = e.message ?: "",
-                code = 0
+                httpCode = 0
             )
         )
     }

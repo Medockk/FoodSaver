@@ -13,6 +13,11 @@ plugins {
 }
 
 kotlin {
+
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xcontext-parameters"))
+    }
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -41,6 +46,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.animation)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
@@ -50,12 +56,14 @@ kotlin {
             implementation(libs.material3)
             implementation(libs.koin.compose.navigation)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.bundles.coil)
 
             implementation(projects.shared)
             implementation(projects.coreDi)
             implementation(projects.coreDb)
             implementation(projects.coreNetwork)
             implementation(projects.featureAuth)
+            implementation(projects.featureMain)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)
@@ -63,6 +71,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+        }
+
+        webMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

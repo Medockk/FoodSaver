@@ -7,6 +7,6 @@ config.resolve = {
         stream: require.resolve("stream-browserify"),
         buffer: require.resolve("buffer/"),
         vm: require.resolve("vm-browserify"),
-        fs: false, // 👈 ВАЖНО: отключаем Node-модуль fs
+        fs: false
     },
 };

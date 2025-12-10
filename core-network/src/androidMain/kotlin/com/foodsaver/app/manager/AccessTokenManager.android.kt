@@ -12,6 +12,7 @@ actual class AccessTokenManager actual constructor() {
     private var sp: SharedPreferences
     private val refreshTokenKey = "REFRESH_TOKEN_KEY"
     private val jwtTokenKey = "JWT_TOKEN_KEY"
+    private val csrfTokenKey = "CSRF_TOKEN_KEY"
 
     init {
         val context by inject<Context>(Context::class.java)
@@ -42,5 +43,13 @@ actual class AccessTokenManager actual constructor() {
 
     actual suspend fun clearTokens() {
         sp.edit { clear() }
+    }
+
+    actual suspend fun getCsrfToken(): String? {
+        return sp.getString(csrfTokenKey, null)
+    }
+
+    actual suspend fun setCsrfToken(csrfToken: String) {
+        sp.edit { remove(csrfTokenKey).putString(csrfTokenKey, csrfToken) }
     }
 }

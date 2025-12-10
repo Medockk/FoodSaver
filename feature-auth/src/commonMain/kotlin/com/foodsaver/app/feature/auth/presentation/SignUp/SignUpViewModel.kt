@@ -57,7 +57,7 @@ class SignUpViewModel(
                 if (EmailValidator.validate(state.email)) {
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val request = SignUpModel(
-                            email = state.email,
+                            username = state.email,
                             password = state.password
                         )
 

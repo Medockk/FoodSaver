@@ -10,6 +10,7 @@ import kotlin.time.ExperimentalTime
 data class GlobalErrorResponse(
     val error: String,
     val message: String,
-    val code: Int,
+    val httpCode: Int,
+    val errorCode: Int = 0,
     val timestamp: Long = Clock.System.now().epochSeconds,
 )

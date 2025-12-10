@@ -1,30 +1,35 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.1"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
-androidx-activity = "1.11.0"
+androidx-activity = "1.12.1"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
-androidx-lifecycle = "2.9.4"
+androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
-composeHotReload = "1.0.0-rc02"
-composeMultiplatform = "1.9.0"
+composeHotReload = "1.0.0"
+composeMultiplatform = "1.9.3"
 junit = "4.13.2"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
+
+#Android google auth api
+credentials = "1.5.0"
+googleid = "1.1.1"
 
 #Shared Libraies
 kotlinxBrowser = "0.5.0"
-material3Version = "1.9.0-alpha04"
-navigationCompose = "2.9.0"
+material3Version = "1.9.0"
+navigationCompose = "2.9.1"
 kotlinSerialization = "1.9.0"
 koinCompose = "4.1.1"
-ktor = "3.3.1"
+ktor = "3.3.3"
 coil3 = "3.3.0"
-sqldelight = "2.1.0"
-sqliteFramework = "2.6.1"
+sqldelight = "2.2.1"
+sqliteFramework = "2.6.2"
+kotlinxDateTime = "0.7.1"
 
 #Android Libraries
 androidSecurity = "1.1.0"
@@ -45,11 +50,19 @@ kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 
 #Android Libraries
 android-security = { module = "androidx.security:security-crypto", version.ref = "androidSecurity"}
+#Android Auth with Google OAuth2
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+
+#JVM Libraries
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 
 #Shared libriries
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3Version" }
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCompose" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
@@ -81,6 +94,14 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-web-driver = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
 androidx-sqlite-framework = { group = "androidx.sqlite", name = "sqlite-framework", version.ref = "sqliteFramework" }
+
+[bundles]
+coil = [
+    "coil-compose",
+    "coil-compose-core",
+    "coil-network-ktor3",
+    "coil-mp"
+]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -2,4 +2,20 @@
 <resources>
     <string name="app_name">FoodSaver</string>
     <string name="hello">Привет</string>
+
+    <string name="email">Эл. почта</string>
+    <string name="fio">Имя Фамилия</string>
+    <string name="password">Пароль</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="sign_in">Войти</string>
+    <string name="create_account">Создать аккаунт</string>
+    <string name="create">Создать</string>
+    <string name="authenticate_with_google">Войти с помощью Google</string>
+
+    <string name="search">Поиск</string>
+
+    <string name="day">день</string>
+    <string name="days">дней</string>
+    <string name="hour">час</string>
+    <string name="hours">часов</string>
 </resources>

@@ -4,7 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class SignUpModelDto(
-    val email: String,
+    val username: String,
     val password: String,
-    val returnSecureToken: Boolean = true
+    val displayName: String? = null,
+    val email: String? = null,
+    val returnSecureToken: Boolean = true,
 )

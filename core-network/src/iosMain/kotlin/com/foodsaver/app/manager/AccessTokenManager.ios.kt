@@ -7,6 +7,7 @@ actual class AccessTokenManager actual constructor() {
     private val storage = NSUserDefaults.standardUserDefaults
     private val refreshTokenKey = "REFRESH_TOKEN_KEY"
     private val jwtTokenKey = "JWT_TOKEN_KEY"
+    private val csrfTokenKey = "CSRF_TOKEN_KEY"
 
     actual suspend fun getRefreshToken(): String? {
         return storage.stringForKey(refreshTokenKey)
@@ -21,8 +22,18 @@ actual class AccessTokenManager actual constructor() {
     }
 
     actual suspend fun setJwtToken(jwtToken: String) {
+        storage.setObject(jwtToken, jwtTokenKey)
     }
 
     actual suspend fun clearTokens() {
+
+    }
+
+    actual suspend fun getCsrfToken(): String? {
+        return storage.stringForKey(csrfTokenKey)
+    }
+
+    actual suspend fun setCsrfToken(csrfToken: String) {
+        storage.setObject(csrfToken, csrfTokenKey)
     }
 }

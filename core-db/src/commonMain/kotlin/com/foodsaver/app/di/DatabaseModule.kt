@@ -22,5 +22,5 @@ val databaseModule = module {
 
     factoryOf(::GetAllUsersUseCase)
     factoryOf(::GetUserByUidUseCase)
-    factory { InsertUserUseCase(get()) }
+    factoryOf(::InsertUserUseCase)
 }
