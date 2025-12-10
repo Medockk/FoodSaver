@@ -3,24 +3,27 @@
 package com.foodsaver.app.presentation.FeatureMain.Home.components
 
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.BoundsTransform
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,20 +31,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.CircularPrimaryButton
-import com.foodsaver.app.common.PrimaryButton
+import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.domain.model.ExpiresDateType
 import com.foodsaver.app.domain.model.ProductModel
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.days
+import foodsaver.composeapp.generated.resources.hours
 import foodsaver.composeapp.generated.resources.ic_expires_icon
 import foodsaver.composeapp.generated.resources.ic_minus_icon
 import foodsaver.composeapp.generated.resources.ic_plus_icon
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 context(scope: AnimatedContentScope)
 @Composable
@@ -64,7 +79,6 @@ fun SharedTransitionScope.ProductCard(
     )
 
     Card(
-        //elevation = CardDefaults.cardElevation(8.dp),
         modifier = modifier
             .padding(5.dp)
             .dropShadow(
@@ -76,7 +90,8 @@ fun SharedTransitionScope.ProductCard(
         },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
-        )
+        ),
+        shape = RoundedCornerShape(10.dp)
     ) {
         Column(Modifier.padding(10.dp)) {
             Row {
@@ -85,8 +100,13 @@ fun SharedTransitionScope.ProductCard(
                     contentDescription = "expires at",
                     tint = MaterialTheme.colorScheme.surfaceDim
                 )
+
+                val dateType = when (product.expiresDateType) {
+                    ExpiresDateType.DAYS -> stringResource(Res.string.days)
+                    ExpiresDateType.HOURS -> stringResource(Res.string.hours)
+                }
                 Text(
-                    text = product.expiresAt,
+                    text = "${product.expiresAt} $dateType",
                     modifier = Modifier
                         .sharedElement(
                             sharedContentState = rememberSharedContentState("product_expiresAt_${product.productId}"),
@@ -98,82 +118,142 @@ fun SharedTransitionScope.ProductCard(
                     color = MaterialTheme.colorScheme.surfaceDim
                 )
             }
-        }
-        Spacer(Modifier.height(5.dp))
 
-        Text(
-            text = product.name,
-            modifier = Modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState("product_name_${product.productId}"),
-                    animatedVisibilityScope = scope,
-                    boundsTransform = { _, _ ->
-                        tween()
-                    }
-                ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(Modifier.height(5.dp))
-        Text(
-            text = product.description,
-            modifier = Modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState("product_desc_${product.productId}"),
-                    animatedVisibilityScope = scope,
-                    boundsTransform = { _, _ ->
-                        tween()
-                    }
-                ),
-            color = MaterialTheme.colorScheme.secondaryFixedDim
-        )
+            Spacer(Modifier.height(10.dp))
 
-        Spacer(Modifier.height(15.dp))
-        Row {
-            Text(
-                text = product.cost.toString(),
+            SubcomposeAsyncImage(
+                model = product.photoUrl,
+                contentDescription = product.name,
+                contentScale = ContentScale.Crop,
+                clipToBounds = true,
                 modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_cost_${product.productId}"),
-                        animatedVisibilityScope = scope
-                    ),
-                color = MaterialTheme.colorScheme.primary
+                    .heightIn(max = 80.dp)
+                    .fillMaxHeight(),
+                loading = {
+                    this@Column.AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(tween()),
+                        exit = fadeOut(tween())
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(7.dp))
+                                .shimmerEffect()
+                        )
+                    }
+                },
+                success = {
+                    SubcomposeAsyncImageContent()
+                }
             )
-            Spacer(Modifier.width(40.dp))
 
-            CircularPrimaryButton(
-                content = {
-                    Icon(
-                        painter = painterResource(
-                            resource = if (animatedIconRotation in centerRotateValue..plusIconRotationValue) {
-                                Res.drawable.ic_plus_icon
-                            } else {
-                                Res.drawable.ic_minus_icon
-                            }
-                        ),
-                        modifier = Modifier
-                            .size(15.dp)
-                            .graphicsLayer {
-                                this.rotationZ = animatedIconRotation
-                                this.alpha = if (animatedIconRotation in 45f..centerRotateValue || animatedIconRotation in centerRotateValue..135f) 0.8f
-                                else 1f
-                            },
-                        contentDescription = null,
-                        tint = Color.White,
-                    )
-                },
-                onClick = {
-                    onAddProductClick(product.productId)
-                },
+            Spacer(Modifier.height(13.dp))
+
+            Text(
+                text = product.name,
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_btn_${product.productId}"),
+                        sharedContentState = rememberSharedContentState("product_name_${product.productId}"),
                         animatedVisibilityScope = scope,
                         boundsTransform = { _, _ ->
-                            spring(Spring.DampingRatioLowBouncy)
-                        }
-                    )
+                            tween(450, easing = LinearEasing)
+                        },
+                        renderInOverlayDuringTransition = true
+                    ),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                autoSize = TextAutoSize.StepBased(maxFontSize = 20.sp, minFontSize = 14.sp),
+                maxLines = 2
             )
-        }
+            Spacer(Modifier.height(5.dp))
+            Text(
+                text = "${product.unit} ${product.unitName}",
+                modifier = Modifier
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("product_desc_${product.productId}"),
+                        animatedVisibilityScope = scope,
+                        boundsTransform = { _, _ ->
+                            tween()
+                        }
+                    ),
+                color = MaterialTheme.colorScheme.secondaryFixedDim,
+                fontWeight = FontWeight.Medium,
+                fontSize = 15.sp
+            )
 
+            Spacer(Modifier.height(15.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${product.costUnit} ${product.cost.toInt()}",
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState("product_cost_${product.productId}"),
+                            animatedVisibilityScope = scope,
+                            boundsTransform = { _, _ ->
+                                tween()
+                            }
+                        ),
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+                Spacer(Modifier.width(5.dp))
+                if (product.oldCost != null) {
+                    Text(
+                        text = "${product.costUnit} ${product.oldCost!!.toInt()}",
+                        color = MaterialTheme.colorScheme.primary.copy(0.5f),
+                        maxLines = 1,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        textDecoration = TextDecoration.LineThrough,
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 10.sp,
+                            maxFontSize = 18.sp
+                        )
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+
+                CircularPrimaryButton(
+                    content = {
+                        Icon(
+                            painter = painterResource(
+                                resource = if (animatedIconRotation in centerRotateValue..plusIconRotationValue) {
+                                    Res.drawable.ic_plus_icon
+                                } else {
+                                    Res.drawable.ic_minus_icon
+                                }
+                            ),
+                            modifier = Modifier
+                                .size(15.dp)
+                                .graphicsLayer {
+                                    this.rotationZ = animatedIconRotation
+                                    this.alpha =
+                                        if (animatedIconRotation in 45f..centerRotateValue || animatedIconRotation in centerRotateValue..135f) 0.8f
+                                        else 1f
+                                },
+                            contentDescription = null,
+                            tint = Color.White,
+                        )
+                    },
+                    onClick = {
+                        onAddProductClick(product.productId)
+                    },
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState("product_btn_${product.productId}"),
+                            animatedVisibilityScope = scope,
+                            boundsTransform = { _, _ ->
+                                tween()
+                            }
+                        )
+                )
+            }
+        }
     }
 }

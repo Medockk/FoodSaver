@@ -6,10 +6,10 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,10 +36,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -102,6 +100,7 @@ private fun SharedTransitionScope.HomeScreen(
 ) {
 
     val lazyColumnState = rememberLazyListState()
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -161,26 +160,28 @@ private fun SharedTransitionScope.HomeScreen(
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             item {
-                Spacer(Modifier.height(20.dp))
-                SearchTextField(
-                    value = state.searchQuery,
-                    onValueChange = { onEvent(HomeEvent.OnSearchQueryChange(it)) },
-                    onSearch = {  },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    hint = stringResource(Res.string.search),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.search_icon),
-                            contentDescription = stringResource(Res.string.search),
-                            tint = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier
-                                .size(20.dp)
-                        )
-                    }
-                )
+                Column() {
+                    Spacer(Modifier.height(20.dp))
+                    SearchTextField(
+                        value = state.searchQuery,
+                        onValueChange = { onEvent(HomeEvent.OnSearchQueryChange(it)) },
+                        onSearch = {  },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        hint = stringResource(Res.string.search),
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.search_icon),
+                                contentDescription = stringResource(Res.string.search),
+                                tint = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier
+                                    .size(20.dp)
+                            )
+                        }
+                    )
+                    Spacer(Modifier.height(20.dp))
+                }
 
-                Spacer(Modifier.height(20.dp))
             }
 
             item {
@@ -236,7 +237,8 @@ private fun SharedTransitionScope.HomeScreen(
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 items(
                     items = state.productsByCategory,
                     key = { it.productId }

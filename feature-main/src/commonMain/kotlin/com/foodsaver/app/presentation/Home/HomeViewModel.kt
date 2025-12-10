@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.domain.model.CategoryModel
-import com.foodsaver.app.domain.model.ProductModel
 import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.utils.ApiResult.ApiResult

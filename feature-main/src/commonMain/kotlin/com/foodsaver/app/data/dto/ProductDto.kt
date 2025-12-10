@@ -9,15 +9,24 @@ import kotlin.time.Instant
 @Serializable
 internal data class ProductDto(
     val productId: String,
+
     val title: String,
     val description: String,
+    val photoUrl: String?,
 
     val cost: Float,
-    val rating: Float?,
-    val organization: OrganizationDto,
+    val costUnit: String,
+    val oldCost: Float? = null,
+
+
     val count: Int,
+    val rating: Float?,
+
+    val organization: OrganizationDto,
     val categoryIds: List<String>,
-    val photoUrl: String?,
+
+    val unit: Long,
+    val unitName: String,
 
     val expiresAt: Instant
 )

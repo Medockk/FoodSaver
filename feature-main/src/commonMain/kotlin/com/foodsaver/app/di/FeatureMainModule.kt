@@ -6,7 +6,9 @@ import com.foodsaver.app.data.repository.ProductRepositoryImpl
 import com.foodsaver.app.domain.repository.CategoryRepository
 import com.foodsaver.app.domain.repository.ProductRepository
 import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
+import com.foodsaver.app.domain.usecase.GetCachedProductUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
+import com.foodsaver.app.presentation.FeatureMain.Product.PVM
 import com.foodsaver.app.presentation.Home.HomeViewModel
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.factoryOf
@@ -29,5 +31,7 @@ val featureMainModule = module {
 
     factoryOf(::GetAllCategoriesUseCase)
     factoryOf(::GetProductsUseCase)
+    factoryOf(::GetCachedProductUseCase)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::PVM)
 }
