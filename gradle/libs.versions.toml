@@ -29,6 +29,7 @@ ktor = "3.3.3"
 coil3 = "3.3.0"
 sqldelight = "2.2.1"
 sqliteFramework = "2.6.2"
+kotlinxDateTime = "0.7.1"
 
 #Android Libraries
 androidSecurity = "1.1.0"
@@ -61,6 +62,7 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3Version" }
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCompose" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
@@ -92,6 +94,14 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-web-driver = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
 androidx-sqlite-framework = { group = "androidx.sqlite", name = "sqlite-framework", version.ref = "sqliteFramework" }
+
+[bundles]
+coil = [
+    "coil-compose",
+    "coil-compose-core",
+    "coil-network-ktor3",
+    "coil-mp"
+]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

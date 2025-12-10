@@ -20,7 +20,6 @@ import com.foodsaver.app.utils.ApiResult.onSuccess
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
@@ -38,7 +37,7 @@ internal class AuthRepositoryImpl(
         val body = signInModel.toDto()
 
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/signIn"){
+            httpClient.post("${HttpConstants.AUTH_URL}/signIn"){
                 setBody(body)
             }
         }.onSuccess {
@@ -52,7 +51,7 @@ internal class AuthRepositoryImpl(
     override suspend fun signUp(signUpModel: SignUpModel): ApiResult<AuthResponseModel> {
         val body = signUpModel.toDto()
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/signUp") {
+            httpClient.post("${HttpConstants.AUTH_URL}/signUp") {
                 setBody(body)
             }
         }.onSuccess {
@@ -70,9 +69,9 @@ internal class AuthRepositoryImpl(
 
         val requestBody = GoogleAuthRequestDto(googleIdToken)
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.BASE_URL}auth/google") {
+            httpClient.post("${HttpConstants.AUTH_URL}/google") {
                 setBody(requestBody)
-            }.body()
+            }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
             it.saveAuthData()

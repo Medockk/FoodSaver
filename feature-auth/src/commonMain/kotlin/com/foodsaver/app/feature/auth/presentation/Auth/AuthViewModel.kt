@@ -139,24 +139,23 @@ class AuthViewModel(
     }
 
     private suspend fun checkInputData(shouldCheckFio: Boolean = false): Boolean {
-        var result = true
         if (shouldCheckFio && _state.value.fio.isBlank()) {
             _channel.send(AuthAction.OnError("Fio must be not empty"))
-            result = false
+            return false
         }
         if (_state.value.email.isBlank()) {
             _channel.send(AuthAction.OnError("Email must be not empty"))
-            result = false
+            return false
         }
         if (!EmailValidator.validate(_state.value.email)) {
             _channel.send(AuthAction.OnError("Email invalid"))
-            result = false
+            return false
         }
         if (_state.value.password.isBlank()) {
             _channel.send(AuthAction.OnError("Password must be not empty"))
-            result = false
+            return false
         }
 
-        return result
+        return true
     }
 }

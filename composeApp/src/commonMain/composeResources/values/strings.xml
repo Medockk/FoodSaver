@@ -11,4 +11,11 @@
     <string name="create_account">Create Account</string>
     <string name="create">Create</string>
     <string name="authenticate_with_google">Authenticate with Google</string>
+
+    <string name="search">Search</string>
+
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
 </resources>
