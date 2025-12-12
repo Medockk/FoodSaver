@@ -1,11 +1,11 @@
 package com.foodsaver.app.data.repository
 
+import com.foodsaver.app.ApiResult.ApiResult
+import com.foodsaver.app.ApiResult.map
 import com.foodsaver.app.data.dto.CategoryDto
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.model.CategoryModel
 import com.foodsaver.app.domain.repository.CategoryRepository
-import com.foodsaver.app.utils.ApiResult.ApiResult
-import com.foodsaver.app.utils.ApiResult.map
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient

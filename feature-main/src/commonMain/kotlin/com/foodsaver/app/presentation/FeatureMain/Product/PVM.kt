@@ -2,9 +2,9 @@ package com.foodsaver.app.presentation.FeatureMain.Product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.foodsaver.app.InputOutput
 import com.foodsaver.app.domain.model.ProductModel
 import com.foodsaver.app.domain.usecase.GetCachedProductUseCase
-import com.foodsaver.app.utils.InputOutput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.feature.auth.presentation.AuthRoute
-import com.foodsaver.app.presentation.Auth.featureAuthNavigation
-import com.foodsaver.app.presentation.FeatureMain.Home.featureMainNavigation
+import com.foodsaver.app.presentation.FeatureAuth.featureAuthNavigation
+import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
 import com.foodsaver.app.presentation.MainRoute
 import com.foodsaver.app.ui.colorScheme
 
@@ -30,12 +30,12 @@ fun App(
             Scaffold(
                 contentWindowInsets = WindowInsets.statusBars
             ) { _ ->
-                NavHost(navController, startDestination = MainRoute.HomeScreen) {
+                NavHost(navController, startDestination = /*MainRoute.HomeScreen*/initialRoute) {
                     featureAuthNavigation(navController, onSuccessAuthentication = {
                         navController.navigate(MainRoute.HomeScreen)
                     })
 
-                    featureMainNavigation(navController)
+                    featureHomeNavigation(navController)
                 }
             }
         }

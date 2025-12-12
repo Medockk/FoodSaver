@@ -41,9 +41,17 @@ plugins {
 
 include(":composeApp")
 include(":shared")
-include(":core-di")
-include(":core-db")
-include(":core-network")
+
+include(":core")
+include(":core:core-di")
+include(":core:core-db")
+include(":core:core-network")
+include(":core:core-common")
+
 include(":feature-auth")
+include(":feature-auth:data")
+include(":feature-auth:di")
+include(":feature-auth:domain")
+
 include(":feature-main")
 include(":feature-product-detail")

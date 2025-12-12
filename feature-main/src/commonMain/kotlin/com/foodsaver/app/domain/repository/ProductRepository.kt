@@ -1,7 +1,7 @@
 package com.foodsaver.app.domain.repository
 
+import com.foodsaver.app.ApiResult.ApiResult
 import com.foodsaver.app.domain.model.ProductModel
-import com.foodsaver.app.utils.ApiResult.ApiResult
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {

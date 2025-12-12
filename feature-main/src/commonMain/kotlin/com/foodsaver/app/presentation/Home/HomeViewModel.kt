@@ -4,11 +4,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.foodsaver.app.ApiResult.ApiResult
+import com.foodsaver.app.InputOutput
 import com.foodsaver.app.domain.model.CategoryModel
 import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
-import com.foodsaver.app.utils.ApiResult.ApiResult
-import com.foodsaver.app.utils.InputOutput
 import com.foodsaver.app.utils.Paginator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
