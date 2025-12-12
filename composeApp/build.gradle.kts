@@ -55,14 +55,19 @@ kotlin {
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
             implementation(libs.koin.compose.navigation)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 
             implementation(projects.shared)
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
+
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreCommon)
+
             implementation(projects.featureAuth)
+            implementation(projects.featureAuth.di)
+
             implementation(projects.featureMain)
         }
 //        commonTest.dependencies {

@@ -44,9 +44,9 @@ kotlin {
         }
 
         commonMain.dependencies {
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
         }
         jvmMain.dependencies {
 

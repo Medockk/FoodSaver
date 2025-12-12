@@ -48,12 +48,12 @@ kotlin {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
             api(libs.kotlinx.serialization.json)
-            api(libs.kotlinx.coroutinesSwing)
+            implementation(libs.kotlinx.coroutines)
 
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
-            implementation(projects.featureAuth)
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.featureAuth.di)
             implementation(projects.featureMain)
         }
         jvmMain.dependencies {

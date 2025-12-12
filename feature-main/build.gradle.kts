@@ -46,9 +46,10 @@ kotlin {
         }
 
         commonMain.dependencies {
-            implementation(projects.coreDi)
-            implementation(projects.coreNetwork)
-            implementation(projects.coreDb)
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreCommon)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.datetime)
