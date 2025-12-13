@@ -11,6 +11,11 @@ private val lightColorScheme = lightColorScheme(
     primary = Color(0xFF472C9C),
     onPrimary = Color(0xffffffff),
 
+    inversePrimary = Color(0xFF898EBC),
+
+    primaryFixed = Color(0xFF061737),
+    primaryFixedDim = Color(0xFFEDEFFF),
+
     outline = Color(0xFFF6F6F6),
     outlineVariant = Color(0xFF3B3B3B),
 

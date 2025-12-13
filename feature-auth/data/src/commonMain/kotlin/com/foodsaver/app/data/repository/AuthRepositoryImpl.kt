@@ -10,11 +10,7 @@ import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
-import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.repository.AuthRepository
-import com.foodsaver.app.domain.usecase.GetAllUsersUseCase
-import com.foodsaver.app.domain.usecase.GetUserByUidUseCase
-import com.foodsaver.app.domain.usecase.InsertUserUseCase
 import com.foodsaver.app.dto.GlobalErrorResponse
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
@@ -26,7 +22,8 @@ import io.ktor.http.HttpStatusCode
 
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
-    private val accessTokenManager: AccessTokenManager
+    private val accessTokenManager: AccessTokenManager,
+    private val googleAuthenticator: GoogleAuthenticator
 ): AuthRepository {
 
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
@@ -55,7 +52,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun authenticateWithGoogle(): ApiResult<AuthResponseModel> {
-        val googleIdToken = GoogleAuthenticator().getGoogleIdToken() ?: return ApiResult.Error(GlobalErrorResponse(
+        val googleIdToken = googleAuthenticator.getGoogleIdToken() ?: return ApiResult.Error(GlobalErrorResponse(
             error = "Google id token is null",
             message = "Failed to authenticate user. Try again",
             httpCode = HttpStatusCode.BadRequest.value
@@ -77,6 +74,6 @@ class AuthRepositoryImpl(
     }
 }
 
-internal expect class GoogleAuthenticator() {
+expect class GoogleAuthenticator {
     internal suspend fun getGoogleIdToken(): String?
 }

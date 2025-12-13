@@ -128,7 +128,14 @@ fun SharedTransitionScope.ProductCard(
                 clipToBounds = true,
                 modifier = Modifier
                     .heightIn(max = 80.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState("product_image_${product.productId}"),
+                        animatedVisibilityScope = scope,
+                        boundsTransform = { _, _ ->
+                            tween()
+                        }
+                    ),
                 loading = {
                     this@Column.AnimatedVisibility(
                         visible = true,
@@ -169,10 +176,10 @@ fun SharedTransitionScope.ProductCard(
             )
             Spacer(Modifier.height(5.dp))
             Text(
-                text = "${product.unit} ${product.unitName}",
+                text = "${product.unit} ${product.unitType.value}",
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_desc_${product.productId}"),
+                        sharedContentState = rememberSharedContentState("product_unit_${product.productId}"),
                         animatedVisibilityScope = scope,
                         boundsTransform = { _, _ ->
                             tween()
@@ -250,7 +257,8 @@ fun SharedTransitionScope.ProductCard(
                             animatedVisibilityScope = scope,
                             boundsTransform = { _, _ ->
                                 tween()
-                            }
+                            },
+                            renderInOverlayDuringTransition = true
                         )
                 )
             }

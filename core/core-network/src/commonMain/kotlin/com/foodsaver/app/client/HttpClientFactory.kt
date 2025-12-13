@@ -13,7 +13,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -44,10 +43,6 @@ internal class HttpClientFactory(
                 install(HttpRequestRetry) {
                     maxRetries = 3
                     delayMillis { it * 3_000L }
-                    retryIf(maxRetries = 3) { _, response ->
-                        response.status != HttpStatusCode.Unauthorized ||
-                                response.status != HttpStatusCode.Forbidden
-                    }
                 }
             }.intercept()
         }

@@ -220,7 +220,7 @@ private fun SharedTransitionScope.HomeScreen(
                         this@LazyVerticalGrid.items(
                             items = state.products,
                             key = { it.productId }
-                        ) {product ->
+                        ) { product ->
                             val isInCart = remember { mutableStateOf(false) }
                             with(animatedContentScope) {
                                 ProductCard(

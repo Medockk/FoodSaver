@@ -64,11 +64,13 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreProduct)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)
 
-            implementation(projects.featureMain)
+            implementation(projects.featureHome)
+            implementation(projects.featureProductDetail)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)

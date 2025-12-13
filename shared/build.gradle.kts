@@ -53,8 +53,11 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreProduct)
+
             implementation(projects.featureAuth.di)
-            implementation(projects.featureMain)
+            implementation(projects.featureHome)
+            implementation(projects.featureProductDetail)
         }
         jvmMain.dependencies {
 

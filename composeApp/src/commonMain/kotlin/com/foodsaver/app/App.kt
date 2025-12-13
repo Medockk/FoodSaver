@@ -30,7 +30,7 @@ fun App(
             Scaffold(
                 contentWindowInsets = WindowInsets.statusBars
             ) { _ ->
-                NavHost(navController, startDestination = /*MainRoute.HomeScreen*/initialRoute) {
+                NavHost(navController, startDestination = MainRoute.HomeScreen/*initialRoute*/) {
                     featureAuthNavigation(navController, onSuccessAuthentication = {
                         navController.navigate(MainRoute.HomeScreen)
                     })
