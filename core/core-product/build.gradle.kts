@@ -49,6 +49,7 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreModel)
         }
         jvmMain.dependencies {
 

@@ -9,7 +9,7 @@ import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.attribute.DosFileAttributeView
 
-actual class SqlDriverFactory {
+internal actual class SqlDriverFactory {
     actual suspend fun create(): SqlDriver {
         val parentFolder = File(System.getProperty("user.home") + "\\.foodsaver\\db")
 

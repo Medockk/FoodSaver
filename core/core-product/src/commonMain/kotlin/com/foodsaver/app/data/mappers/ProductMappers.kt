@@ -2,56 +2,47 @@
 
 package com.foodsaver.app.data.mappers
 
-import com.foodsaver.app.data.dto.ProductDto
-import com.foodsaver.app.domain.model.ExpiresDateType
+import com.foodsaver.app.domain.model.OrganizationModel
 import com.foodsaver.app.domain.model.ProductModel
-import com.foodsaver.app.domain.model.ProductUnitType
-import kotlin.time.Clock
+import com.foodsaver.app.domain.model.castExpiresDate
+import com.foodsaver.app.domain.model.getCostSymbol
+import com.foodsaver.app.domain.model.getExpiresType
+import com.foodsaver.app.domain.model.getUnitType
+import com.foodsaver.app.dto.OrganizationDto
+import com.foodsaver.app.dto.ProductDto
 import kotlin.time.ExperimentalTime
 
 internal fun ProductDto.toModel(): ProductModel {
 
-    val duration = expiresAt.minus(Clock.System.now())
-
-    val durationDay = duration.inWholeDays
-    val durationHours = if (durationDay <= 0) duration.inWholeHours
-    else null
-
-    val costSymbol = when (costUnit.uppercase()) {
-        "USD" -> "$"
-        else -> "₽"
-    }
-
-    val unitType = try {
-        ProductUnitType.valueOf(unitName)
-    } catch (_: Exception) {
-        ProductUnitType.GRAM
-    }
-
     return ProductModel(
         productId = productId,
 
-        name = title,
+        title = title,
         description = description,
         photoUrl = photoUrl,
 
         cost = cost,
-        costUnit = costSymbol,
+        costUnit = getCostSymbol(costUnit),
         oldCost = oldCost,
 
         rating = rating,
         count = count,
-        organization = organization.organizationName,
+        organization = organization.toModel(),
 
         unit = unit,
-        unitType = unitType,
+        unitType = getUnitType(unitName),
 
         categoryIds = categoryIds,
-        expiresAt = (durationHours ?: durationDay).toString(),
-        expiresDateType = if (durationHours != null) ExpiresDateType.HOURS
-        else ExpiresDateType.DAYS,
+        expiresAt = expiresAt.castExpiresDate().toString(),
+        expiresDateType = expiresAt.getExpiresType(),
     )
 }
 
 internal fun List<ProductDto>.toModel() =
     map { it.toModel() }
+
+internal fun OrganizationDto.toModel() =
+    OrganizationModel(
+        id = id,
+        organizationName = organizationName
+    )

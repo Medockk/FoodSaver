@@ -36,7 +36,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +49,11 @@ import com.foodsaver.app.presentation.Home.HomeAction
 import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.presentation.Home.HomeState
 import com.foodsaver.app.presentation.Home.HomeViewModel
-import com.foodsaver.app.presentation.MainRoute
+import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_burger_icon
+import foodsaver.composeapp.generated.resources.ic_cart_icon
 import foodsaver.composeapp.generated.resources.ic_location_icon
 import foodsaver.composeapp.generated.resources.search
 import foodsaver.composeapp.generated.resources.search_icon
@@ -148,6 +148,21 @@ private fun SharedTransitionScope.HomeScreen(
                             )
                         }
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Route.MainGraph.CartScreen)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_cart_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    }
                 }
             )
         }
@@ -221,15 +236,20 @@ private fun SharedTransitionScope.HomeScreen(
                             items = state.products,
                             key = { it.productId }
                         ) { product ->
-                            val isInCart = remember { mutableStateOf(false) }
                             with(animatedContentScope) {
+                                val isProductInCart = state.cartProducts.any { it.productId == product.productId }
                                 ProductCard(
                                     product = product,
-                                    isInCart = isInCart.value,
+                                    isInCart = isProductInCart,
                                     onProductClick = { productId ->
-                                        navController.navigate(route = MainRoute.ProductScreen(productId))
+                                        navController.navigate(route = Route.MainGraph.ProductDetailScreen(
+                                            productId = productId,
+                                            isProductInCart = isProductInCart
+                                        ))
                                     },
-                                    onAddProductClick = { isInCart.value = !isInCart.value },
+                                    onAddProductClick = {
+                                        onEvent(HomeEvent.OnAddProductToCart(it))
+                                    },
                                     modifier = Modifier
                                         .fillParentMaxWidth(0.5f)
                                 )

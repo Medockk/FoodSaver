@@ -51,6 +51,7 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.datetime)

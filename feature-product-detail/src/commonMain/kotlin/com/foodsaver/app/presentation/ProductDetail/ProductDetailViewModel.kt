@@ -2,8 +2,13 @@ package com.foodsaver.app.presentation.ProductDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.foodsaver.app.ApiResult.ApiResult
 import com.foodsaver.app.InputOutput
+import com.foodsaver.app.domain.model.CartRequestModel
+import com.foodsaver.app.domain.model.ProductModel
+import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.GetCachedProductUseCase
+import com.foodsaver.app.presentation.ProductDetail.ProductDetailActions.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +20,17 @@ import kotlinx.coroutines.withContext
 
 class ProductDetailViewModel(
     private val productId: String,
-    private val getCachedProductUseCase: GetCachedProductUseCase
-): ViewModel() {
+    private val isProductInCart: Boolean,
+    private val getCachedProductUseCase: GetCachedProductUseCase,
 
-    private val _state = MutableStateFlow(ProductDetailState())
+    private val addProductToCartUseCase: AddProductToCartUseCase,
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(
+        ProductDetailState(
+            isProductInCart = isProductInCart
+        )
+    )
     val state = _state.asStateFlow()
 
     private val _channel = Channel<ProductDetailActions>()
@@ -44,7 +56,28 @@ class ProductDetailViewModel(
 
     fun onEvent(events: ProductDetailEvents) {
         when (events) {
-            ProductDetailEvents.AddProductToCart -> TODO()
+            ProductDetailEvents.OnAddProductToCart -> {
+                viewModelScope.launch(Dispatchers.InputOutput) {
+                    val request = CartRequestModel(productId, _state.value.productCount)
+
+                    when (val result = addProductToCartUseCase(request)) {
+                        is ApiResult.Error -> {
+                            _state.value = state.value.copy(isLoading = false)
+                            _channel.send(OnError(result.error.message))
+                        }
+
+                        ApiResult.Loading -> {
+                            _state.value = state.value.copy(isLoading = true)
+                        }
+
+                        is ApiResult.Success<ProductModel> -> {
+                            _state.value = state.value.copy(isLoading = false)
+                            _channel.send(ProductDetailActions.OnAddedToCart)
+                        }
+                    }
+                }
+            }
+
             ProductDetailEvents.OnDecreaseCountClick -> {
                 _state.update {
                     if (it.productCount != 1) {
@@ -54,8 +87,15 @@ class ProductDetailViewModel(
                     }
                 }
             }
+
             ProductDetailEvents.OnIncreaseCountClick -> {
                 _state.update { it.copy(productCount = it.productCount + 1) }
+            }
+
+            ProductDetailEvents.OnRemoveProductFromCart -> {
+                viewModelScope.launch(Dispatchers.InputOutput) {
+
+                }
             }
         }
     }

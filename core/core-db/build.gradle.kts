@@ -8,9 +8,16 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
+
+    alias { libs.plugins.jetbrains.kotlin.serialization }
 }
 
 kotlin {
+
+    compilerOptions {
+        freeCompilerArgs.addAll("-opt-in=kotlinx.datetime.ExperimentalTime", "-opt-in=kotlin.time.ExperimentalTime")
+    }
+
     androidTarget() {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -47,7 +54,12 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.coreDi)
-            implementation(libs.sqldelight.coroutines.extensions)
+            api(libs.sqldelight.coroutines.extensions)
+
+            implementation(libs.kotlinx.serialization.json)
+            implementation(projects.core.coreCommon)
+
+            implementation(libs.kotlinx.datetime)
         }
         jvmMain.dependencies {
             implementation(libs.sqldelight.jvm.driver)

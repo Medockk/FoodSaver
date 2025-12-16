@@ -7,6 +7,8 @@ fun initSharedKoin() = initKoinApp(
         *featureAuthModule,
         featureMainModule,
         coreProductModule,
-        featureProductDetailModule
+        featureProductDetailModule,
+        coreCartModule,
+        featureCartModule
     )
 )

@@ -21,4 +21,5 @@
 
     <string name="total_items">Total</string>
     <string name="add_product_to_cart">Add to cart</string>
+    <string name="remove_product_from_cart">Remove to cart</string>
 </resources>

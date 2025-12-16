@@ -123,8 +123,8 @@ fun SharedTransitionScope.ProductCard(
 
             SubcomposeAsyncImage(
                 model = product.photoUrl,
-                contentDescription = product.name,
-                contentScale = ContentScale.Crop,
+                contentDescription = product.title,
+                contentScale = ContentScale.FillBounds,
                 clipToBounds = true,
                 modifier = Modifier
                     .heightIn(max = 80.dp)
@@ -158,7 +158,7 @@ fun SharedTransitionScope.ProductCard(
             Spacer(Modifier.height(13.dp))
 
             Text(
-                text = product.name,
+                text = product.title,
                 modifier = Modifier
                     .sharedElement(
                         sharedContentState = rememberSharedContentState("product_name_${product.productId}"),

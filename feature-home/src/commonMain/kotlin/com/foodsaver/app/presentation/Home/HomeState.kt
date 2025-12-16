@@ -11,6 +11,7 @@ data class HomeState(
     val categories: List<CategoryModel> = emptyList(),
 
     val products: List<ProductModel> = emptyList(),
+    val cartProducts: List<ProductModel> = emptyList(),
     val productsByCategory: List<ProductModel> = emptyList(),
     val isProductsLoading: Boolean = products.isEmpty(),
 )

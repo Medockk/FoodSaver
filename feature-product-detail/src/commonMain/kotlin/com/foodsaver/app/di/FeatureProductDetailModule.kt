@@ -9,7 +9,9 @@ val featureProductDetailModule = module {
     viewModel { params ->
         ProductDetailViewModel(
             productId = params.get<String>(),
-            getCachedProductUseCase = get()
+            isProductInCart = params.get<Boolean>(),
+            getCachedProductUseCase = get(),
+            addProductToCartUseCase = get()
         )
     }
 }
