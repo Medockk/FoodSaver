@@ -75,12 +75,13 @@ private fun CartScreen(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(paddingValues),
         ) {
 
-            items(state.cartProducts) { product ->
+            items(state.cartProducts) { cartItem ->
                 CartProductCard(
-                    product = product,
+                    cartItem = cartItem,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 12.dp, end = 15.dp)

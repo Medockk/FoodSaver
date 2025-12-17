@@ -17,6 +17,7 @@ internal class DatabaseProviderImpl(
 
     override suspend fun get(): MainAppDatabase {
         val driver = sqlDriverFactory.create()
+
         val database = MainAppDatabase.invoke(
             driver = driver,
             cartEntityAdapter = CartEntity.Adapter(
@@ -36,6 +37,8 @@ internal class DatabaseProviderImpl(
                         return value
                     }
                 },
+                productAdapter = ProductColumnAdapter
+            ),
             )
         )
 

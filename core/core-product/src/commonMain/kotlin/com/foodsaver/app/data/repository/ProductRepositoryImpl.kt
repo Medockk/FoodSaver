@@ -4,9 +4,9 @@ import com.foodsaver.app.ApiResult.ApiResult
 import com.foodsaver.app.ApiResult.map
 import com.foodsaver.app.ApiResult.onSuccess
 import com.foodsaver.app.data.mappers.toModel
-import com.foodsaver.app.domain.model.ProductModel
 import com.foodsaver.app.domain.repository.ProductRepository
 import com.foodsaver.app.dto.ProductDto
+import com.foodsaver.app.model.ProductModel
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient

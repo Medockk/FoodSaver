@@ -22,4 +22,13 @@
     <string name="total_items">Total</string>
     <string name="add_product_to_cart">Add to cart</string>
     <string name="remove_product_from_cart">Remove to cart</string>
+
+    <string name="menu">Menu</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="address">Addresses</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="support_service">Support service</string>
+    <string name="log_out">Log Out</string>
+
+    <string name="profile">Profile</string>
 </resources>

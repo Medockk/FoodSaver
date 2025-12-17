@@ -1,44 +1,25 @@
-import com.foodsaver.app.domain.model.OrganizationModel;
-import kotlin.Float;
-import kotlin.Int;
-import kotlin.Long;
-import kotlin.String;
-import kotlin.collections.List;
-import kotlin.time.Instant;
+import com.foodsaver.app.dto.ProductDto;
 
 CREATE TABLE IF NOT EXISTS cartEntity (
-    productId TEXT NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    photoUrl TEXT,
-    cost REAL AS Float NOT NULL,
-    costUnit TEXT NOT NULL,
-    oldCost REAL AS Float,
-
-    count INTEGER AS Int NOT NULL ,
-    rating REAL AS Float,
-
-    organization TEXT AS OrganizationModel NOT NULL,
-    categoryIds TEXT AS List<String> NOT NULL,
-
-    unit INTEGER AS Long NOT NULL,
-    unitName TEXT NOT NULL,
-
-    expiresAt INTEGER AS Instant NOT NULL
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    globalId TEXT,
+    product TEXT AS ProductDto NOT NULL,
+    quantity INTEGER NOT NULL,
+    tempId TEXT NOT NULL UNIQUE
 );
 
 selectAll:
 SELECT * FROM cartEntity;
 
 insertCartItem:
-INSERT OR REPLACE INTO cartEntity
-VALUES ?;
+INSERT INTO cartEntity (globalId, product, quantity, tempId)
+VALUES (?, ?, ?, ?);
 
 clearCart:
 DELETE FROM cartEntity;
 
 deleteCartItem:
-DELETE FROM cartEntity WHERE productId = ?;
+DELETE FROM cartEntity WHERE localId = ?;
 
 updateCount:
-UPDATE cartEntity SET count = ? WHERE productId = ?;
+UPDATE cartEntity SET quantity = ? WHERE localId = ?;

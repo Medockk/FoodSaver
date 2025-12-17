@@ -58,6 +58,7 @@ kotlin {
 
             implementation(libs.kotlinx.serialization.json)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreModel)
 
             implementation(libs.kotlinx.datetime)
         }

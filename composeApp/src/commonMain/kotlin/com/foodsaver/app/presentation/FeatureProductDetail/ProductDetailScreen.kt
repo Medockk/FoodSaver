@@ -52,8 +52,8 @@ import androidx.navigation.NavController
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.shimmerEffect
-import com.foodsaver.app.domain.model.ExpiresDateType
-import com.foodsaver.app.domain.model.ProductUnitType
+import com.foodsaver.app.model.ExpiresDateType
+import com.foodsaver.app.model.ProductUnitType
 import com.foodsaver.app.presentation.FeatureProductDetail.components.ProductCounter
 import com.foodsaver.app.presentation.ProductDetail.ProductDetailActions
 import com.foodsaver.app.presentation.ProductDetail.ProductDetailEvents

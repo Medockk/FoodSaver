@@ -1,4 +1,4 @@
-package com.foodsaver.app.domain.model
+package com.foodsaver.app.model
 
 enum class ExpiresDateType {
 

@@ -35,6 +35,9 @@ private val lightColorScheme =  lightColorScheme(
     secondaryFixed = Color(0xFFD2D4D8),
     secondary = Color(0xFFF4F4F4),
     onSecondary = Color(0x80000000),
+
+    tertiary = Color(0xFFF6F8FA),
+    onTertiary = Color(0xFF32343E)
 )
 private val darkColorScheme = darkColorScheme(
     // Основные цвета

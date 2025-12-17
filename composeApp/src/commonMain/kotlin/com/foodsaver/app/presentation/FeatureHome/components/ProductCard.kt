@@ -47,8 +47,8 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.CircularPrimaryButton
 import com.foodsaver.app.common.shimmerEffect
-import com.foodsaver.app.domain.model.ExpiresDateType
-import com.foodsaver.app.domain.model.ProductModel
+import com.foodsaver.app.model.ExpiresDateType
+import com.foodsaver.app.model.ProductModel
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.days
 import foodsaver.composeapp.generated.resources.hours

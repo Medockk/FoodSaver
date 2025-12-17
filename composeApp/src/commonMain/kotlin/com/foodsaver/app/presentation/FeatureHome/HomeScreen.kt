@@ -5,7 +5,9 @@ package com.foodsaver.app.presentation.FeatureHome
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,6 +27,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,9 +45,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.foodsaver.app.common.SearchTextField
+import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.presentation.FeatureHome.components.CategoryChip
 import com.foodsaver.app.presentation.FeatureHome.components.ProductCard
 import com.foodsaver.app.presentation.Home.HomeAction
@@ -55,8 +64,10 @@ import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_burger_icon
 import foodsaver.composeapp.generated.resources.ic_cart_icon
 import foodsaver.composeapp.generated.resources.ic_location_icon
+import foodsaver.composeapp.generated.resources.poppins_black
 import foodsaver.composeapp.generated.resources.search
 import foodsaver.composeapp.generated.resources.search_icon
+import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -112,10 +123,17 @@ private fun SharedTransitionScope.HomeScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(
-                        text = "Moscow",
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                    if (state.profile != null) {
+                        state.profile?.let { profile ->
+                            Text(
+                                text = profile.username,
+                                color = MaterialTheme.colorScheme.secondaryFixedDim,
+                                fontSize = 12.sp
+                            )
+                        }
+                    } else {
+                        Box(Modifier.size(100.dp, 15.dp).shimmerEffect())
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
@@ -125,7 +143,9 @@ private fun SharedTransitionScope.HomeScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = {}
+                            onClick = {
+                                navController.navigate(Route.ProfileGraph)
+                            }
                         ) {
                             Icon(
                                 painter = painterResource(Res.drawable.ic_burger_icon),
@@ -150,18 +170,42 @@ private fun SharedTransitionScope.HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Route.MainGraph.CartScreen)
+                    BadgedBox(
+                        badge = {
+                            Badge(
+                                modifier = Modifier
+                                    .size(15.dp)
+                                    .align(Alignment.TopEnd)
+                                    .background(MaterialTheme.colorScheme.background, CircleShape)
+                                    .padding(0.5.dp)
+                                    .background(MaterialTheme.colorScheme.error, CircleShape),
+                                containerColor = Color.Unspecified
+                            ) {
+                                if (state.cartProducts.isNotEmpty()) {
+                                    Text(
+                                        text = state.cartProducts.size.toString(),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 9.sp,
+                                        fontFamily = FontFamily(Font(Res.font.poppins_black))
+                                    )
+                                }
+                            }
                         }
                     ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_cart_icon),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier
-                                .size(24.dp)
-                        )
+                        IconButton(
+                            onClick = {
+                                navController.navigate(Route.MainGraph.CartScreen)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_cart_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
+                        }
                     }
                 }
             )
@@ -216,7 +260,11 @@ private fun SharedTransitionScope.HomeScreen(
                             label = category.categoryName,
                             isSelected = index == state.categoryIndex,
                             onClick = {
-                                onEvent(HomeEvent.OnCategoryIndexChange(index))
+                                if (index == state.categoryIndex) {
+                                    onEvent(HomeEvent.OnCategoryIndexChange(null))
+                                } else {
+                                    onEvent(HomeEvent.OnCategoryIndexChange(index))
+                                }
                             }
                         )
                     }
@@ -237,7 +285,7 @@ private fun SharedTransitionScope.HomeScreen(
                             key = { it.productId }
                         ) { product ->
                             with(animatedContentScope) {
-                                val isProductInCart = state.cartProducts.any { it.productId == product.productId }
+                                val isProductInCart = state.cartProducts.any { it.product.productId == product.productId }
                                 ProductCard(
                                     product = product,
                                     isInCart = isProductInCart,

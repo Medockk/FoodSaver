@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.ApiResult.ApiResult
 import com.foodsaver.app.InputOutput
-import com.foodsaver.app.domain.model.ProductModel
-import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
+import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.usecase.GetCartUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -41,7 +40,7 @@ class CartViewModel(
                     ApiResult.Loading -> {
                         _state.value = state.value.copy(isLoading = true)
                     }
-                    is ApiResult.Success<List<ProductModel>> -> {
+                    is ApiResult.Success<List<CartItemModel>> -> {
                         withContext(Dispatchers.Main) {
                             _state.value = state.value.copy(
                                 cartProducts = it.data,

@@ -3,8 +3,8 @@
 package com.foodsaver.app.data.adapters
 
 import app.cash.sqldelight.ColumnAdapter
-import kotlinx.datetime.Instant
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 internal val instantAdapter = object: ColumnAdapter<Instant, Long> {
     override fun decode(databaseValue: Long): Instant {
