@@ -1,0 +1,5 @@
+-- Добавляем новые колонки. Важно: используем чистый SQL.
+ALTER TABLE userEntity ADD COLUMN phone TEXT;
+ALTER TABLE userEntity ADD COLUMN bio TEXT;
+ALTER TABLE userEntity ADD COLUMN addresses TEXT DEFAULT '[]';
+ALTER TABLE userEntity ADD COLUMN paymentCartNumbers TEXT DEFAULT '[]';

@@ -68,8 +68,10 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreModel)
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCart)
+            implementation(projects.core.coreProfile)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)
@@ -77,6 +79,7 @@ kotlin {
             implementation(projects.featureHome)
             implementation(projects.featureProductDetail)
             implementation(projects.featureCart)
+            implementation(projects.featureProfile)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)
