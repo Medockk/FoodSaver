@@ -44,10 +44,5 @@ fun NavGraphBuilder.featureHomeNavigation(
                 navController = navController
             )
         }
-
-        composable<Route.MainGraph.ProfileScreen> {
-
-        }
     }
-
 }

@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.presentation.FeatureAuth.featureAuthNavigation
 import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
+import com.foodsaver.app.presentation.FeatureProfile.featureProfileNavigation
 import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.ui.colorScheme
 
@@ -38,6 +39,7 @@ fun App(
                         })
 
                     featureHomeNavigation(navController)
+                    featureProfileNavigation(navController)
                 }
             }
         }

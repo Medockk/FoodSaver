@@ -96,7 +96,8 @@ sqldelight {
     databases {
         create("MainAppDatabase") {
             packageName.set("com.databases.cache")
-            //verifyMigrations.set(true)
+            verifyMigrations.set(true)
+            version = 2
 
             generateAsync.set(true)
         }

@@ -29,8 +29,24 @@ sealed class Route {
 
         @Serializable
         data object CartScreen: Route()
+    }
+
+    @Serializable
+    data object ProfileGraph: Route() {
 
         @Serializable
-        data object ProfileScreen: Route()
+        data object ProfileMenuScreen: Route()
+
+        @Serializable
+        data object ProfilePersonalInfoScreen: Route()
+
+        @Serializable
+        data object ProfileAddressScreen: Route()
+
+        @Serializable
+        data object ProfilePaymentMethodScreen: Route()
+
+        @Serializable
+        data object ProfileSupportScreen: Route()
     }
 }

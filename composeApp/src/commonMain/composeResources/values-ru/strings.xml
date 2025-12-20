@@ -31,4 +31,9 @@
     <string name="log_out">Выйти</string>
 
     <string name="profile">Профиль</string>
+    <string name="save">Сохранить</string>
+    <string name="profile_full_name">ПОЛНОЕ ИМЯ</string>
+    <string name="profile_email">ЭЛЕКТРОННАЯ ПОЧТА</string>
+    <string name="profile_phone">НОМЕР ТЕЛЕФОНА</string>
+    <string name="profile_bio">О СЕБЕ</string>
 </resources>

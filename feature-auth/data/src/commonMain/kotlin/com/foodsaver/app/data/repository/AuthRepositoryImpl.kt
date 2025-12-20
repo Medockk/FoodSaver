@@ -52,11 +52,21 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun authenticateWithGoogle(): ApiResult<AuthResponseModel> {
-        val googleIdToken = googleAuthenticator.getGoogleIdToken() ?: return ApiResult.Error(GlobalErrorResponse(
-            error = "Google id token is null",
-            message = "Failed to authenticate user. Try again",
-            httpCode = HttpStatusCode.BadRequest.value
-        ))
+        val googleIdToken = try {
+            googleAuthenticator.getGoogleIdToken() ?: return ApiResult.Error(GlobalErrorResponse(
+                error = "Google id token is null",
+                message = "Failed to authenticate user. Try again",
+                httpCode = HttpStatusCode.BadRequest.value
+            ))
+        } catch (e: Exception) {
+            return ApiResult.Error(
+                error = GlobalErrorResponse(
+                    error = e.message.toString(),
+                    message = "Failed to authenticate user",
+                    httpCode = HttpStatusCode.BadRequest.value
+                )
+            )
+        }
 
         val requestBody = GoogleAuthRequestDto(googleIdToken)
         return saveNetworkCall<AuthResponseModelDto> {

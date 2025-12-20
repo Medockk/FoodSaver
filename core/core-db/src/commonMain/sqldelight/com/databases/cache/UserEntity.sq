@@ -1,0 +1,20 @@
+import kotlin.String;
+import kotlin.collections.List;
+import kotlin.time.Instant;
+
+-- Здесь описываем ПОЛНУЮ таблицу со всеми типами и адаптерами
+CREATE TABLE IF NOT EXISTS userEntity (
+    uid TEXT NOT NULL PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT,
+    name TEXT,
+    photoUrl TEXT,
+    createdAt INTEGER AS Instant NOT NULL,
+    roles TEXT AS List<String> NOT NULL,
+
+    -- Новые поля:
+    phone TEXT,
+    bio TEXT,
+    addresses TEXT AS List<String> NOT NULL ,       -- Здесь указываем адаптер
+    paymentCartNumbers TEXT AS List<String> NOT NULL -- И здесь
+);
