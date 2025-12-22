@@ -17,12 +17,18 @@ import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
 import com.foodsaver.app.presentation.FeatureProfile.featureProfileNavigation
 import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.ui.colorScheme
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
+    viewModel: AppViewModel = koinViewModel(),
     initialAuthRoute: Route = Route.AuthGraph.AuthScreen,
 ) {
+
+    val startDestination = if (viewModel.isUserLogin) Route.MainGraph
+    else Route.AuthGraph
+
     MaterialTheme(
         colorScheme = colorScheme()
     ) {
@@ -30,12 +36,13 @@ fun App(
             Scaffold(
                 contentWindowInsets = WindowInsets.statusBars
             ) { _ ->
-                NavHost(navController, startDestination = Route.MainGraph) {
+                NavHost(navController, startDestination = startDestination) {
                     featureAuthNavigation(
                         navController = navController,
                         startDestination = initialAuthRoute,
                         onSuccessAuthentication = {
                             navController.navigate(Route.MainGraph.HomeScreen)
+                            viewModel.onUserAuthenticate()
                         })
 
                     featureHomeNavigation(navController)

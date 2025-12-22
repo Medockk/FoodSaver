@@ -36,6 +36,7 @@ internal class ProfilePersonalInfoRepositoryImpl(
                 paymentCartNumbers = it.paymentCartNumbers,
 
                 uid = it.uid,
+                currentCity = it.currentCity
             )
         }.map {  }
     }

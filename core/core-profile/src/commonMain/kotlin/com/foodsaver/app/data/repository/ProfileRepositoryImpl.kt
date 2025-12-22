@@ -35,7 +35,7 @@ internal class ProfileRepositoryImpl(
 
         val job = launch(Dispatchers.InputOutput) {
             queries.getUser().asFlow().collect {
-                it.executeAsOneOrNull()?.let { user ->
+                it.executeAsList().lastOrNull()?.let { user ->
                     send(ApiResult.Success(user.toModel()))
                 }
             }

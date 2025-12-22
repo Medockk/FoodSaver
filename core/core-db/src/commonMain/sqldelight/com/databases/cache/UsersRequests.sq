@@ -19,5 +19,6 @@ photoUrl = ?,
 bio = ?,
 phone = ?,
 addresses = ?,
-paymentCartNumbers = ?
+paymentCartNumbers = ?,
+currentCity = ?
 WHERE uid = ?;

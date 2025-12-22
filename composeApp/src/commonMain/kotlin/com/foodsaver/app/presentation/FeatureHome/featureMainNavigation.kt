@@ -40,8 +40,9 @@ fun NavGraphBuilder.featureHomeNavigation(
         }
 
         composable<Route.MainGraph.CartScreen> {
-            CartScreenRoot(
-                navController = navController
+            scope.CartScreenRoot(
+                navController = navController,
+                animatedVisibilityScope = this,
             )
         }
     }

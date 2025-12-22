@@ -126,7 +126,7 @@ private fun SharedTransitionScope.HomeScreen(
                     if (state.profile != null) {
                         state.profile?.let { profile ->
                             Text(
-                                text = profile.username,
+                                text = profile.currentCity ?: "",
                                 color = MaterialTheme.colorScheme.secondaryFixedDim,
                                 fontSize = 12.sp
                             )

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase,
-    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase,
+    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(AuthState())
@@ -140,19 +140,19 @@ class AuthViewModel(
 
     private suspend fun checkInputData(shouldCheckFio: Boolean = false): Boolean {
         if (shouldCheckFio && _state.value.fio.isBlank()) {
-            _channel.send(AuthAction.OnError("Fio must be not empty"))
+            _channel.send(OnError("Fio must be not empty"))
             return false
         }
         if (_state.value.email.isBlank()) {
-            _channel.send(AuthAction.OnError("Email must be not empty"))
+            _channel.send(OnError("Email must be not empty"))
             return false
         }
         if (!EmailValidator.validate(_state.value.email)) {
-            _channel.send(AuthAction.OnError("Email invalid"))
+            _channel.send(OnError("Email invalid"))
             return false
         }
         if (_state.value.password.isBlank()) {
-            _channel.send(AuthAction.OnError("Password must be not empty"))
+            _channel.send(OnError("Password must be not empty"))
             return false
         }
 
