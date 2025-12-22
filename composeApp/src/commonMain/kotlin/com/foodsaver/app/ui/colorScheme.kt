@@ -37,7 +37,10 @@ private val lightColorScheme =  lightColorScheme(
     onSecondary = Color(0x80000000),
 
     tertiary = Color(0xFFF6F8FA),
-    onTertiary = Color(0xFF32343E)
+    onTertiary = Color(0xFF32343E),
+
+    inverseSurface = Color(0xFFEDEEF5),
+    inverseOnSurface = Color(0xFF4B5563),
 )
 private val darkColorScheme = darkColorScheme(
     // Основные цвета
@@ -58,7 +61,7 @@ private val darkColorScheme = darkColorScheme(
 
     // Цвета поверхностей
     // Background инвертируется в очень темный (Tone 10)
-    background = Color(0xFF141414),
+    background = Color(0xFF1D1D1D),
     // OnBackground инвертируется в светлый (Tone 90)
     onBackground = Color(0xFFE6E6E6),
 

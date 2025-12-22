@@ -4,16 +4,17 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.di.initSharedKoin
+import com.foodsaver.app.di.uiModule
 import com.foodsaver.app.presentation.routing.Route
 import kotlinx.browser.window
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    initSharedKoin()
+    initSharedKoin(arrayOf(uiModule))
     ComposeViewport {
         val route = getRoute()
         val navController = rememberNavController()
-        App(navController, route)
+        App(navController, initialAuthRoute = route)
     }
 }
 

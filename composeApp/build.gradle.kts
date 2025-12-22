@@ -42,6 +42,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.splash)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -58,7 +59,10 @@ kotlin {
 
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
+
             implementation(libs.koin.compose.navigation)
+            implementation(libs.koin.core)
+
             implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 

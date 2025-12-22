@@ -11,6 +11,7 @@ import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
 import com.foodsaver.app.domain.repository.AuthRepository
+import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.dto.GlobalErrorResponse
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
@@ -23,8 +24,14 @@ import io.ktor.http.HttpStatusCode
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
     private val accessTokenManager: AccessTokenManager,
-    private val googleAuthenticator: GoogleAuthenticator
+    private val googleAuthenticator: GoogleAuthenticator,
+
+    private val databaseProvider: DatabaseProvider,
 ): AuthRepository {
+
+    override suspend fun isUserLogin(): Boolean {
+        return databaseProvider.get().usersRequestsQueries.getUser().executeAsOneOrNull() != null
+    }
 
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
         val body = signInModel.toDto()

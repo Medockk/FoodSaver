@@ -20,6 +20,7 @@ internal fun UserDto.tpModel() =
         bio = bio,
         addresses = addresses,
         paymentCartNumbers = paymentCartNumbers,
+        currentCity = currentCity
     )
 
 internal fun UserEntity.toModel() =
@@ -33,8 +34,9 @@ internal fun UserEntity.toModel() =
         roles = roles,
         phone = phone,
         bio = bio,
-        addresses = addresses ?: emptyList(),
-        paymentCartNumbers = paymentCartNumbers ?: emptyList(),
+        addresses = addresses,
+        paymentCartNumbers = paymentCartNumbers,
+        currentCity = currentCity
     )
 
 internal fun UserDto.toEntity() =
@@ -50,4 +52,5 @@ internal fun UserDto.toEntity() =
         bio = bio,
         addresses = addresses,
         paymentCartNumbers = paymentCartNumbers,
+        currentCity = currentCity
     )

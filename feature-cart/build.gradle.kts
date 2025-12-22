@@ -48,6 +48,7 @@ kotlin {
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreCart)
             implementation(projects.core.coreModel)
+            implementation(projects.core.coreProfile)
 
             implementation(libs.koin.compose.viewmodel)
         }
