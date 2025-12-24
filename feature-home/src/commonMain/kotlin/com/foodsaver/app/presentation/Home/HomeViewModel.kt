@@ -128,7 +128,6 @@ class HomeViewModel(
                     ApiResult.Loading -> Unit
                     is ApiResult.Success<List<CartItemModel>> -> {
                         withContext(Dispatchers.Main) {
-                            println("Cart is ${it.data}")
                             _state.value = state.value.copy(
                                 cartProducts = it.data
                             )

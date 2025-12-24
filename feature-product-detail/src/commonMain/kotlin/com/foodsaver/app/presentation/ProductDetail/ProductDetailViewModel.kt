@@ -8,7 +8,6 @@ import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.GetCachedProductUseCase
-import com.foodsaver.app.model.ProductModel
 import com.foodsaver.app.presentation.ProductDetail.ProductDetailActions.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

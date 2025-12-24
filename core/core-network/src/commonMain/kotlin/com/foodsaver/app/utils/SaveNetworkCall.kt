@@ -20,25 +20,34 @@ suspend inline fun<reified T> saveNetworkCall(
             val errorBodyText = result.bodyAsText()
 
             val errorResult = runCatching {
-                Json.decodeFromString<GlobalErrorResponse>(errorBodyText)
+                val decodedBody = Json.decodeFromString<GlobalErrorResponse>(errorBodyText)
+                return@runCatching decodedBody
             }.getOrElse {
                 it.printStackTrace()
                 return ApiResult.Error(
                     error = GlobalErrorResponse(
                         error = "Server error: ${result.status.value}",
-                        message = "Failed to serialize body with ${it.message}",
+                        message = "Unknown error",
                         httpCode = 0
                     )
                 )
             }
+
             ApiResult.Error(errorResult)
         }
     } catch (e: Exception) {
         e.printStackTrace()
+
+        val message = if (e.message?.startsWith("Failed to connect to", ignoreCase = true) == true) {
+            "Server is not responding. Check your internet connection"
+        } else {
+            "Oops... Unknown error"
+        }
+
         ApiResult.Error(
             GlobalErrorResponse(
-                error = "Unknown Error",
-                message = e.message ?: "",
+                error = e.message ?: "Unknown",
+                message = message,
                 httpCode = 0
             )
         )

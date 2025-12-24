@@ -3,8 +3,11 @@
 package com.foodsaver.app.data.mappers
 
 import com.databases.cache.UserEntity
+import com.foodsaver.app.domain.model.AddressModel
 import com.foodsaver.app.domain.model.UserModel
+import com.foodsaver.app.dto.AddressDto
 import com.foodsaver.app.dto.UserDto
+import com.foodsaver.app.mappers.toModel
 import kotlin.time.ExperimentalTime
 
 internal fun UserDto.tpModel() =
@@ -18,10 +21,16 @@ internal fun UserDto.tpModel() =
         roles = roles,
         phone = phone,
         bio = bio,
-        addresses = addresses,
-        paymentCartNumbers = paymentCartNumbers,
+        addresses = addresses.map { it.toModel() },
+        paymentCartNumbers = paymentCartNumbers.map { it.toModel() },
         currentCity = currentCity
     )
+
+internal fun AddressDto.toModel() = AddressModel(
+    id = id,
+    name = name,
+    address = address
+)
 
 internal fun UserEntity.toModel() =
     UserModel(
@@ -34,8 +43,8 @@ internal fun UserEntity.toModel() =
         roles = roles,
         phone = phone,
         bio = bio,
-        addresses = addresses,
-        paymentCartNumbers = paymentCartNumbers,
+        addresses = addresses.map { it.toModel() },
+        paymentCartNumbers = paymentCartNumbers.map { it.toModel() },
         currentCity = currentCity
     )
 

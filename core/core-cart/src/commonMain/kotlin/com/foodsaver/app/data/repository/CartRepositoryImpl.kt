@@ -32,8 +32,8 @@ import kotlin.uuid.Uuid
 
 internal class CartRepositoryImpl(
     private val httpClient: HttpClient,
-    private val databaseProvider: DatabaseProvider
-): CartRepository {
+    private val databaseProvider: DatabaseProvider,
+) : CartRepository {
 
     override fun getCart(): Flow<ApiResult<List<CartItemModel>>> = channelFlow {
 
@@ -52,11 +52,11 @@ internal class CartRepositoryImpl(
             httpClient.get(HttpConstants.CART_URL)
         }.onSuccess { cartItemDtos ->
             withContext(Dispatchers.InputOutput) {
-                database.transaction {
-                    val tempIds = cartItemDtos.map { it.tempId }
+                queries.transaction {
+                    val existingTempIds = queries.selectAll().executeAsList().map { it.tempId }
 
                     cartItemDtos.forEach { cartDto ->
-                        if (!tempIds.contains(cartDto.tempId)) {
+                        if (!existingTempIds.contains(cartDto.tempId)) {
                             queries.insertCartItem(
                                 globalId = cartDto.id,
                                 product = cartDto.product,
@@ -66,10 +66,13 @@ internal class CartRepositoryImpl(
                         }
                     }
                 }
-            }
-        }.map { it.mapToModel() }
 
-        send(result)
+            }
+        }
+
+        if (result is ApiResult.Error) {
+            send(ApiResult.Error(result.error))
+        }
     }
 
     override suspend fun addProductToCart(request: CartRequestModel): ApiResult<CartItemModel> {

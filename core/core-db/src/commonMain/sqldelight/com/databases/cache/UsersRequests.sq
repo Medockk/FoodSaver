@@ -22,3 +22,8 @@ addresses = ?,
 paymentCartNumbers = ?,
 currentCity = ?
 WHERE uid = ?;
+
+updatePaymentMethod:
+UPDATE userEntity
+SET paymentCartNumbers = ?
+WHERE uid = ?;

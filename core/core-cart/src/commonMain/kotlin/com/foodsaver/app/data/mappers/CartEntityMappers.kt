@@ -5,7 +5,6 @@ package com.foodsaver.app.data.mappers
 import com.databases.cache.CartEntity
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.dto.CartItemDto
-import com.foodsaver.app.dto.ProductDto
 import com.foodsaver.app.mappers.toModel
 import kotlin.jvm.JvmName
 import kotlin.time.ExperimentalTime

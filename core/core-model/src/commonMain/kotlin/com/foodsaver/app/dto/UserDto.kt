@@ -18,8 +18,8 @@ data class UserDto(
 
     val phone: String?,
     val bio: String?,
-    val addresses: List<String> = emptyList(),
-    val paymentCartNumbers: List<String> = emptyList(),
+    val addresses: List<AddressDto> = emptyList(),
+    val paymentCartNumbers: List<PaymentCardDto> = emptyList(),
 
     val currentCity: String?,
 )

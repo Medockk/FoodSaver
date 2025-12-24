@@ -2,6 +2,7 @@
 
 package com.foodsaver.app.domain.model
 
+import com.foodsaver.app.model.PaymentCardModel
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -16,7 +17,7 @@ data class UserModel(
 
     val phone: String?,
     val bio: String?,
-    val addresses: List<String> = emptyList(),
-    val paymentCartNumbers: List<String> = emptyList(),
+    val addresses: List<AddressModel> = emptyList(),
+    val paymentCartNumbers: List<PaymentCardModel> = emptyList(),
     val currentCity: String?,
 )

@@ -25,11 +25,11 @@ fun NavGraphBuilder.featureProfileNavigation(
         }
 
         composable<Route.ProfileGraph.ProfileAddressScreen> {
-
+            ProfileAddressRoot(navController)
         }
 
         composable<Route.ProfileGraph.ProfilePaymentMethodScreen> {
-
+            ProfilePaymentMethodScreenRoot(navController)
         }
 
         composable<Route.ProfileGraph.ProfileSupportScreen> {

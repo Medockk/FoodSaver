@@ -39,4 +39,7 @@
 
     <string name="cart">Cart</string>
     <string name="time_to_delivery">Срок поставки</string>
+    <string name="addresses">Addresses</string>
+    <string name="add_new_address">Add new address</string>
+    <string name="add_new_card">Add new card</string>
 </resources>

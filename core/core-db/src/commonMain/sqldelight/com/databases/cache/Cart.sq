@@ -1,7 +1,7 @@
 import com.foodsaver.app.dto.ProductDto;
 
 CREATE TABLE IF NOT EXISTS cartEntity (
-    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    localId INTEGER PRIMARY KEY AUTOINCREMENT,
     globalId TEXT,
     product TEXT AS ProductDto NOT NULL,
     quantity INTEGER NOT NULL,
