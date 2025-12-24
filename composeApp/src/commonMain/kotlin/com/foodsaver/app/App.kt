@@ -12,17 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.foodsaver.app.feature.auth.presentation.AuthRoute
 import com.foodsaver.app.presentation.FeatureAuth.featureAuthNavigation
 import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
-import com.foodsaver.app.presentation.MainRoute
+import com.foodsaver.app.presentation.FeatureProfile.featureProfileNavigation
+import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.ui.colorScheme
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
-    initialRoute: AuthRoute = AuthRoute.AuthScreen,
+    viewModel: AppViewModel = koinViewModel(),
+    initialAuthRoute: Route = Route.AuthGraph.AuthScreen,
 ) {
+
+    val startDestination = if (viewModel.isUserLogin) Route.MainGraph
+    else Route.AuthGraph
+
     MaterialTheme(
         colorScheme = colorScheme()
     ) {
@@ -30,12 +36,17 @@ fun App(
             Scaffold(
                 contentWindowInsets = WindowInsets.statusBars
             ) { _ ->
-                NavHost(navController, startDestination = /*MainRoute.HomeScreen*/initialRoute) {
-                    featureAuthNavigation(navController, onSuccessAuthentication = {
-                        navController.navigate(MainRoute.HomeScreen)
-                    })
+                NavHost(navController, startDestination = startDestination) {
+                    featureAuthNavigation(
+                        navController = navController,
+                        startDestination = initialAuthRoute,
+                        onSuccessAuthentication = {
+                            navController.navigate(Route.MainGraph.HomeScreen)
+                            viewModel.onUserAuthenticate()
+                        })
 
                     featureHomeNavigation(navController)
+                    featureProfileNavigation(navController)
                 }
             }
         }

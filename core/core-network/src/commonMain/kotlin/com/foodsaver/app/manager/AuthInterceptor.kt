@@ -132,7 +132,7 @@ internal class AuthInterceptor(
      * @return The value of [Cookie] with name [tokenName]
      */
     private suspend fun CookiesStorage.getTokenFromCookies(tokenName: String): String? {
-        val token = this.get(Url(HttpConstants.ROOT_URL))
+        val token = this.get(Url(HttpConstants.ROOT_URL + "/"))
             .find { it.name == tokenName }
         return token?.value
     }

@@ -18,10 +18,10 @@ import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-actual class GoogleAuthenticator actual constructor() {
+actual class GoogleAuthenticator {
 
     private lateinit var authConnector: AuthConnector
-    constructor(authConnector: AuthConnector): this() {
+    constructor(authConnector: AuthConnector) {
         this.authConnector = authConnector
     }
 

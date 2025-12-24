@@ -18,4 +18,28 @@
     <string name="days">дней</string>
     <string name="hour">час</string>
     <string name="hours">часов</string>
+
+    <string name="total_items">Всего</string>
+    <string name="add_product_to_cart">Добавить в корзину</string>
+    <string name="remove_product_from_cart">Убрать из корзины</string>
+
+    <string name="menu">Меню</string>
+    <string name="personal_info">Личные данные</string>
+    <string name="address">Адресса</string>
+    <string name="payment_method">Способ оплаты</string>
+    <string name="support_service">Сервис поддержки</string>
+    <string name="log_out">Выйти</string>
+
+    <string name="profile">Профиль</string>
+    <string name="save">Сохранить</string>
+    <string name="profile_full_name">ПОЛНОЕ ИМЯ</string>
+    <string name="profile_email">ЭЛЕКТРОННАЯ ПОЧТА</string>
+    <string name="profile_phone">НОМЕР ТЕЛЕФОНА</string>
+    <string name="profile_bio">О СЕБЕ</string>
+
+    <string name="cart">Cart</string>
+    <string name="time_to_delivery">Срок поставки</string>
+    <string name="addresses">Адреса</string>
+    <string name="add_new_address">Добавить адрес</string>
+    <string name="add_new_card">Добавить карту</string>
 </resources>

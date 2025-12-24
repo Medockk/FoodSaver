@@ -9,15 +9,19 @@ import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.attribute.DosFileAttributeView
 
-actual class SqlDriverFactory {
+internal actual class SqlDriverFactory {
     actual suspend fun create(): SqlDriver {
-        val parentFolder = File(System.getProperty("user.home") + "\\.foodsaver\\db")
+        val parentFolder = File(File(System.getProperty("user.home") + ".foodsaver"), "db")
 
         if (!parentFolder.exists()) {
             parentFolder.mkdirs()
-            val dosView = Files.getFileAttributeView(parentFolder.toPath(), DosFileAttributeView::class.java,
-                LinkOption.NOFOLLOW_LINKS)
-            dosView?.setHidden(true)
+            try {
+                val dosView = Files.getFileAttributeView(parentFolder.toPath(), DosFileAttributeView::class.java,
+                    LinkOption.NOFOLLOW_LINKS)
+                dosView?.setHidden(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         val dbPath = File(parentFolder, "MainAppDatabase.db")

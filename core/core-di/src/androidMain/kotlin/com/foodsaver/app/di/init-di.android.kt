@@ -5,7 +5,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 lateinit var applicationContext: Context
-actual val platformModule: Module
+actual val platformDiModule: Module
     get() = module {
-        single<Context> { applicationContext }
+        single<Context>(createdAtStart = true) { applicationContext }
     }

@@ -1,0 +1,92 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
+package com.foodsaver.app.presentation.FeatureProductDetail.components
+
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.foodsaver.app.common.CircularPrimaryButton
+import com.foodsaver.app.utils.ScreenAnimation
+import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.ic_minus_icon
+import foodsaver.composeapp.generated.resources.ic_plus_icon
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun SharedTransitionScope.ProductCounter(
+    count: Int,
+    onIncreaseClick: () -> Unit,
+    onDecreaseClick: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    productId: String,
+    modifier: Modifier = Modifier,
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        CircularPrimaryButton(
+            onClick = onDecreaseClick,
+            backgroundColor = Color.Transparent,
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primaryFixedDim)
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_minus_icon),
+                contentDescription = "Decrease",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(12.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = count.toString(),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primaryFixed,
+            fontSize = 19.sp,
+            modifier = Modifier
+                .sharedElement(
+                    sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.countAnim(productId)),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween()
+                    },
+                    renderInOverlayDuringTransition = false
+                ),
+        )
+        Spacer(Modifier.width(10.dp))
+
+        CircularPrimaryButton(
+            onClick = onIncreaseClick
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_plus_icon),
+                contentDescription = "Increase",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(12.dp),
+                tint = Color.White,
+            )
+        }
+    }
+}

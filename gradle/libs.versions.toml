@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.1"
+agp = "8.13.2"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -33,6 +33,7 @@ kotlinxDateTime = "0.7.1"
 
 #Android Libraries
 androidSecurity = "1.1.0"
+splashScreen = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -50,6 +51,7 @@ kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",
 
 #Android Libraries
 android-security = { module = "androidx.security:security-crypto", version.ref = "androidSecurity"}
+androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 #Android Auth with Google OAuth2
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }

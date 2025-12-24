@@ -7,10 +7,10 @@ import com.foodsaver.app.feature.auth.config.BuildConfig
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 
-actual class GoogleAuthenticator actual constructor() {
+actual class GoogleAuthenticator {
 
-    private lateinit var context: Context
-    constructor(context: Context): this() {
+    private var context: Context
+    constructor(context: Context) {
         this.context = context
     }
     internal actual suspend fun getGoogleIdToken(): String? {

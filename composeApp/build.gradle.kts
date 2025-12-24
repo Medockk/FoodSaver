@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
@@ -40,6 +42,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.splash)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -52,9 +55,14 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            implementation(libs.kotlinx.serialization.json)
+
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
+
             implementation(libs.koin.compose.navigation)
+            implementation(libs.koin.core)
+
             implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 
@@ -64,11 +72,18 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreModel)
+            implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
+            implementation(projects.core.coreProfile)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)
 
-            implementation(projects.featureMain)
+            implementation(projects.featureHome)
+            implementation(projects.featureProductDetail)
+            implementation(projects.featureCart)
+            implementation(projects.featureProfile)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)

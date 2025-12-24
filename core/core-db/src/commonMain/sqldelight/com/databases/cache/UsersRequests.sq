@@ -1,12 +1,29 @@
 insertUser:
-INSERT INTO Users(uid, name)
-VALUES(:uid, :name);
+INSERT OR REPLACE INTO userEntity
+VALUES ?;
 
-getAllUsers:
+getUser:
 SELECT *
-FROM Users;
+FROM userEntity;
 
 getUserByUid:
 SELECT *
-FROM Users
+FROM userEntity
 WHERE uid = :uid;
+
+updateUser:
+UPDATE userEntity
+SET name = ?,
+email = ?,
+photoUrl = ?,
+bio = ?,
+phone = ?,
+addresses = ?,
+paymentCartNumbers = ?,
+currentCity = ?
+WHERE uid = ?;
+
+updatePaymentMethod:
+UPDATE userEntity
+SET paymentCartNumbers = ?
+WHERE uid = ?;

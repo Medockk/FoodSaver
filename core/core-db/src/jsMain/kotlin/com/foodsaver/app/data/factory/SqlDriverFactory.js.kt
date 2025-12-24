@@ -13,7 +13,7 @@ import org.w3c.dom.MessageEvent
 import org.w3c.dom.events.Event
 import kotlin.js.Promise
 
-actual class SqlDriverFactory {
+internal actual class SqlDriverFactory {
 
     private val mutex = Mutex()
     actual suspend fun create(): SqlDriver {

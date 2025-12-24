@@ -47,6 +47,7 @@ kotlin {
             implementation(projects.core.coreDi)
             // стоит ли так делать? потом
             implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreDb)
 
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.koin.compose.viewmodel)

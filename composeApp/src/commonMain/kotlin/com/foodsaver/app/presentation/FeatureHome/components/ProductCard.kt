@@ -47,8 +47,9 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.CircularPrimaryButton
 import com.foodsaver.app.common.shimmerEffect
-import com.foodsaver.app.domain.model.ExpiresDateType
-import com.foodsaver.app.domain.model.ProductModel
+import com.foodsaver.app.model.ExpiresDateType
+import com.foodsaver.app.model.ProductModel
+import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.days
 import foodsaver.composeapp.generated.resources.hours
@@ -109,7 +110,11 @@ fun SharedTransitionScope.ProductCard(
                     text = "${product.expiresAt} $dateType",
                     modifier = Modifier
                         .sharedElement(
-                            sharedContentState = rememberSharedContentState("product_expiresAt_${product.productId}"),
+                            sharedContentState = rememberSharedContentState(
+                                ScreenAnimation.Home_ProductDetail.expiresAtAnim(
+                                    product.productId
+                                )
+                            ),
                             animatedVisibilityScope = scope,
                             boundsTransform = { _, _ ->
                                 tween()
@@ -123,12 +128,23 @@ fun SharedTransitionScope.ProductCard(
 
             SubcomposeAsyncImage(
                 model = product.photoUrl,
-                contentDescription = product.name,
-                contentScale = ContentScale.Crop,
+                contentDescription = product.title,
+                contentScale = ContentScale.FillBounds,
                 clipToBounds = true,
                 modifier = Modifier
                     .heightIn(max = 80.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Home_ProductDetail.imageAnim(
+                                product.productId
+                            )
+                        ),
+                        animatedVisibilityScope = scope,
+                        boundsTransform = { _, _ ->
+                            tween()
+                        }
+                    ),
                 loading = {
                     this@Column.AnimatedVisibility(
                         visible = true,
@@ -151,10 +167,14 @@ fun SharedTransitionScope.ProductCard(
             Spacer(Modifier.height(13.dp))
 
             Text(
-                text = product.name,
+                text = product.title,
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_name_${product.productId}"),
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Home_ProductDetail.nameAnim(
+                                product.productId
+                            )
+                        ),
                         animatedVisibilityScope = scope,
                         boundsTransform = { _, _ ->
                             tween(450, easing = LinearEasing)
@@ -169,10 +189,14 @@ fun SharedTransitionScope.ProductCard(
             )
             Spacer(Modifier.height(5.dp))
             Text(
-                text = "${product.unit} ${product.unitName}",
+                text = "${product.unit} ${product.unitType.value}",
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState("product_desc_${product.productId}"),
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Home_ProductDetail.unitAnim(
+                                product.productId
+                            )
+                        ),
                         animatedVisibilityScope = scope,
                         boundsTransform = { _, _ ->
                             tween()
@@ -191,7 +215,11 @@ fun SharedTransitionScope.ProductCard(
                     text = "${product.costUnit} ${product.cost.toInt()}",
                     modifier = Modifier
                         .sharedElement(
-                            sharedContentState = rememberSharedContentState("product_cost_${product.productId}"),
+                            sharedContentState = rememberSharedContentState(
+                                ScreenAnimation.Home_ProductDetail.costAnim(
+                                    product.productId
+                                )
+                            ),
                             animatedVisibilityScope = scope,
                             boundsTransform = { _, _ ->
                                 tween()
@@ -246,11 +274,16 @@ fun SharedTransitionScope.ProductCard(
                     },
                     modifier = Modifier
                         .sharedElement(
-                            sharedContentState = rememberSharedContentState("product_btn_${product.productId}"),
+                            sharedContentState = rememberSharedContentState(
+                                ScreenAnimation.Home_ProductDetail.buttonAnim(
+                                    product.productId
+                                )
+                            ),
                             animatedVisibilityScope = scope,
                             boundsTransform = { _, _ ->
                                 tween()
-                            }
+                            },
+                            renderInOverlayDuringTransition = true
                         )
                 )
             }

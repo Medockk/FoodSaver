@@ -4,20 +4,21 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.di.initSharedKoin
-import com.foodsaver.app.feature.auth.presentation.AuthRoute
+import com.foodsaver.app.di.uiModule
+import com.foodsaver.app.presentation.routing.Route
 import kotlinx.browser.window
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    initSharedKoin()
+    initSharedKoin(arrayOf(uiModule))
     ComposeViewport {
         val route = getRoute()
         val navController = rememberNavController()
-        App(navController, route)
+        App(navController, initialAuthRoute = route)
     }
 }
 
-private fun getRoute(): AuthRoute {
+private fun getRoute(): Route {
     val path = window.location.pathname.removePrefix("/")
     println("Path is $path")
     val query = window.location.search.removePrefix("?")
@@ -32,7 +33,7 @@ private fun getRoute(): AuthRoute {
     println("Params is $params")
 
     return when(path) {
-        "reset-password" -> AuthRoute.ResetPasswordScreen(params["id"].orEmpty())
-        else -> AuthRoute.AuthScreen
+        "reset-password" -> Route.AuthGraph.ResetPasswordScreen(params["id"].orEmpty())
+        else -> Route.AuthGraph.AuthScreen
     }
 }

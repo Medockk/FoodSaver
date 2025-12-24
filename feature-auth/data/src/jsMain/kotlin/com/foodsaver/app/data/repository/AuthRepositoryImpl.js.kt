@@ -6,9 +6,8 @@ import com.foodsaver.app.feature.auth.config.BuildConfig
 import kotlinx.browser.window
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.js.unsafeCast
 
-actual class GoogleAuthenticator actual constructor() {
+actual class GoogleAuthenticator {
     private val clientId: String = BuildConfig.GOOGLE_CLIENT_ID_WEB
     internal actual suspend fun getGoogleIdToken(): String? = suspendCoroutine {
         val config = js("{}").unsafeCast<IdConfiguration>()

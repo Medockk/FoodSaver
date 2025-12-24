@@ -7,24 +7,43 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.foodsaver.app.presentation.FeatureProduct.ProductScreenRoot
-import com.foodsaver.app.presentation.MainRoute
+import com.foodsaver.app.presentation.FeatureCart.CartScreenRoot
+import com.foodsaver.app.presentation.FeatureProductDetail.ProductScreenRoot
+import com.foodsaver.app.presentation.routing.Route
 
 context(scope: SharedTransitionScope)
-fun NavGraphBuilder.featureHomeNavigation(navController: NavController) {
+fun NavGraphBuilder.featureHomeNavigation(
+    navController: NavController,
+    startDestination: Route = Route.MainGraph.HomeScreen
+) {
 
-    composable<MainRoute.HomeScreen> {
-        scope.HomeScreenRoot(navController, this)
-    }
+    navigation<Route.MainGraph>(
+        startDestination = startDestination
+    ) {
 
-    composable<MainRoute.ProductScreen> {
-        val productId = it.toRoute<MainRoute.ProductScreen>().productId
+        composable<Route.MainGraph.HomeScreen> {
+            scope.HomeScreenRoot(navController, this)
+        }
 
-        scope.ProductScreenRoot(
-            productId = productId,
-            navController = navController,
-            animatedVisibilityScope = this
-        )
+        composable<Route.MainGraph.ProductDetailScreen> {
+            val productId = it.toRoute<Route.MainGraph.ProductDetailScreen>().productId
+            val isProductInCart = it.toRoute<Route.MainGraph.ProductDetailScreen>().isProductInCart
+
+            scope.ProductScreenRoot(
+                productId = productId,
+                navController = navController,
+                animatedVisibilityScope = this,
+                isProductInCart = isProductInCart
+            )
+        }
+
+        composable<Route.MainGraph.CartScreen> {
+            scope.CartScreenRoot(
+                navController = navController,
+                animatedVisibilityScope = this,
+            )
+        }
     }
 }

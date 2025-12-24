@@ -1,5 +1,19 @@
 package com.foodsaver.app.di
 
-fun initSharedKoin() = initKoinApp(
-    arrayOf(networkModule, databaseModule, *featureAuthModule, featureMainModule)
+import org.koin.core.module.Module
+
+fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
+    arrayOf(
+        *modules,
+        networkModule,
+        databaseModule,
+        *featureAuthModule,
+        featureMainModule,
+        coreProductModule,
+        featureProductDetailModule,
+        coreCartModule,
+        featureCartModule,
+        coreProfileModule,
+        featureProfileModule
+    )
 )

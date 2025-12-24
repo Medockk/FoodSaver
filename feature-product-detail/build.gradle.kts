@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
@@ -22,7 +24,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "BaseModule"
+            baseName = "FeatureProductDetail"
             isStatic = true
         }
     }
@@ -47,6 +49,12 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
+            implementation(projects.core.coreCommon)
+            implementation(projects.core.coreModel)
+
+            implementation(libs.koin.compose.viewmodel)
         }
         jvmMain.dependencies {
 
@@ -67,7 +75,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.foodsaver.app.base.module"
+    namespace = "com.foodsaver.app.feature.product.detail"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
