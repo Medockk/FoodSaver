@@ -25,7 +25,7 @@ internal fun CartEntity.toModel(): CartItemModel {
         localId = localId,
         globalId = globalId,
         product = this.product.toModel(),
-        quantity = quantity.toInt()
+        quantity = quantity
     )
 }
 

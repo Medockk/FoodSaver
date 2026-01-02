@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal data class CartRequestDto(
     val productId: String,
-    val quantity: Int = 1
+    val quantity: Long = 1
 )

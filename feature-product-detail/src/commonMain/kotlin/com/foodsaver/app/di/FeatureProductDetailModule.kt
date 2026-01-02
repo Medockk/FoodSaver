@@ -11,7 +11,10 @@ val featureProductDetailModule = module {
             productId = params.get<String>(),
             isProductInCart = params.get<Boolean>(),
             getCachedProductUseCase = get(),
-            addProductToCartUseCase = get()
+            addProductToCartUseCase = get(),
+            increaseProductCountUseCase = get(),
+            decreaseProductCountUseCase = get(),
+            removeProductFromCartUseCase = get(),
         )
     }
 }

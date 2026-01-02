@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface ProductRepository {
 
     suspend fun getProducts(page: Int, size: Int): ApiResult<List<ProductModel>>
-    fun getCachedProduct(productId: String): Flow<ProductModel?>
+    suspend fun getCachedProduct(productId: String): Flow<ProductModel?>
 }

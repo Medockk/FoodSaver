@@ -40,6 +40,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.SearchTextField
 import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.presentation.FeatureHome.components.CategoryChip
@@ -91,13 +93,18 @@ fun SharedTransitionScope.HomeScreenRoot(
         }
     }
 
-    HomeScreen(
-        state = state,
-        onEvent = viewModel::onEvent,
-        snackbarHostState = snackBarHostState,
-        animatedContentScope = animatedContentScope,
-        navController = navController
-    )
+    PrimaryPullToRefreshBox(
+        isRefreshing = state.isRefresh,
+        onRefresh = viewModel::onRefresh
+    ) {
+        HomeScreen(
+            state = state,
+            onEvent = viewModel::onEvent,
+            snackbarHostState = snackBarHostState,
+            animatedContentScope = animatedContentScope,
+            navController = navController
+        )
+    }
 }
 
 @Composable
@@ -285,14 +292,14 @@ private fun SharedTransitionScope.HomeScreen(
                             key = { it.productId }
                         ) { product ->
                             with(animatedContentScope) {
-                                val isProductInCart = state.cartProducts.any { it.product.productId == product.productId }
+                                val isInCart = state.cartProductIds.contains(product.productId)
                                 ProductCard(
                                     product = product,
-                                    isInCart = isProductInCart,
+                                    isInCart = isInCart,
                                     onProductClick = { productId ->
                                         navController.navigate(route = Route.MainGraph.ProductDetailScreen(
                                             productId = productId,
-                                            isProductInCart = isProductInCart
+                                            isProductInCart = isInCart
                                         ))
                                     },
                                     onAddProductClick = {

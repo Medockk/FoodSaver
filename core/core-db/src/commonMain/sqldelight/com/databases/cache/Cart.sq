@@ -15,11 +15,31 @@ insertCartItem:
 INSERT INTO cartEntity (globalId, product, quantity, tempId)
 VALUES (?, ?, ?, ?);
 
+insertCart:
+INSERT INTO cartEntity
+VALUES ?;
+
 clearCart:
 DELETE FROM cartEntity;
 
-deleteCartItem:
+deleteCartItemByLocalId:
 DELETE FROM cartEntity WHERE localId = ?;
 
-updateCount:
-UPDATE cartEntity SET quantity = ? WHERE localId = ?;
+deleteCartItemByGlobalId:
+DELETE FROM cartEntity WHERE globalId = ?;
+
+deleteCartItemByTempId:
+DELETE FROM cartEntity WHERE tempId = ?;
+
+updateCartItemByTempId:
+UPDATE cartEntity
+SET globalId = ?
+WHERE tempId = ?;
+
+updateCountByGlobalId:
+UPDATE cartEntity
+SET quantity = ?
+WHERE globalId = ?;
+
+getCartItemByProductId:
+SELECT * FROM cartEntity WHERE tempId = ? OR globalId = ? LIMIT 1;

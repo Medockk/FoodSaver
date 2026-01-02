@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
+import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.model.ExpiresDateType
 import com.foodsaver.app.model.ProductUnitType
@@ -103,14 +104,19 @@ fun SharedTransitionScope.ProductScreenRoot(
         }
     }
 
-    ProductScreen(
-        productId = productId,
-        state = state,
-        navController = navController,
-        animatedVisibilityScope = animatedVisibilityScope,
-        onEvent = viewModel::onEvent,
-        snackbarHostState = snackbarHostState
-    )
+    PrimaryPullToRefreshBox(
+        isRefreshing = state.isRefresh,
+        onRefresh = viewModel::onRefresh
+    ) {
+        ProductScreen(
+            productId = productId,
+            state = state,
+            navController = navController,
+            animatedVisibilityScope = animatedVisibilityScope,
+            onEvent = viewModel::onEvent,
+            snackbarHostState = snackbarHostState
+        )
+    }
 }
 
 

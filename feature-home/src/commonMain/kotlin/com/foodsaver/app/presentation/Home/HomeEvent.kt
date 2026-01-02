@@ -1,5 +1,7 @@
 package com.foodsaver.app.presentation.Home
 
+import com.foodsaver.app.model.ProductModel
+
 sealed interface HomeEvent {
 
     data class OnSearchQueryChange(val value: String): HomeEvent

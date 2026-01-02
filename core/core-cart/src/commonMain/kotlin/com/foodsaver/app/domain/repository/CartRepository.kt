@@ -10,4 +10,8 @@ interface CartRepository {
     fun getCart(): Flow<ApiResult<List<CartItemModel>>>
 
     suspend fun addProductToCart(request: CartRequestModel): ApiResult<CartItemModel>
+    suspend fun increaseProductCount(request: CartRequestModel): ApiResult<Unit>
+    suspend fun decreaseProductCount(request: CartRequestModel): ApiResult<Unit>
+
+    suspend fun removeProductFromCart(productId: String): ApiResult<Unit>
 }

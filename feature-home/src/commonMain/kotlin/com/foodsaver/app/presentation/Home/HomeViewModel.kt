@@ -15,9 +15,13 @@ import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.domain.usecase.GetProfileUseCase
+import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.utils.Paginator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,8 +32,9 @@ class HomeViewModel(
     private val getCartUseCase: GetCartUseCase,
 
     private val addProductToCartUseCase: AddProductToCartUseCase,
+    private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
 
-    private val getProfileUseCase: GetProfileUseCase
+    private val getProfileUseCase: GetProfileUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf(HomeState())
@@ -70,13 +75,34 @@ class HomeViewModel(
         getProfile()
     }
 
-    private fun getProfile() {
+    fun onRefresh() {
+        _state.value = state.value.copy(isRefresh = true)
         viewModelScope.launch(Dispatchers.InputOutput) {
+
+            val jobs = async {
+                arrayOf(
+                    loadProducts(),
+                    loadCart(),
+                    getAllCategories(),
+                    getProfile(),
+                )
+            }
+
+            delay(1000)
+            withContext(Dispatchers.Main) {
+                _state.value = state.value.copy(isRefresh = false)
+            }
+        }
+    }
+
+    private fun getProfile(): Job {
+        return viewModelScope.launch(Dispatchers.InputOutput) {
             getProfileUseCase().collect { result ->
                 when (result) {
                     is ApiResult.Error -> {
                         _channel.send(HomeAction.OnError(result.error.message))
                     }
+
                     ApiResult.Loading -> Unit
                     is ApiResult.Success<UserModel> -> {
                         withContext(Dispatchers.Main) {
@@ -90,8 +116,8 @@ class HomeViewModel(
         }
     }
 
-    fun getAllCategories() {
-        viewModelScope.launch(Dispatchers.InputOutput) {
+    private fun getAllCategories(): Job {
+        return viewModelScope.launch(Dispatchers.InputOutput) {
             when (val result = getAllCategoriesUseCase.invoke()) {
                 is ApiResult.Error -> {
                     _state.value = state.value.copy(isLoading = false)
@@ -112,24 +138,27 @@ class HomeViewModel(
         }
     }
 
-    private fun loadProducts() {
-        viewModelScope.launch(Dispatchers.InputOutput) {
+    private fun loadProducts(): Job {
+        return viewModelScope.launch(Dispatchers.InputOutput) {
             productsPaginator.loadPage()
         }
     }
 
-    private fun loadCart() {
-        viewModelScope.launch(Dispatchers.InputOutput) {
+    private fun loadCart(): Job {
+        return viewModelScope.launch(Dispatchers.InputOutput) {
             getCartUseCase().collect {
                 when (it) {
                     is ApiResult.Error -> {
                         println(it.error)
                     }
+
                     ApiResult.Loading -> Unit
                     is ApiResult.Success<List<CartItemModel>> -> {
                         withContext(Dispatchers.Main) {
+                            val cartIds = it.data.map { item -> item.product.productId }.toSet()
                             _state.value = state.value.copy(
-                                cartProducts = it.data
+                                cartProducts = it.data,
+                                cartProductIds = cartIds,
                             )
                         }
                     }
@@ -157,18 +186,30 @@ class HomeViewModel(
             }
 
             is HomeEvent.OnAddProductToCart -> {
-                viewModelScope.launch(Dispatchers.InputOutput) {
-                    val request = CartRequestModel(productId = event.productId)
-                    when (val result = addProductToCartUseCase.invoke(request)) {
-                        is ApiResult.Error -> {
+                if (_state.value.cartProductIds.contains(event.productId)) {
+                    viewModelScope.launch(Dispatchers.InputOutput) {
+                        val result = removeProductFromCartUseCase(event.productId)
+
+                        if (result is ApiResult.Error) {
                             _channel.send(HomeAction.OnError(result.error.message))
                         }
-                        ApiResult.Loading -> Unit
-                        is ApiResult.Success<CartItemModel> -> {
-                            val cartProducts = _state.value.cartProducts + result.data
-                            _state.value = state.value.copy(
-                                cartProducts = cartProducts
-                            )
+                    }
+                } else {
+                    viewModelScope.launch(Dispatchers.InputOutput) {
+                        val request = CartRequestModel(event.productId)
+                        when (val result = addProductToCartUseCase.invoke(request)) {
+                            is ApiResult.Error -> {
+                                _channel.send(HomeAction.OnError(result.error.message))
+                            }
+
+                            ApiResult.Loading -> Unit
+                            is ApiResult.Success<CartItemModel> -> {
+                                println("Added product is ${result.data}")
+//                            val cartProducts = _state.value.cartProducts + result.data
+//                            _state.value = state.value.copy(
+//                                cartProducts = cartProducts
+//                            )
+                            }
                         }
                     }
                 }

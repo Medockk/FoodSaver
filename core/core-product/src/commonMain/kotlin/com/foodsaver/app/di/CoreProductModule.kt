@@ -10,7 +10,8 @@ import org.koin.dsl.module
 val coreProductModule = module {
     single<ProductRepository> {
         ProductRepositoryImpl(
-            httpClient = get()
+            httpClient = get(),
+            databaseProvider = get()
         )
     }
 

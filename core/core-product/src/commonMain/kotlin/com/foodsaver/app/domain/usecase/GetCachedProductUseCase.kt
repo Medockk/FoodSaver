@@ -6,6 +6,6 @@ class GetCachedProductUseCase(
     private val productRepository: ProductRepository
 ) {
 
-    operator fun invoke(productId: String) =
+    suspend operator fun invoke(productId: String) =
         productRepository.getCachedProduct(productId)
 }

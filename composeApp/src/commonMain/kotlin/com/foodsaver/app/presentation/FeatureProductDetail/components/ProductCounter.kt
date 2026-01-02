@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SharedTransitionScope.ProductCounter(
-    count: Int,
+    count: Long,
     onIncreaseClick: () -> Unit,
     onDecreaseClick: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,

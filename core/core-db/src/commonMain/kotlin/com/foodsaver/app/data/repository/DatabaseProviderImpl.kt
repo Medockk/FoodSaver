@@ -1,5 +1,6 @@
 package com.foodsaver.app.data.repository
 
+import com.databases.cache.CachedProduct
 import com.databases.cache.CartEntity
 import com.databases.cache.MainAppDatabase
 import com.databases.cache.UserEntity
@@ -28,6 +29,9 @@ internal class DatabaseProviderImpl(
                 rolesAdapter = listAdapter,
                 addressesAdapter = addressColumnAdapter,
                 paymentCartNumbersAdapter = paymentCardColumnAdapter
+            ),
+            cachedProductAdapter = CachedProduct.Adapter(
+                productAdapter = ProductColumnAdapter
             )
         )
 

@@ -12,7 +12,17 @@ fun <T: Any, R: Any> ApiResult<T>.map(transform: (T) -> R): ApiResult<R> {
     }
 }
 
-fun <T: Any> ApiResult<T>.onFailure(action: (GlobalErrorResponse) -> Unit): ApiResult<T> {
+fun <T: Any> ApiResult<T>.onFailure(scope: CoroutineScope, action: (GlobalErrorResponse) -> Unit): ApiResult<T> {
+    if (this is ApiResult.Error) {
+        scope.launch {
+            action(this@onFailure.error)
+        }
+    }
+
+    return this
+}
+
+suspend fun <T: Any> ApiResult<T>.onFailure(action: suspend (GlobalErrorResponse) -> Unit): ApiResult<T> {
     if (this is ApiResult.Error) {
         action(this.error)
     }

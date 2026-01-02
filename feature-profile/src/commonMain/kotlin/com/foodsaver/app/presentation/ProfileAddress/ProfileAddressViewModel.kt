@@ -54,7 +54,21 @@ class ProfileAddressViewModel(
 
     fun onEvent(event: ProfileAddressEvent) {
         when (event) {
-            ProfileAddressEvent.OnAddNewAddressClick -> TODO()
+            ProfileAddressEvent.OnAddNewAddressClick -> {
+                state = state.copy(shouldShowDialog = true)
+            }
+            ProfileAddressEvent.OnCloseDialog -> {
+                state = state.copy(shouldShowDialog = false)
+            }
+            is ProfileAddressEvent.OnDialogAddressNameChange -> {
+                state = state.copy(dialogAddressName = event.value)
+            }
+            is ProfileAddressEvent.OnDialogAddressValueChange -> {
+                state = state.copy(dialogAddressValue = event.value)
+            }
+            ProfileAddressEvent.OnSaveAddress -> {
+                state = state.copy(shouldShowDialog = false)
+            }
         }
     }
 }
