@@ -2,7 +2,7 @@ import com.foodsaver.app.dto.ProductDto;
 
 CREATE TABLE IF NOT EXISTS cartEntity (
     localId INTEGER PRIMARY KEY AUTOINCREMENT,
-    globalId TEXT,
+    productId TEXT,
     product TEXT AS ProductDto NOT NULL,
     quantity INTEGER NOT NULL,
     tempId TEXT NOT NULL UNIQUE
@@ -12,7 +12,7 @@ selectAll:
 SELECT * FROM cartEntity;
 
 insertCartItem:
-INSERT INTO cartEntity (globalId, product, quantity, tempId)
+INSERT INTO cartEntity (productId, product, quantity, tempId)
 VALUES (?, ?, ?, ?);
 
 insertCart:
@@ -26,20 +26,20 @@ deleteCartItemByLocalId:
 DELETE FROM cartEntity WHERE localId = ?;
 
 deleteCartItemByGlobalId:
-DELETE FROM cartEntity WHERE globalId = ?;
+DELETE FROM cartEntity WHERE productId = ?;
 
 deleteCartItemByTempId:
 DELETE FROM cartEntity WHERE tempId = ?;
 
 updateCartItemByTempId:
 UPDATE cartEntity
-SET globalId = ?
+SET productId = ?
 WHERE tempId = ?;
 
 updateCountByGlobalId:
 UPDATE cartEntity
 SET quantity = ?
-WHERE globalId = ?;
+WHERE productId = ?;
 
 getCartItemByProductId:
-SELECT * FROM cartEntity WHERE tempId = ? OR globalId = ? LIMIT 1;
+SELECT * FROM cartEntity WHERE tempId = ? OR productId = ? LIMIT 1;

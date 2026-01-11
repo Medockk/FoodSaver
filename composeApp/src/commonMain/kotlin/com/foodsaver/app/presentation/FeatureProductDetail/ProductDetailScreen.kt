@@ -56,10 +56,10 @@ import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.model.ExpiresDateType
 import com.foodsaver.app.model.ProductUnitType
 import com.foodsaver.app.presentation.FeatureProductDetail.components.ProductCounter
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailActions
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailEvents
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailState
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailViewModel
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailActions
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailEvents
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailState
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailViewModel
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
@@ -77,7 +77,6 @@ import foodsaver.composeapp.generated.resources.total_items
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun SharedTransitionScope.ProductScreenRoot(
@@ -85,9 +84,7 @@ fun SharedTransitionScope.ProductScreenRoot(
     isProductInCart: Boolean,
     navController: NavController,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: ProductDetailViewModel = koinViewModel(parameters = {
-        parametersOf(productId, isProductInCart)
-    }),
+    viewModel: ProductDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }

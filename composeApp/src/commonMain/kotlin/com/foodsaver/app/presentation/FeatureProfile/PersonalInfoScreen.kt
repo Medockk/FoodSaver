@@ -23,12 +23,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.foodsaver.app.common.CircularAsyncImage
 import com.foodsaver.app.common.CircularPrimaryButton
@@ -48,6 +52,8 @@ import foodsaver.composeapp.generated.resources.profile_email
 import foodsaver.composeapp.generated.resources.profile_full_name
 import foodsaver.composeapp.generated.resources.profile_phone
 import foodsaver.composeapp.generated.resources.save
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -58,7 +64,7 @@ fun ProfilePersonalInfoScreenRoot(
     viewModel: ProfilePersonalInfoViewModel = koinViewModel()
 ) {
 
-    val state = viewModel.state.value
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveActions(viewModel.channel) {
@@ -111,6 +117,27 @@ private fun ProfilePersonalInfoScreen(
         )
     )
 
+    if (state.showGallery) {
+        GalleryPickerLauncher(
+            includeExif = true,
+            onPhotosSelected = { photos ->
+                photos.firstOrNull()?.let {
+                    onEvent(ProfilePersonalInfoEvent.OnChangeImage(
+                        it.loadBytes(),
+                        it.mimeType
+                    ))
+                }
+                onEvent(ProfilePersonalInfoEvent.OnCloseGallery)
+            },
+            onError = {
+                onEvent(ProfilePersonalInfoEvent.OnCloseGallery)
+            },
+            onDismiss = {
+                onEvent(ProfilePersonalInfoEvent.OnCloseGallery)
+            }
+        )
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -140,32 +167,30 @@ private fun ProfilePersonalInfoScreen(
                 verticalArrangement = Arrangement.spacedBy(22.dp)
             ) {
                 state.profile?.let { profile ->
-                    if (profile.photoUrl != null) {
-                        item {
-                            Box {
-                                CircularAsyncImage(
-                                    imageUrl = profile.photoUrl,
-                                    maxSize = 130.dp,
-                                    modifier = Modifier
-                                        .fillParentMaxWidth(0.3f)
-                                )
+                    item {
+                        Box {
+                            CircularAsyncImage(
+                                imageUrl = profile.photoUrl,
+                                maxSize = 130.dp,
+                                modifier = Modifier
+                                    .fillParentMaxWidth(0.3f)
+                            )
 
-                                CircularPrimaryButton(
-                                    onClick = {
-                                        onEvent(ProfilePersonalInfoEvent.OnChangeImage)
-                                    },
+                            CircularPrimaryButton(
+                                onClick = {
+                                    onEvent(ProfilePersonalInfoEvent.OnOpenGallery)
+                                },
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.BottomEnd)
+                            ) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_change_image_icon),
+                                    contentDescription = "Change image",
+                                    tint = Color.Unspecified,
                                     modifier = Modifier
-                                        .size(40.dp)
-                                        .align(Alignment.BottomEnd)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.ic_change_image_icon),
-                                        contentDescription = "Change image",
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier
-                                            .size(16.dp)
-                                    )
-                                }
+                                        .size(16.dp)
+                                )
                             }
                         }
                     }

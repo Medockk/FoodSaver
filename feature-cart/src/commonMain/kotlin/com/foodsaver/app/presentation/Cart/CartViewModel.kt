@@ -1,28 +1,28 @@
 package com.foodsaver.app.presentation.Cart
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CartViewModel(
     private val getCartUseCase: GetCartUseCase,
-    private val getProfileUseCase: GetProfileUseCase
-): ViewModel() {
+    private val getProfileUseCase: GetProfileUseCase,
+) : ViewModel() {
 
-    private val _state = mutableStateOf(CartState())
-    val state: State<CartState> = _state
+    private val _state = MutableStateFlow(CartState())
+    val state = _state.asStateFlow()
 
     private val _channel = Channel<CartAction>()
     val channel = _channel.receiveAsFlow()
@@ -39,10 +39,11 @@ class CartViewModel(
                     is ApiResult.Error -> {
                         _channel.send(CartAction.OnError(it.error.message))
                     }
+
                     ApiResult.Loading -> Unit
                     is ApiResult.Success<UserModel> -> {
-                        withContext(Dispatchers.Main) {
-                            _state.value = state.value.copy(
+                        _state.update { state ->
+                            state.copy(
                                 profile = it.data
                             )
                         }
@@ -54,20 +55,23 @@ class CartViewModel(
 
     private fun getCart() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            getCartUseCase.invoke().collect {
-                when (it) {
+            getCartUseCase.invoke().collect { result ->
+                when (result) {
                     is ApiResult.Error -> {
-                        _state.value = state.value.copy(isLoading = false)
+                        _state.update { it.copy(isLoading = false) }
 
-                        _channel.send(CartAction.OnError(it.error.message))
+                        _channel.send(CartAction.OnError(result.error.message))
                     }
+
                     ApiResult.Loading -> {
-                        _state.value = state.value.copy(isLoading = true)
+                        _state.update { it.copy(isLoading = true) }
                     }
+
                     is ApiResult.Success<List<CartItemModel>> -> {
-                        withContext(Dispatchers.Main) {
-                            _state.value = state.value.copy(
-                                cartProducts = it.data,
+                        println("Cart Screen. CHANGES: ${result.data.map { it.globalId + " " + it.quantity }}")
+                        _state.update {
+                            it.copy(
+                                cartProducts = result.data,
                                 isLoading = false
                             )
                         }

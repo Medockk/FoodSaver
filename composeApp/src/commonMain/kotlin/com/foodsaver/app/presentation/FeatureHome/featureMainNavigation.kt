@@ -9,9 +9,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureCart.CartScreenRoot
 import com.foodsaver.app.presentation.FeatureProductDetail.ProductScreenRoot
-import com.foodsaver.app.presentation.routing.Route
 
 context(scope: SharedTransitionScope)
 fun NavGraphBuilder.featureHomeNavigation(

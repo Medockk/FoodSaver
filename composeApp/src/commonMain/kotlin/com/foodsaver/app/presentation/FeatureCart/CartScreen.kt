@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,15 +37,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
 import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.Cart.CartAction
 import com.foodsaver.app.presentation.Cart.CartEvent
 import com.foodsaver.app.presentation.Cart.CartState
 import com.foodsaver.app.presentation.Cart.CartViewModel
 import com.foodsaver.app.presentation.FeatureCart.components.CartProductCard
-import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.cart
@@ -61,7 +64,7 @@ fun SharedTransitionScope.CartScreenRoot(
     viewModel: CartViewModel = koinViewModel(),
 ) {
 
-    val state = viewModel.state.value
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveActions(viewModel.channel) {
@@ -218,38 +221,40 @@ private fun SharedTransitionScope.CartScreen(
             }
 
             item {
-                Column(
+                Box(
                     modifier = Modifier
                         .offset(y = (-10).dp)
-                        .fillMaxSize()
+                        .fillParentMaxWidth()
+                        .height(30.dp)
                         .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
                         .background(
                             MaterialTheme.colorScheme.background,
                             RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp)
                         )
-                ) {
-                    Spacer(Modifier.height(30.dp))
-                    state.cartProducts.forEach {
-                        CartProductCard(
-                            cartItem = it,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 12.dp, end = 15.dp),
-                            onClick = {
-                                navController.navigate(
-                                    Route.MainGraph.ProductDetailScreen(
-                                        productId = it.product.productId,
-                                        isProductInCart = true
-                                    )
-                                )
-                            },
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        Spacer(Modifier.height(20.dp))
-                    }
+                )
+            }
 
-                    Spacer(Modifier.weight(1f))
-                }
+            this@LazyColumn.items(
+                items = state.cartProducts,
+                key = { it.product.productId }
+            ) {
+                CartProductCard(
+                    cartItem = it,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 15.dp),
+                    onClick = {
+                        navController.navigate(
+                            Route.MainGraph.ProductDetailScreen(
+                                productId = it.product.productId,
+                                isProductInCart = true,
+                                initialQuantity = it.quantity
+                            )
+                        )
+                    },
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+                Spacer(Modifier.height(20.dp))
             }
         }
     }

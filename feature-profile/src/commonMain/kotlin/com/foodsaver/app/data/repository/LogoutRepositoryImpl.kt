@@ -1,7 +1,7 @@
 package com.foodsaver.app.data.repository
 
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.LogoutRepository
 import com.foodsaver.app.utils.HttpConstants

@@ -1,16 +1,12 @@
-@file:OptIn(ExperimentalWasmDsl::class, ExperimentalKotlinGradlePluginApi::class)
+@file:OptIn(ExperimentalWasmDsl::class)
 
-import com.android.build.api.dsl.androidLibrary
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.resources.ResourcesExtension
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
@@ -24,34 +20,9 @@ kotlin {
         freeCompilerArgs.set(listOf("-Xcontext-parameters"))
     }
 
-    androidLibrary {
-
-        namespace = "com.foodsaver.app"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        version = 1
-
-//        defaultConfig {
-//            applicationId = "com.foodsaver.app"
-//            targetSdk = libs.versions.android.targetSdk.get().toInt()
-//            versionCode = 1
-//            versionName = "1.0"
-//        }
-        packaging {
-            resources {
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            }
-        }
-//        buildTypes {
-//            getByName("release") {
-//                isMinifyEnabled = false
-//            }
-//        }
+    androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
-
-//            sourceCompatibility = JavaVersion.VERSION_11
-//            targetCompatibility = JavaVersion.VERSION_11
         }
     }
 
@@ -105,6 +76,7 @@ kotlin {
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCart)
             implementation(projects.core.coreProfile)
+            implementation(projects.core.coreNavigation)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)
@@ -113,6 +85,8 @@ kotlin {
             implementation(projects.featureProductDetail)
             implementation(projects.featureCart)
             implementation(projects.featureProfile)
+
+            implementation(libs.image.picker)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)
@@ -128,25 +102,45 @@ kotlin {
     }
 }
 
-//dependencies {
-//    debugImplementation(compose.uiTooling)
-//}
+android {
+    namespace = "com.foodsaver.app"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-compose {
-    desktop {
-        application {
-            mainClass = "com.foodsaver.app.MainKt"
-
-            nativeDistributions {
-                targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
-                packageName = "com.foodsaver.app"
-                packageVersion = "1.0.0"
-            }
+    defaultConfig {
+        applicationId = "com.foodsaver.app"
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
 
-    resources {
-        packageOfResClass = "foodsaver.composeapp.generated.resources"
-        generateResClass = ResourcesExtension.ResourceClassGeneration.Always
+dependencies {
+    debugImplementation(compose.uiTooling)
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.foodsaver.app.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
+            packageName = "com.foodsaver.app"
+            packageVersion = "1.0.0"
+        }
     }
 }

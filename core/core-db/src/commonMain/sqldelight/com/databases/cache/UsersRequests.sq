@@ -27,3 +27,8 @@ updatePaymentMethod:
 UPDATE userEntity
 SET paymentCartNumbers = ?
 WHERE uid = ?;
+
+updatePhotoUrl:
+UPDATE userEntity
+SET photoUrl = ?
+WHERE uid = ?;

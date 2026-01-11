@@ -81,6 +81,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.lite)
             implementation(libs.googleid)
         }
 

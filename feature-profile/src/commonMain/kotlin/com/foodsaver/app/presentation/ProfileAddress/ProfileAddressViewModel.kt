@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.Dispatchers

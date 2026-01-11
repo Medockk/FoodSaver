@@ -21,7 +21,6 @@ subprojects {
     tasks.withType<KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             freeCompilerArgs.addAll("-Xexpect-actual-classes")
-            freeCompilerArgs.addAll("-opt-in=kotlinx.datetime.ExperimentalTime", "-opt-in=kotlin.time.ExperimentalTime")
         }
     }
 }

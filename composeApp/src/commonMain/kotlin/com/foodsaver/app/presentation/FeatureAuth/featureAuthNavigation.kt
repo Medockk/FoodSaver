@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import com.foodsaver.app.presentation.routing.Route
+import com.foodsaver.app.navigationModule.Route
 
 fun NavGraphBuilder.featureAuthNavigation(
     navController: NavController,

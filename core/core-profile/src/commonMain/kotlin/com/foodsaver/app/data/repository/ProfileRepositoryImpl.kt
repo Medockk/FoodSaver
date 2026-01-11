@@ -1,10 +1,10 @@
 package com.foodsaver.app.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.map
-import com.foodsaver.app.ApiResult.onSuccess
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.data.mappers.toEntity
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.data.mappers.tpModel

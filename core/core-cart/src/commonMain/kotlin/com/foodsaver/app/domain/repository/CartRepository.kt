@@ -1,6 +1,6 @@
 package com.foodsaver.app.domain.repository
 
-import com.foodsaver.app.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import kotlinx.coroutines.flow.Flow

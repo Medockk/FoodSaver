@@ -2,7 +2,6 @@
 
 package com.foodsaver.app.data.mappers
 
-import com.databases.cache.CachedProduct
 import com.foodsaver.app.dto.OrganizationDto
 import com.foodsaver.app.dto.ProductDto
 import com.foodsaver.app.dto.castExpiresDate

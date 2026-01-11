@@ -59,8 +59,10 @@ kotlin {
             implementation(projects.core.coreCart)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
+            implementation(projects.core.coreNavigation)
 
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.jetbrains.compose.navigation)
         }
         jvmMain.dependencies {
 

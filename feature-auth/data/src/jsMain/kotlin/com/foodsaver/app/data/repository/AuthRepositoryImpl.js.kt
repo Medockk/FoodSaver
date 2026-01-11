@@ -1,5 +1,6 @@
 package com.foodsaver.app.data.repository
 
+import com.foodsaver.app.commonModule.utils.PlatformContext
 import com.foodsaver.app.data.repository.external.IdConfiguration
 import com.foodsaver.app.data.repository.external.google
 import com.foodsaver.app.feature.auth.config.BuildConfig
@@ -9,7 +10,7 @@ import kotlin.coroutines.suspendCoroutine
 
 actual class GoogleAuthenticator {
     private val clientId: String = BuildConfig.GOOGLE_CLIENT_ID_WEB
-    internal actual suspend fun getGoogleIdToken(): String? = suspendCoroutine {
+    internal actual suspend fun getGoogleIdToken(platformContext: PlatformContext): String? = suspendCoroutine {
         val config = js("{}").unsafeCast<IdConfiguration>()
         config.client_id = clientId
         config.auto_select = false

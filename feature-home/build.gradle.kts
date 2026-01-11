@@ -14,6 +14,10 @@ plugins {
 
 kotlin {
 
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xcontext-parameters"))
+    }
+
     androidLibrary {
         namespace = "com.foodsaver.app.feature.home"
         compileSdk = libs.versions.android.compileSdk.get().toInt()

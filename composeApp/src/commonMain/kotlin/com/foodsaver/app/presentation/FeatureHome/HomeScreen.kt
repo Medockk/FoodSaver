@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,8 +39,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,17 +49,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.SearchTextField
 import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureHome.components.CategoryChip
 import com.foodsaver.app.presentation.FeatureHome.components.ProductCard
 import com.foodsaver.app.presentation.Home.HomeAction
 import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.presentation.Home.HomeState
 import com.foodsaver.app.presentation.Home.HomeViewModel
-import com.foodsaver.app.presentation.routing.Route
+import com.foodsaver.app.presentation.Home.ProductsDisplayMode
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_burger_icon
@@ -78,10 +79,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SharedTransitionScope.HomeScreenRoot(
     navController: NavController,
     animatedContentScope: AnimatedContentScope,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
 
-    val state = viewModel.state.value
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val channel = viewModel.channel
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -114,7 +115,7 @@ private fun SharedTransitionScope.HomeScreen(
     snackbarHostState: SnackbarHostState,
     animatedContentScope: AnimatedContentScope,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     val lazyColumnState = rememberLazyListState()
@@ -226,12 +227,12 @@ private fun SharedTransitionScope.HomeScreen(
             contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             item {
-                Column() {
+                Column {
                     Spacer(Modifier.height(20.dp))
                     SearchTextField(
                         value = state.searchQuery,
                         onValueChange = { onEvent(HomeEvent.OnSearchQueryChange(it)) },
-                        onSearch = {  },
+                        onSearch = { },
                         modifier = Modifier
                             .fillMaxWidth(),
                         hint = stringResource(Res.string.search),
@@ -256,22 +257,17 @@ private fun SharedTransitionScope.HomeScreen(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
 
-                ) {
+                    ) {
                     itemsIndexed(
                         items = state.categories,
-                        key = { index, _ ->
-                            index
-                        }
-                    ) { index, category ->
+                        key = { _, category -> category.categoryId }
+                    ) { _, category ->
+                        val isSelected = state.selectedCategoryIds.contains(category.categoryId)
                         CategoryChip(
                             label = category.categoryName,
-                            isSelected = index == state.categoryIndex,
+                            isSelected = isSelected,
                             onClick = {
-                                if (index == state.categoryIndex) {
-                                    onEvent(HomeEvent.OnCategoryIndexChange(null))
-                                } else {
-                                    onEvent(HomeEvent.OnCategoryIndexChange(index))
-                                }
+                                onEvent(HomeEvent.OnCategoryIndexChange(category.categoryId))
                             }
                         )
                     }
@@ -279,54 +275,44 @@ private fun SharedTransitionScope.HomeScreen(
                 Spacer(Modifier.height(28.dp))
             }
 
-            if (state.categoryIndex == null) {
-                item {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
-                        modifier = Modifier
-                            .fillParentMaxSize()
-                    ) {
-                        this@LazyVerticalGrid.items(
-                            items = state.products,
-                            key = { it.productId }
-                        ) { product ->
-                            with(animatedContentScope) {
-                                val isInCart = state.cartProductIds.contains(product.productId)
-                                ProductCard(
-                                    product = product,
-                                    isInCart = isInCart,
-                                    onProductClick = { productId ->
-                                        navController.navigate(route = Route.MainGraph.ProductDetailScreen(
+            item {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    modifier = Modifier
+                        .fillParentMaxSize()
+                ) {
+                    this@LazyVerticalGrid.items(
+                        items = when (state.productsDisplayMode) {
+                            ProductsDisplayMode.All -> state.products
+                            ProductsDisplayMode.Searched -> state.searchedProducts
+                        },
+                        key = { it.productId }
+                    ) { product ->
+                        with(animatedContentScope) {
+                            val isInCart = state.cartProductIds.contains(product.productId)
+                            ProductCard(
+                                product = product,
+                                isInCart = isInCart,
+                                onProductClick = { productId ->
+                                    navController.navigate(
+                                        route = Route.MainGraph.ProductDetailScreen(
                                             productId = productId,
-                                            isProductInCart = isInCart
-                                        ))
-                                    },
-                                    onAddProductClick = {
-                                        onEvent(HomeEvent.OnAddProductToCart(it))
-                                    },
-                                    modifier = Modifier
-                                        .fillParentMaxWidth(0.5f)
-                                )
-                            }
+                                            isProductInCart = isInCart,
+                                            initialQuantity = state.cartProducts.find {
+                                                it.product.productId == productId
+                                            }?.quantity ?: 1L
+                                        )
+                                    )
+                                },
+                                onAddProductClick = {
+                                    onEvent(HomeEvent.OnAddProductToCart(it))
+                                },
+                                modifier = Modifier
+                                    .fillParentMaxWidth(0.5f)
+                                    .animateItem()
+                            )
                         }
-                    }
-                }
-            }
-            else {
-                items(
-                    items = state.productsByCategory,
-                    key = { it.productId }
-                ) {product ->
-                    with(animatedContentScope) {
-                        ProductCard(
-                            product = product,
-                            isInCart = false,
-                            onProductClick = {  },
-                            onAddProductClick = {  },
-                            modifier = Modifier
-                                .fillMaxWidth(0.5f)
-                        )
                     }
                 }
             }

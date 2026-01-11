@@ -1,8 +1,8 @@
 package com.foodsaver.app.data.repository
 
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.map
-import com.foodsaver.app.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.data.dto.AuthResponseModelDto
 import com.foodsaver.app.data.dto.GoogleAuthRequestDto
 import com.foodsaver.app.data.mappers.toDto
@@ -12,7 +12,9 @@ import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
 import com.foodsaver.app.domain.repository.AuthRepository
 import com.foodsaver.app.domain.repository.DatabaseProvider
-import com.foodsaver.app.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.utils.PlatformContext
+import com.foodsaver.app.domain.utils.AuthExceptions
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
@@ -58,13 +60,25 @@ class AuthRepositoryImpl(
         }.map { it.toModel() }
     }
 
-    override suspend fun authenticateWithGoogle(): ApiResult<AuthResponseModel> {
+    override suspend fun authenticateWithGoogle(platformContext: PlatformContext): ApiResult<AuthResponseModel> {
         val googleIdToken = try {
-            googleAuthenticator.getGoogleIdToken() ?: return ApiResult.Error(GlobalErrorResponse(
+            googleAuthenticator.getGoogleIdToken(platformContext) ?: return ApiResult.Error(GlobalErrorResponse(
                 error = "Google id token is null",
                 message = "Failed to authenticate user. Try again",
                 httpCode = HttpStatusCode.BadRequest.value
             ))
+        } catch (e: AuthExceptions) {
+            val message = when (e) {
+                is AuthExceptions.FailedToExactActivityFromContext -> "Failed to authenticate user"
+                is AuthExceptions.NoGoogleAccount -> "Authenticate in Google account, to login in app"
+            }
+            return ApiResult.Error(
+                error = GlobalErrorResponse(
+                    error = e.message.toString(),
+                    message = message,
+                    httpCode = HttpStatusCode.BadRequest.value
+                )
+            )
         } catch (e: Exception) {
             return ApiResult.Error(
                 error = GlobalErrorResponse(
@@ -92,5 +106,5 @@ class AuthRepositoryImpl(
 }
 
 expect class GoogleAuthenticator {
-    internal suspend fun getGoogleIdToken(): String?
+    internal suspend fun getGoogleIdToken(platformContext: PlatformContext): String?
 }

@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -51,8 +50,7 @@ fun SharedTransitionScope.CartProductCard(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clip(CircleShape)
-                        .sizeIn(maxHeight = 25.dp, maxWidth = 25.dp)
-                        .aspectRatio(1f)
+                        .sizeIn(minWidth = 25.dp, minHeight = 25.dp, maxHeight = 28.dp)
                         .sharedElement(
                             sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.countAnim(cartItem.product.productId)),
                             animatedVisibilityScope = animatedVisibilityScope,
@@ -65,7 +63,7 @@ fun SharedTransitionScope.CartProductCard(
                     Text(
                         text = cartItem.quantity.toString(),
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(horizontal = 4.dp, vertical = 2.dp),
                         color = Color.White
                     )
                 }

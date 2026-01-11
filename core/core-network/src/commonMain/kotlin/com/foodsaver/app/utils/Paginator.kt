@@ -1,11 +1,11 @@
 package com.foodsaver.app.utils
 
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.getOrElse
-import com.foodsaver.app.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.getOrElse
+import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 
 class Paginator<Key, Item>(
-    initKey: Key,
+    private val initKey: Key,
     private val onLoadUpdated: (Boolean) -> Unit,
     private val onRequest: suspend (nextKey: Key) -> ApiResult<Item>,
     private val onNextKey: (currentKey: Key, result: Item) -> Key,
@@ -38,5 +38,11 @@ class Paginator<Key, Item>(
         onLoadUpdated(false)
 
         isEndReached = endReached(currentKey, item)
+    }
+
+    fun reset() {
+        currentKey = initKey
+        isMakingRequest = false
+        isEndReached = false
     }
 }

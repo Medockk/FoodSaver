@@ -1,8 +1,8 @@
 package com.foodsaver.app.data.repository
 
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.map
-import com.foodsaver.app.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProductRepository
@@ -47,5 +47,25 @@ internal class ProductRepositoryImpl(
         val product = queries.getCachedProducts().executeAsList()
             .find { it.product.productId == productId }
         send(product?.product?.toModel())
+    }
+
+    override suspend fun searchProduct(
+        name: String,
+        categoryIds: List<String>,
+        page: Int,
+        size: Int
+    ): ApiResult<List<ProductModel>> {
+        return saveNetworkCall<List<ProductDto>> {
+            httpClient.get(HttpConstants.PRODUCTS_URL + "/search") {
+                parameter("name", name)
+                categoryIds.forEach { categoryId ->
+                    parameter("categoryIds", categoryId)
+                }
+                parameter("page", page)
+                parameter("size", size)
+            }
+        }.map {
+            it.toModel()
+        }
     }
 }

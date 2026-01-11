@@ -1,5 +1,7 @@
 package com.foodsaver.app.data.repository
 
-actual class GoogleAuthenticator actual constructor() {
-    internal actual suspend fun getGoogleIdToken(): String? = null
+import com.foodsaver.app.commonModule.utils.PlatformContext
+
+actual class GoogleAuthenticator {
+    internal actual suspend fun getGoogleIdToken(platformContext: PlatformContext): String? = null
 }

@@ -14,6 +14,10 @@ plugins {
 
 kotlin {
 
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xcontext-parameters"))
+    }
+
     androidLibrary {
         namespace = "com.foodsaver.app.core.module.core.common"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -54,6 +58,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.androidx.viewModel)
 
             implementation(libs.kotlinx.datetime)
         }

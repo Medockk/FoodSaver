@@ -12,6 +12,10 @@ plugins {
 
 kotlin {
 
+    compilerOptions {
+        freeCompilerArgs.addAll("-opt-in=kotlinx.datetime.ExperimentalTime", "-opt-in=kotlin.time.ExperimentalTime")
+    }
+
     androidLibrary {
         namespace = "com.foodsaver.app.core.module.core.db"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
