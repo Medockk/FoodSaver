@@ -1,0 +1,14 @@
+import com.foodsaver.app.dto.ProductDto;
+
+CREATE TABLE IF NOT EXISTS cachedProduct (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    product TEXT AS ProductDto NOT NULL
+);
+
+getCachedProducts:
+SELECT *
+FROM cachedProduct;
+
+insertCachedProduct:
+INSERT INTO cachedProduct (product)
+VALUES (?);

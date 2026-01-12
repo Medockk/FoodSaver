@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS userEntity (
+    uid TEXT NOT NULL PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT,
+    name TEXT,
+    photoUrl TEXT,
+    createdAt INTEGER NOT NULL,
+    roles TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cartEntity (
+    localId INTEGER PRIMARY KEY AUTOINCREMENT,
+    productId TEXT,
+    product TEXT AS ProductDto NOT NULL,
+    quantity INTEGER NOT NULL,
+    tempId TEXT NOT NULL UNIQUE
+);

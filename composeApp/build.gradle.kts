@@ -10,9 +10,16 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
+
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xcontext-parameters"))
+    }
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -35,34 +42,59 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.splash)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.animation)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            implementation(libs.kotlinx.serialization.json)
+
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
+
             implementation(libs.koin.compose.navigation)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.koin.core)
+
+            implementation(libs.kotlinx.coroutines)
+            implementation(libs.bundles.coil)
 
             implementation(projects.shared)
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
+
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreCommon)
+            implementation(projects.core.coreAuth)
+            implementation(projects.core.coreModel)
+            implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
+            implementation(projects.core.coreProfile)
+            implementation(projects.core.coreNavigation)
+
             implementation(projects.featureAuth)
+            implementation(projects.featureAuth.di)
+
+            implementation(projects.featureHome)
+            implementation(projects.featureProductDetail)
+            implementation(projects.featureCart)
+            implementation(projects.featureProfile)
+
+            implementation(libs.image.picker)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)
 //        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+            implementation(libs.kotlinx.coroutines.swing)
         }
 
         webMain.dependencies {

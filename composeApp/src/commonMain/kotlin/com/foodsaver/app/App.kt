@@ -1,61 +1,54 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.foodsaver.app
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.foodsaver.app.feature.auth.presentation.Route
-import com.foodsaver.app.presentation.Auth.AuthScreenRoot
+import com.foodsaver.app.navigationModule.Route
+import com.foodsaver.app.presentation.FeatureAuth.featureAuthNavigation
+import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
+import com.foodsaver.app.presentation.FeatureProfile.featureProfileNavigation
 import com.foodsaver.app.ui.colorScheme
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
-    initialRoute: Route = Route.AuthGraph,
+    viewModel: AppViewModel = koinViewModel(),
+    initialAuthRoute: Route = Route.AuthGraph.AuthScreen,
 ) {
+
+    val startDestination = if (viewModel.isUserLogin) Route.MainGraph
+    else Route.AuthGraph
+
     MaterialTheme(
         colorScheme = colorScheme()
     ) {
-        Scaffold(
-            contentWindowInsets = WindowInsets.statusBars
-        ) { _ ->
-            NavHost(navController, startDestination = initialRoute) {
-                navigation<Route.AuthGraph>(
-                    startDestination = Route.AuthGraph.AuthScreen
-                ) {
-                    composable<Route.AuthGraph.AuthScreen> {
-                        AuthScreenRoot(navController)
-                    }
-                }
+        SharedTransitionLayout {
+            Scaffold(
+                contentWindowInsets = WindowInsets.statusBars
+            ) { _ ->
+                NavHost(navController, startDestination = startDestination) {
+                    featureAuthNavigation(
+                        navController = navController,
+                        startDestination = initialAuthRoute,
+                        onSuccessAuthentication = { uid ->
+                            navController.navigate(Route.MainGraph.HomeScreen) {
+                                popUpTo<Route.AuthGraph>()
+                            }
+                            viewModel.onUserAuthenticate(uid)
+                        })
 
-                composable<Route.ResetGraph.ResetPassword> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(it.toRoute<Route.ResetGraph.ResetPassword>().token)
-                    }
-                }
-
-                navigation<Route.MainGraph>(Route.MainGraph.HomeScreen) {
-                    composable<Route.MainGraph.HomeScreen> {
-                        Box(Modifier.fillMaxSize().background(Color.Green))
-                    }
+                    featureHomeNavigation(navController)
+                    featureProfileNavigation(navController)
                 }
             }
         }

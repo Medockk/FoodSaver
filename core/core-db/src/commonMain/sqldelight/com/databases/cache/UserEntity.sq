@@ -1,0 +1,21 @@
+import com.foodsaver.app.dto.AddressDto;
+import com.foodsaver.app.dto.PaymentCardDto;
+import kotlin.String;
+import kotlin.collections.List;
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS userEntity (
+    uid TEXT NOT NULL PRIMARY KEY,
+    username TEXT NOT NULL,
+    email TEXT,
+    name TEXT,
+    photoUrl TEXT,
+    createdAt INTEGER AS Instant NOT NULL,
+    roles TEXT AS List<String> NOT NULL,
+
+    phone TEXT,
+    bio TEXT,
+    addresses TEXT AS List<AddressDto> NOT NULL,
+    paymentCartNumbers TEXT AS List<PaymentCardDto> NOT NULL,
+    currentCity TEXT
+);

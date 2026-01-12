@@ -11,4 +11,35 @@
     <string name="create_account">Create Account</string>
     <string name="create">Create</string>
     <string name="authenticate_with_google">Authenticate with Google</string>
+
+    <string name="search">Search</string>
+
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
+
+    <string name="total_items">Total</string>
+    <string name="add_product_to_cart">Add to cart</string>
+    <string name="remove_product_from_cart">Remove to cart</string>
+
+    <string name="menu">Menu</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="address">Addresses</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="support_service">Support service</string>
+    <string name="log_out">Log Out</string>
+
+    <string name="profile">Profile</string>
+    <string name="save">Save</string>
+    <string name="profile_full_name">FULL NAME</string>
+    <string name="profile_email">EMAIL</string>
+    <string name="profile_phone">PHONE NUMBER</string>
+    <string name="profile_bio">BIO</string>
+
+    <string name="cart">Cart</string>
+    <string name="time_to_delivery">Срок поставки</string>
+    <string name="addresses">Addresses</string>
+    <string name="add_new_address">Add new address</string>
+    <string name="add_new_card">Add new card</string>
 </resources>

@@ -1,0 +1,34 @@
+insertUser:
+INSERT OR REPLACE INTO userEntity
+VALUES ?;
+
+deleteUser:
+DELETE FROM userEntity
+WHERE uid = ?;
+
+getUserByUid:
+SELECT *
+FROM userEntity
+WHERE uid = :uid;
+
+updateUser:
+UPDATE userEntity
+SET name = ?,
+email = ?,
+photoUrl = ?,
+bio = ?,
+phone = ?,
+addresses = ?,
+paymentCartNumbers = ?,
+currentCity = ?
+WHERE uid = ?;
+
+updatePaymentMethod:
+UPDATE userEntity
+SET paymentCartNumbers = ?
+WHERE uid = ?;
+
+updatePhotoUrl:
+UPDATE userEntity
+SET photoUrl = ?
+WHERE uid = ?;

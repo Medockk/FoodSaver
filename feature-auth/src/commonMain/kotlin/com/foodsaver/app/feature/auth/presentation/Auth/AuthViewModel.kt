@@ -4,16 +4,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.feature.auth.domain.model.AuthResponseModel
-import com.foodsaver.app.feature.auth.domain.model.SignInModel
-import com.foodsaver.app.feature.auth.domain.model.SignUpModel
-import com.foodsaver.app.feature.auth.domain.usecase.AuthenticateWithGoogleUseCase
-import com.foodsaver.app.feature.auth.domain.usecase.SignInUseCase
-import com.foodsaver.app.feature.auth.domain.usecase.SignUpUseCase
-import com.foodsaver.app.feature.auth.domain.utils.EmailValidator
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.domain.model.AuthResponseModel
+import com.foodsaver.app.domain.model.SignInModel
+import com.foodsaver.app.domain.model.SignUpModel
+import com.foodsaver.app.domain.usecase.AuthenticateWithGoogleUseCase
+import com.foodsaver.app.domain.usecase.SignInUseCase
+import com.foodsaver.app.domain.usecase.SignUpUseCase
+import com.foodsaver.app.domain.utils.EmailValidator
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthAction.OnError
-import com.foodsaver.app.utils.ApiResult.ApiResult
-import com.foodsaver.app.utils.InputOutput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase,
-    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase,
+    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(AuthState())
@@ -78,7 +78,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -104,16 +104,18 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
             }
 
-            AuthEvent.OnAuthenticateWithGoogle -> {
+            is AuthEvent.OnAuthenticateWithGoogle -> {
                 _state.value = state.value.copy(isLoading = true)
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    when (val result = authenticateWithGoogleUseCase.invoke()) {
+                    when (val result = authenticateWithGoogleUseCase.invoke(
+                        event.platformContext
+                    )) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
                             _channel.send(OnError(result.error.message))
@@ -122,7 +124,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -139,24 +141,23 @@ class AuthViewModel(
     }
 
     private suspend fun checkInputData(shouldCheckFio: Boolean = false): Boolean {
-        var result = true
         if (shouldCheckFio && _state.value.fio.isBlank()) {
-            _channel.send(AuthAction.OnError("Fio must be not empty"))
-            result = false
+            _channel.send(OnError("Fio must be not empty"))
+            return false
         }
         if (_state.value.email.isBlank()) {
-            _channel.send(AuthAction.OnError("Email must be not empty"))
-            result = false
+            _channel.send(OnError("Email must be not empty"))
+            return false
         }
         if (!EmailValidator.validate(_state.value.email)) {
-            _channel.send(AuthAction.OnError("Email invalid"))
-            result = false
+            _channel.send(OnError("Email invalid"))
+            return false
         }
         if (_state.value.password.isBlank()) {
-            _channel.send(AuthAction.OnError("Password must be not empty"))
-            result = false
+            _channel.send(OnError("Password must be not empty"))
+            return false
         }
 
-        return result
+        return true
     }
 }
