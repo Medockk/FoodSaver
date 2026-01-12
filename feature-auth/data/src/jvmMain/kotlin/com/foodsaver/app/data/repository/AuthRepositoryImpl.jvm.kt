@@ -1,5 +1,6 @@
 package com.foodsaver.app.data.repository
 
+import com.foodsaver.app.commonModule.utils.PlatformContext
 import com.foodsaver.app.feature.auth.config.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,12 +21,12 @@ import java.nio.charset.StandardCharsets
 
 actual class GoogleAuthenticator {
 
-    private lateinit var authConnector: AuthConnector
+    private val authConnector: AuthConnector
     constructor(authConnector: AuthConnector) {
         this.authConnector = authConnector
     }
 
-    internal actual suspend fun getGoogleIdToken(): String? {
+    internal actual suspend fun getGoogleIdToken(platformContext: PlatformContext): String? {
         val resultDeferred = CompletableDeferred<String?>()
 
         val server = embeddedServer(Netty, port = 0) {

@@ -72,10 +72,12 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreAuth)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCart)
             implementation(projects.core.coreProfile)
+            implementation(projects.core.coreNavigation)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)
@@ -84,13 +86,15 @@ kotlin {
             implementation(projects.featureProductDetail)
             implementation(projects.featureCart)
             implementation(projects.featureProfile)
+
+            implementation(libs.image.picker)
         }
 //        commonTest.dependencies {
 //            implementation(libs.kotlin.test)
 //        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+            implementation(libs.kotlinx.coroutines.swing)
         }
 
         webMain.dependencies {

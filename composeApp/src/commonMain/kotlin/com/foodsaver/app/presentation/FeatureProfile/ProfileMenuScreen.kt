@@ -29,13 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureProfile.components.ProfileInfo
 import com.foodsaver.app.presentation.FeatureProfile.components.ProfileMenuItem
 import com.foodsaver.app.presentation.ProfileMenu.ProfileAction
 import com.foodsaver.app.presentation.ProfileMenu.ProfileEvent
 import com.foodsaver.app.presentation.ProfileMenu.ProfileState
 import com.foodsaver.app.presentation.ProfileMenu.ProfileViewModel
-import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.address
@@ -69,7 +69,11 @@ fun ProfileMenuScreenRoot(
                 snackbarHostState.showSnackbar(it.message)
             }
 
-            ProfileAction.OnSuccessLogout -> TODO()
+            ProfileAction.OnSuccessLogout -> {
+                navController.navigate(Route.AuthGraph) {
+                    popUpTo<Route.MainGraph>()
+                }
+            }
         }
     }
 
@@ -133,7 +137,7 @@ private fun ProfileMenuScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }
                     ) {
                         Icon(
@@ -146,7 +150,9 @@ private fun ProfileMenuScreen(
                     }
                 }
             )
-        }
+        },
+        modifier = Modifier
+            .fillMaxSize()
     ) { paddingValues ->
         Column(
             modifier = Modifier

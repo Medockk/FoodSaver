@@ -68,6 +68,7 @@ import com.foodsaver.app.feature.auth.presentation.Auth.AuthPage
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthState
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
 import com.foodsaver.app.utils.ObserveActions
+import com.foodsaver.app.utils.rememberPlatformContext
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.authenticate_with_google
 import foodsaver.composeapp.generated.resources.create
@@ -87,7 +88,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AuthScreenRoot(
     navController: NavController,
-    onSuccessAuthentication: () -> Unit,
+    onSuccessAuthentication: (uid: String) -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
 
@@ -101,8 +102,8 @@ fun AuthScreenRoot(
                 snackBarHostState.showSnackbar(it.message)
             }
 
-            AuthAction.OnSuccessAuthentication -> {
-                onSuccessAuthentication()
+            is AuthAction.OnSuccessAuthentication -> {
+                onSuccessAuthentication(it.uid)
             }
         }
     }
@@ -130,6 +131,8 @@ private fun AuthScreen(
     snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
+    val platformContext = rememberPlatformContext()
+
     val density = LocalDensity.current
     val screenHeight = with(density) {
         LocalWindowInfo.current.containerSize.height.toDp()
@@ -434,7 +437,7 @@ private fun AuthScreen(
                             fontWeight = FontWeight.Medium
                         )
                     },
-                    onClick = { onEvent(AuthEvent.OnAuthenticateWithGoogle) },
+                    onClick = { onEvent(AuthEvent.OnAuthenticateWithGoogle(platformContext)) },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .heightIn(45.dp),

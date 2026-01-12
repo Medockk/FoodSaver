@@ -9,7 +9,7 @@ class FoodSaverApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        com.foodsaver.app.di.applicationContext = this
+        com.foodsaver.app.di.applicationContext = this.applicationContext
         initSharedKoin(arrayOf(uiModule))
     }
 }

@@ -2,12 +2,15 @@ package com.foodsaver.app.presentation.FeatureProfile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -20,8 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.foodsaver.app.common.AuthenticationTextField
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
+import com.foodsaver.app.presentation.FeatureProfile.components.AddProfileInfoAlert
 import com.foodsaver.app.presentation.FeatureProfile.components.ProfileAddressCard
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressAction
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressEvent
@@ -40,6 +45,7 @@ fun ProfileAddressRoot(
     viewModel: ProfileAddressViewModel = koinViewModel()
 ) {
 
+    val state = viewModel.state
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveActions(viewModel.channel) {
@@ -52,10 +58,57 @@ fun ProfileAddressRoot(
 
     ProfileAddress(
         navController = navController,
-        state = viewModel.state,
+        state = state,
         onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState
     )
+
+    if (state.shouldShowDialog) {
+        AddProfileInfoAlert(
+            content = {
+                Column {
+                    AuthenticationTextField(
+                        value = state.dialogAddressName,
+                        onValueChange = {
+                            viewModel.onEvent(ProfileAddressEvent.OnDialogAddressNameChange(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "Address name",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    AuthenticationTextField(
+                        value = state.dialogAddressValue,
+                        onValueChange = {
+                            viewModel.onEvent(ProfileAddressEvent.OnDialogAddressValueChange(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "Address value",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+
+                }
+            },
+            onSaveButtonClick = {
+                viewModel.onEvent(ProfileAddressEvent.OnSaveAddress)
+            },
+            onDismissRequestClick = {
+                viewModel.onEvent(ProfileAddressEvent.OnCloseDialog)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+    }
 }
 
 @Composable

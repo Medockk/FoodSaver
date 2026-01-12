@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class CartItemDto(
     val id: String,
     val product: ProductDto,
-    val quantity: Int,
+    val quantity: Long,
     val tempId: String,
 )

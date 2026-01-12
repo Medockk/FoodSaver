@@ -5,8 +5,6 @@ package com.foodsaver.app.presentation.FeatureProductDetail
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,14 +49,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
+import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailActions
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailEvents
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailState
+import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailViewModel
 import com.foodsaver.app.model.ExpiresDateType
 import com.foodsaver.app.model.ProductUnitType
 import com.foodsaver.app.presentation.FeatureProductDetail.components.ProductCounter
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailActions
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailEvents
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailState
-import com.foodsaver.app.presentation.ProductDetail.ProductDetailViewModel
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
@@ -76,17 +75,12 @@ import foodsaver.composeapp.generated.resources.total_items
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun SharedTransitionScope.ProductScreenRoot(
-    productId: String,
-    isProductInCart: Boolean,
     navController: NavController,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: ProductDetailViewModel = koinViewModel(parameters = {
-        parametersOf(productId, isProductInCart)
-    }),
+    viewModel: ProductDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -103,20 +97,23 @@ fun SharedTransitionScope.ProductScreenRoot(
         }
     }
 
-    ProductScreen(
-        productId = productId,
-        state = state,
-        navController = navController,
-        animatedVisibilityScope = animatedVisibilityScope,
-        onEvent = viewModel::onEvent,
-        snackbarHostState = snackbarHostState
-    )
+    PrimaryPullToRefreshBox(
+        isRefreshing = state.isRefresh,
+        onRefresh = viewModel::onRefresh
+    ) {
+        ProductScreen(
+            state = state,
+            navController = navController,
+            animatedVisibilityScope = animatedVisibilityScope,
+            onEvent = viewModel::onEvent,
+            snackbarHostState = snackbarHostState
+        )
+    }
 }
 
 
 @Composable
 private fun SharedTransitionScope.ProductScreen(
-    productId: String,
     state: ProductDetailState,
     snackbarHostState: SnackbarHostState,
     navController: NavController,
@@ -125,7 +122,7 @@ private fun SharedTransitionScope.ProductScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    val topAppBarState = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val topAppBarState = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
         snackbarHost = {
@@ -199,10 +196,7 @@ private fun SharedTransitionScope.ProductScreen(
                                     product.productId
                                 )
                             ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
+                            animatedVisibilityScope = animatedVisibilityScope
                         )
                         .sharedElement(
                             sharedContentState = rememberSharedContentState(
@@ -210,10 +204,7 @@ private fun SharedTransitionScope.ProductScreen(
                                     product.productId
                                 )
                             ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
+                            animatedVisibilityScope = animatedVisibilityScope
                         ),
                     contentScale = ContentScale.FillBounds
                 )
@@ -222,58 +213,12 @@ private fun SharedTransitionScope.ProductScreen(
 
                 Text(
                     text = product.title,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Home_ProductDetail.nameAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(450, easing = LinearEasing)
-                            }
-                        )
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Cart_ProductDetail.nameAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(450, easing = LinearEasing)
-                            }
-                        ),
                     fontWeight = FontWeight.Bold,
                     fontSize = 26.sp,
                     color = MaterialTheme.colorScheme.primaryFixed
                 )
                 Text(
                     text = "${product.costUnit} ${product.cost}",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Home_ProductDetail.costAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
-                        )
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Cart_ProductDetail.costAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
-                        ),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
@@ -287,9 +232,7 @@ private fun SharedTransitionScope.ProductScreen(
                     },
                     onDecreaseClick = {
                         onEvent(ProductDetailEvents.OnDecreaseCountClick)
-                    },
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    productId = productId
+                    }
                 )
 
 
@@ -317,31 +260,7 @@ private fun SharedTransitionScope.ProductScreen(
                     )
                     Spacer(Modifier.weight(1f))
 
-                    Row(
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    ScreenAnimation.Home_ProductDetail.unitAnim(
-                                        product.productId
-                                    )
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                boundsTransform = { _, _ ->
-                                    tween()
-                                }
-                            )
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    ScreenAnimation.Cart_ProductDetail.unitAnim(
-                                        product.productId
-                                    )
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                boundsTransform = { _, _ ->
-                                    tween()
-                                }
-                            ),
-                    ) {
+                    Row{
                         Icon(
                             painter = painterResource(
                                 resource = when (product.unitType) {
@@ -364,20 +283,7 @@ private fun SharedTransitionScope.ProductScreen(
                     }
                     Spacer(Modifier.weight(1f))
 
-                    Row(
-                        modifier = Modifier
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    ScreenAnimation.Home_ProductDetail.expiresAtAnim(
-                                        product.productId
-                                    )
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                boundsTransform = { _, _ ->
-                                    tween()
-                                }
-                            ),
-                    ) {
+                    Row{
                         Icon(
                             painter = painterResource(Res.drawable.ic_clock_icon),
                             contentDescription = "expires at",
@@ -453,19 +359,7 @@ private fun SharedTransitionScope.ProductScreen(
                             }
                         },
                         modifier = Modifier
-                            .heightIn(min = 55.dp)
-                            .sharedElement(
-                                sharedContentState = rememberSharedContentState(
-                                    ScreenAnimation.Home_ProductDetail.buttonAnim(
-                                        product.productId
-                                    )
-                                ),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                boundsTransform = { _, _ ->
-                                    tween()
-                                },
-                                renderInOverlayDuringTransition = false
-                            ),
+                            .heightIn(min = 55.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary
                         ),

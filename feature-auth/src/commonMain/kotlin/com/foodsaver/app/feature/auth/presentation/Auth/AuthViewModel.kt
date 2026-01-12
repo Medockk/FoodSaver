@@ -4,8 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
@@ -78,7 +78,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -104,16 +104,18 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
             }
 
-            AuthEvent.OnAuthenticateWithGoogle -> {
+            is AuthEvent.OnAuthenticateWithGoogle -> {
                 _state.value = state.value.copy(isLoading = true)
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    when (val result = authenticateWithGoogleUseCase.invoke()) {
+                    when (val result = authenticateWithGoogleUseCase.invoke(
+                        event.platformContext
+                    )) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
                             _channel.send(OnError(result.error.message))
@@ -122,7 +124,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }

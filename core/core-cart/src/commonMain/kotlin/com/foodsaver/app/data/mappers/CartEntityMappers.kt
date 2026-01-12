@@ -23,9 +23,9 @@ internal fun List<CartItemDto>.mapToModel() =
 internal fun CartEntity.toModel(): CartItemModel {
     return CartItemModel(
         localId = localId,
-        globalId = globalId,
+        globalId = productId,
         product = this.product.toModel(),
-        quantity = quantity.toInt()
+        quantity = quantity
     )
 }
 

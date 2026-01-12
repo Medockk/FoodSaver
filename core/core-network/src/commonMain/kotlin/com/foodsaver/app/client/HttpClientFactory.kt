@@ -2,6 +2,7 @@ package com.foodsaver.app.client
 
 import com.foodsaver.app.manager.AuthInterceptor
 import io.ktor.client.HttpClient
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -43,6 +44,10 @@ internal class HttpClientFactory(
                 install(HttpRequestRetry) {
                     maxRetries = 3
                     delayMillis { it * 3_000L }
+                    retryOnException(3, true)
+                    retryOnExceptionIf(maxRetries = 3) { _, cause ->
+                        cause !is ConnectTimeoutException
+                    }
                 }
             }.intercept()
         }

@@ -26,7 +26,9 @@ actual class AccessTokenManager actual constructor() {
     }
 
     actual suspend fun clearTokens() {
-
+        listOf(refreshTokenKey, jwtTokenKey, csrfTokenKey).forEach { key ->
+            storage.removeObjectForKey(key)
+        }
     }
 
     actual suspend fun getCsrfToken(): String? {

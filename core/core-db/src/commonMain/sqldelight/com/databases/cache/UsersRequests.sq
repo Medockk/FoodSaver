@@ -2,9 +2,9 @@ insertUser:
 INSERT OR REPLACE INTO userEntity
 VALUES ?;
 
-getUser:
-SELECT *
-FROM userEntity;
+deleteUser:
+DELETE FROM userEntity
+WHERE uid = ?;
 
 getUserByUid:
 SELECT *
@@ -26,4 +26,9 @@ WHERE uid = ?;
 updatePaymentMethod:
 UPDATE userEntity
 SET paymentCartNumbers = ?
+WHERE uid = ?;
+
+updatePhotoUrl:
+UPDATE userEntity
+SET photoUrl = ?
 WHERE uid = ?;

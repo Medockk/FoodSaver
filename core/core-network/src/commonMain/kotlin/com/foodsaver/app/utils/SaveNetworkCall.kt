@@ -1,7 +1,7 @@
 package com.foodsaver.app.utils
 
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText

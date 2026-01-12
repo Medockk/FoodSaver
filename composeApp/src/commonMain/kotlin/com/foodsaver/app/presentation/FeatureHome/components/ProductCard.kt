@@ -108,18 +108,6 @@ fun SharedTransitionScope.ProductCard(
                 }
                 Text(
                     text = "${product.expiresAt} $dateType",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Home_ProductDetail.expiresAtAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = scope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
-                        ),
                     color = MaterialTheme.colorScheme.surfaceDim
                 )
             }
@@ -140,10 +128,7 @@ fun SharedTransitionScope.ProductCard(
                                 product.productId
                             )
                         ),
-                        animatedVisibilityScope = scope,
-                        boundsTransform = { _, _ ->
-                            tween()
-                        }
+                        animatedVisibilityScope = scope
                     ),
                 loading = {
                     this@Column.AnimatedVisibility(
@@ -168,19 +153,6 @@ fun SharedTransitionScope.ProductCard(
 
             Text(
                 text = product.title,
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(
-                            ScreenAnimation.Home_ProductDetail.nameAnim(
-                                product.productId
-                            )
-                        ),
-                        animatedVisibilityScope = scope,
-                        boundsTransform = { _, _ ->
-                            tween(450, easing = LinearEasing)
-                        },
-                        renderInOverlayDuringTransition = true
-                    ),
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
@@ -190,18 +162,6 @@ fun SharedTransitionScope.ProductCard(
             Spacer(Modifier.height(5.dp))
             Text(
                 text = "${product.unit} ${product.unitType.value}",
-                modifier = Modifier
-                    .sharedElement(
-                        sharedContentState = rememberSharedContentState(
-                            ScreenAnimation.Home_ProductDetail.unitAnim(
-                                product.productId
-                            )
-                        ),
-                        animatedVisibilityScope = scope,
-                        boundsTransform = { _, _ ->
-                            tween()
-                        }
-                    ),
                 color = MaterialTheme.colorScheme.secondaryFixedDim,
                 fontWeight = FontWeight.Medium,
                 fontSize = 15.sp
@@ -213,18 +173,6 @@ fun SharedTransitionScope.ProductCard(
             ) {
                 Text(
                     text = "${product.costUnit} ${product.cost.toInt()}",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Home_ProductDetail.costAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = scope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            }
-                        ),
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     fontWeight = FontWeight.Bold,
@@ -271,20 +219,7 @@ fun SharedTransitionScope.ProductCard(
                     },
                     onClick = {
                         onAddProductClick(product.productId)
-                    },
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(
-                                ScreenAnimation.Home_ProductDetail.buttonAnim(
-                                    product.productId
-                                )
-                            ),
-                            animatedVisibilityScope = scope,
-                            boundsTransform = { _, _ ->
-                                tween()
-                            },
-                            renderInOverlayDuringTransition = true
-                        )
+                    }
                 )
             }
         }

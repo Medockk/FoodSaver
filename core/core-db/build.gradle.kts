@@ -1,12 +1,10 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
-
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias { libs.plugins.androidMultiplatformLibrary }
     alias(libs.plugins.sqldelight)
 
     alias { libs.plugins.jetbrains.kotlin.serialization }
@@ -18,7 +16,11 @@ kotlin {
         freeCompilerArgs.addAll("-opt-in=kotlinx.datetime.ExperimentalTime", "-opt-in=kotlin.time.ExperimentalTime")
     }
 
-    androidTarget() {
+    androidLibrary {
+        namespace = "com.foodsaver.app.core.module.core.db"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -74,7 +76,7 @@ kotlin {
             implementation(libs.sqldelight.web.driver)
         }
         wasmJsMain {
-            //dependsOn(jsMain.get())
+
         }
         jsMain.dependencies {
             implementation(libs.sqldelight.web.driver)
@@ -97,21 +99,9 @@ sqldelight {
         create("MainAppDatabase") {
             packageName.set("com.databases.cache")
             verifyMigrations.set(true)
-            version = 2
+            version = 3
 
             generateAsync.set(true)
         }
-    }
-}
-
-android {
-    namespace = "com.foodsaver.app.core.module.core.db"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }

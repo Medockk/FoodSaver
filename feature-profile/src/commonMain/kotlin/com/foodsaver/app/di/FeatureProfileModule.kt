@@ -9,6 +9,7 @@ import com.foodsaver.app.domain.repository.ProfilePersonalInfoRepository
 import com.foodsaver.app.domain.usecase.auth.LogoutUseCase
 import com.foodsaver.app.domain.usecase.paymentCard.GetPaymentMethodUseCase
 import com.foodsaver.app.domain.usecase.personalInfo.SavePersonalInfoUseCase
+import com.foodsaver.app.domain.usecase.personalInfo.UploadAvatarUseCase
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressViewModel
 import com.foodsaver.app.presentation.ProfileMenu.ProfileViewModel
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodViewModel
@@ -22,25 +23,30 @@ val featureProfileModule = module {
     single<LogoutRepository> {
         LogoutRepositoryImpl(
             httpClient = get(),
-            provider = get()
+            databaseProvider = get(),
+            accessTokenManager = get(),
+            authUserManager = get(),
         )
     }
     single<ProfilePersonalInfoRepository> {
         ProfilePersonalInfoRepositoryImpl(
             httpClient = get(),
-            provider = get()
+            provider = get(),
+            authUserManager = get(),
         )
     }
 
     single<PaymentMethodRepository> {
         PaymentMethodRepositoryImpl(
             httpClient = get(),
-            databaseProvider = get()
+            databaseProvider = get(),
+            authUserManager = get(),
         )
     }
 
     factoryOf(::LogoutUseCase)
     factoryOf(::SavePersonalInfoUseCase)
+    factoryOf(::UploadAvatarUseCase)
 
     factoryOf(::GetPaymentMethodUseCase)
 

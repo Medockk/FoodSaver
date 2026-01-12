@@ -12,10 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureAuth.featureAuthNavigation
 import com.foodsaver.app.presentation.FeatureHome.featureHomeNavigation
 import com.foodsaver.app.presentation.FeatureProfile.featureProfileNavigation
-import com.foodsaver.app.presentation.routing.Route
 import com.foodsaver.app.ui.colorScheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -40,9 +40,11 @@ fun App(
                     featureAuthNavigation(
                         navController = navController,
                         startDestination = initialAuthRoute,
-                        onSuccessAuthentication = {
-                            navController.navigate(Route.MainGraph.HomeScreen)
-                            viewModel.onUserAuthenticate()
+                        onSuccessAuthentication = { uid ->
+                            navController.navigate(Route.MainGraph.HomeScreen) {
+                                popUpTo<Route.AuthGraph>()
+                            }
+                            viewModel.onUserAuthenticate(uid)
                         })
 
                     featureHomeNavigation(navController)

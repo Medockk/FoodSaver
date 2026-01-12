@@ -11,11 +11,21 @@ data class HomeState(
     val profile: UserModel? = null,
 
     val isLoading: Boolean = false,
-    val categoryIndex: Int? = null,
+    val isRefresh: Boolean = false,
+    val selectedCategoryIds: Set<String> = emptySet(),
     val categories: List<CategoryModel> = emptyList(),
 
-    val products: List<ProductModel> = emptyList(),
     val cartProducts: List<CartItemModel> = emptyList(),
-    val productsByCategory: List<ProductModel> = emptyList(),
+    val cartProductIds: Set<String> = emptySet(),
+
+    val products: List<ProductModel> = emptyList(),
+    val searchedProducts: List<ProductModel> = emptyList(),
+    val productsDisplayMode: ProductsDisplayMode = ProductsDisplayMode.All,
+
     val isProductsLoading: Boolean = products.isEmpty(),
 )
+
+sealed interface ProductsDisplayMode {
+    data object All: ProductsDisplayMode
+    data object Searched: ProductsDisplayMode
+}

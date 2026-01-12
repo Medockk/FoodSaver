@@ -1,10 +1,11 @@
 package com.foodsaver.app.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.ApiResult.map
-import com.foodsaver.app.ApiResult.onSuccess
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.mappers.toPaymentCardModel
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.PaymentMethodRepository
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 internal class PaymentMethodRepositoryImpl(
     private val httpClient: HttpClient,
     private val databaseProvider: DatabaseProvider,
+    private val authUserManager: AuthUserManager
 ) : PaymentMethodRepository {
 
     override fun getPaymentMethod(): Flow<ApiResult<List<PaymentCardModel>>> = channelFlow {
@@ -32,9 +34,11 @@ internal class PaymentMethodRepositoryImpl(
         val queries = databaseProvider.get().usersRequestsQueries
 
         val databaseJob = launch(Dispatchers.InputOutput) {
-            queries.getUser().asFlow().collect { query ->
-                query.executeAsList().lastOrNull()?.let { user ->
-                    send(ApiResult.Success(user.paymentCartNumbers.map { it.toModel() }))
+            authUserManager.getCurrentUid()?.let { uid ->
+                queries.getUserByUid(uid).asFlow().collect { query ->
+                    query.executeAsList().lastOrNull()?.let { user ->
+                        send(ApiResult.Success(user.paymentCartNumbers.map { it.toModel() }))
+                    }
                 }
             }
         }

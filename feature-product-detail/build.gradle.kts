@@ -1,18 +1,24 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
+import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
-    androidTarget() {
+
+    androidLibrary {
+        namespace = "com.foodsaver.app.feature.product.detail"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -53,8 +59,10 @@ kotlin {
             implementation(projects.core.coreCart)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
+            implementation(projects.core.coreNavigation)
 
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.jetbrains.compose.navigation)
         }
         jvmMain.dependencies {
 
@@ -71,17 +79,5 @@ kotlin {
         jsMain.dependencies {
 
         }
-    }
-}
-
-android {
-    namespace = "com.foodsaver.app.feature.product.detail"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }

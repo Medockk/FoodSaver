@@ -6,5 +6,5 @@ data class CartItemModel(
     val localId: Long,
     val globalId: String?,
     val product: ProductModel,
-    val quantity: Int
+    val quantity: Long
 )

@@ -11,7 +11,8 @@ val coreProfileModule = module {
     single<ProfileRepository> {
         ProfileRepositoryImpl(
             httpClient = get(),
-            databaseProvider = get()
+            databaseProvider = get(),
+            authUserManager = get()
         )
     }
 

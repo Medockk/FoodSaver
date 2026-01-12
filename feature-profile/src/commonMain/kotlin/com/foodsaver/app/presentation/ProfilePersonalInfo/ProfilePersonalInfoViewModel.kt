@@ -1,28 +1,32 @@
 package com.foodsaver.app.presentation.ProfilePersonalInfo
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.usecase.personalInfo.SavePersonalInfoUseCase
+import com.foodsaver.app.domain.usecase.personalInfo.UploadAvatarUseCase
+import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoAction.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfilePersonalInfoViewModel(
     private val savePersonalInfoUseCase: SavePersonalInfoUseCase,
     private val getProfileUseCase: GetProfileUseCase,
+
+    private val uploadAvatarUseCase: UploadAvatarUseCase,
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(ProfilePersonalInfoState())
-    val state: State<ProfilePersonalInfoState> = _state
+    private val _state = MutableStateFlow(ProfilePersonalInfoState())
+    val state = _state.asStateFlow()
 
     private var initialProfileData = ProfilePersonalInfoState().profile
 
@@ -35,26 +39,25 @@ class ProfilePersonalInfoViewModel(
 
     private fun getProfileInfo() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            getProfileUseCase.invoke().collect {
-                when (it) {
+            getProfileUseCase.invoke().collect { result ->
+                when (result) {
                     is ApiResult.Error -> {
-                        _state.value = state.value.copy(isLoading = false)
-                        _channel.send(ProfilePersonalInfoAction.OnError(it.error.message))
+                        _state.update { it.copy(isLoading = false) }
+                        _channel.send(OnError(result.error.message))
                     }
 
                     ApiResult.Loading -> {
-                        _state.value = state.value.copy(isLoading = true)
+                        _state.update { it.copy(isLoading = true) }
                     }
 
                     is ApiResult.Success<UserModel> -> {
-                        withContext(Dispatchers.Main) {
-                            _state.value = state.value.copy(
+                        _state.update {
+                            it.copy(
                                 isLoading = false,
-                                profile = it.data,
+                                profile = result.data,
                             )
-
-                            initialProfileData = it.data
                         }
+                        initialProfileData = result.data
                     }
                 }
             }
@@ -64,40 +67,35 @@ class ProfilePersonalInfoViewModel(
     fun onEvent(event: ProfilePersonalInfoEvent) {
         when (event) {
             is ProfilePersonalInfoEvent.OnBioChange -> {
-                _state.value = state.value.copy(
-                    bio = event.value
-                )
+                _state.update { it.copy(bio = event.value) }
             }
 
             is ProfilePersonalInfoEvent.OnEmailChange -> {
-                _state.value = state.value.copy(
-                    email = event.value
-                )
+                _state.update { it.copy(email = event.value) }
             }
 
             is ProfilePersonalInfoEvent.OnFullNameChange -> {
-                _state.value = state.value.copy(
-                    fullName = event.value
-                )
+                _state.update { it.copy(fullName = event.value) }
             }
 
             is ProfilePersonalInfoEvent.OnPhoneChange -> {
-                _state.value = state.value.copy(
-                    phone = event.value
-                )
+                _state.update { it.copy(phone = event.value) }
             }
 
-            ProfilePersonalInfoEvent.OnChangeImage -> TODO()
+            is ProfilePersonalInfoEvent.OnChangeImage -> {
+                viewModelScope.launch(Dispatchers.InputOutput) {
+                    uploadAvatarUseCase.invoke(event.bytes, event.contentType ?: "image/png")
+
+                    _state.update { it.copy(showGallery = false) }
+                }
+            }
+
             ProfilePersonalInfoEvent.OnSave -> {
                 if (_state.value.fullName.isBlank() && _state.value.profile?.name.isNullOrBlank()) {
-                    viewModelScope.launch {
-                        _channel.send(ProfilePersonalInfoAction.OnError("Full name must be not empty"))
-                    }
+                    _channel.trySend(OnError("Full name must be not empty"))
                     return
                 } else if (_state.value.email.isBlank() && _state.value.profile?.email.isNullOrBlank()) {
-                    viewModelScope.launch {
-                        _channel.send(ProfilePersonalInfoAction.OnError("Email must be not empty"))
-                    }
+                    _channel.trySend(OnError("Email must be not empty"))
                     return
                 }
 
@@ -108,12 +106,10 @@ class ProfilePersonalInfoViewModel(
                     _state.value.phone == initialProfileData?.phone &&
                     _state.value.bio == initialProfileData?.bio
                 ) {
-                    viewModelScope.launch {
-                        _channel.send(ProfilePersonalInfoAction.OnSuccessSave)
-                    }
+                    _channel.trySend(ProfilePersonalInfoAction.OnSuccessSave)
                 } else {
                     viewModelScope.launch(Dispatchers.InputOutput) {
-                        _state.value = state.value.copy(isLoading = true)
+                        _state.update { it.copy(isLoading = true) }
 
                         val request = with(_state.value) {
                             ProfilePersonalInfoModel(
@@ -125,18 +121,25 @@ class ProfilePersonalInfoViewModel(
                         }
                         when (val result = savePersonalInfoUseCase(request)) {
                             is ApiResult.Error -> {
-                                _state.value = state.value.copy(isLoading = false)
-                                _channel.send(ProfilePersonalInfoAction.OnError(result.error.message))
+                                _state.update { it.copy(isLoading = false) }
+                                _channel.send(OnError(result.error.message))
                             }
 
                             ApiResult.Loading -> Unit
                             is ApiResult.Success<*> -> {
-                                _state.value = state.value.copy(isLoading = false)
+                                _state.update { it.copy(isLoading = false) }
                                 _channel.send(ProfilePersonalInfoAction.OnSuccessSave)
                             }
                         }
                     }
                 }
+            }
+
+            ProfilePersonalInfoEvent.OnCloseGallery -> {
+                _state.update { it.copy(showGallery = false) }
+            }
+            ProfilePersonalInfoEvent.OnOpenGallery -> {
+                _state.update { it.copy(showGallery = true) }
             }
         }
     }

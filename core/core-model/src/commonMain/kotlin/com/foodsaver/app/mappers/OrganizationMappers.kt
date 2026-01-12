@@ -8,3 +8,9 @@ fun OrganizationDto.toModel() =
         id = id,
         organizationName = organizationName
     )
+
+fun OrganizationModel.toDto() =
+    OrganizationDto(
+        id = id,
+        organizationName = organizationName
+    )

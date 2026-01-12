@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.ApiResult.ApiResult
-import com.foodsaver.app.InputOutput
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,21 @@ class ProfileAddressViewModel(
 
     fun onEvent(event: ProfileAddressEvent) {
         when (event) {
-            ProfileAddressEvent.OnAddNewAddressClick -> TODO()
+            ProfileAddressEvent.OnAddNewAddressClick -> {
+                state = state.copy(shouldShowDialog = true)
+            }
+            ProfileAddressEvent.OnCloseDialog -> {
+                state = state.copy(shouldShowDialog = false)
+            }
+            is ProfileAddressEvent.OnDialogAddressNameChange -> {
+                state = state.copy(dialogAddressName = event.value)
+            }
+            is ProfileAddressEvent.OnDialogAddressValueChange -> {
+                state = state.copy(dialogAddressValue = event.value)
+            }
+            ProfileAddressEvent.OnSaveAddress -> {
+                state = state.copy(shouldShowDialog = false)
+            }
         }
     }
 }
