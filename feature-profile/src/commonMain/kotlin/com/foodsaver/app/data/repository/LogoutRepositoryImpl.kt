@@ -1,24 +1,31 @@
 package com.foodsaver.app.data.repository
 
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.LogoutRepository
-import com.foodsaver.app.utils.HttpConstants
-import com.foodsaver.app.utils.saveNetworkCall
+import com.foodsaver.app.manager.AccessTokenManager
 import io.ktor.client.HttpClient
-import io.ktor.client.request.delete
 
 internal class LogoutRepositoryImpl(
     private val httpClient: HttpClient,
-    private val provider: DatabaseProvider
-): LogoutRepository {
+    private val databaseProvider: DatabaseProvider,
+    private val accessTokenManager: AccessTokenManager,
+    private val authUserManager: AuthUserManager,
+) : LogoutRepository {
 
     override suspend fun logout(): ApiResult<Unit> {
-        return saveNetworkCall<Unit> {
-            httpClient.delete(HttpConstants.AUTH_URL + "/logout")
-        }.onSuccess {
-            val queries = provider.get().usersRequestsQueries
+        val queries = databaseProvider.get().usersRequestsQueries
+        accessTokenManager.clearTokens()
+        authUserManager.logout()
+
+        queries.transactionWithResult {
+
+            authUserManager.getCurrentUid()?.let { uid ->
+                queries.deleteUser(uid)
+            }
         }
+
+        return ApiResult.Success(Unit)
     }
 }

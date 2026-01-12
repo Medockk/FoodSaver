@@ -86,6 +86,7 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(projects.core.coreAuth)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)

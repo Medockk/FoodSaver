@@ -53,6 +53,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.coreDi)
+            implementation(projects.core.coreAuth)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreCommon)

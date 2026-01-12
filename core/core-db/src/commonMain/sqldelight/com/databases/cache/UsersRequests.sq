@@ -2,9 +2,9 @@ insertUser:
 INSERT OR REPLACE INTO userEntity
 VALUES ?;
 
-getUser:
-SELECT *
-FROM userEntity;
+deleteUser:
+DELETE FROM userEntity
+WHERE uid = ?;
 
 getUserByUid:
 SELECT *

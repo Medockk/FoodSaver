@@ -2,10 +2,7 @@
 
 package com.foodsaver.app.presentation.FeatureProductDetail.components
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,19 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.foodsaver.app.common.CircularPrimaryButton
-import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_minus_icon
 import foodsaver.composeapp.generated.resources.ic_plus_icon
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun SharedTransitionScope.ProductCounter(
+fun ProductCounter(
     count: Long,
     onIncreaseClick: () -> Unit,
     onDecreaseClick: () -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    productId: String,
     modifier: Modifier = Modifier,
 ) {
 
@@ -64,15 +58,6 @@ fun SharedTransitionScope.ProductCounter(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primaryFixed,
             fontSize = 19.sp,
-            modifier = Modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.countAnim(productId)),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween()
-                    },
-                    renderInOverlayDuringTransition = false
-                ),
         )
         Spacer(Modifier.width(10.dp))
 

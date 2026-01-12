@@ -58,6 +58,7 @@ kotlin {
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreProfile)
             implementation(projects.core.coreDb)
+            implementation(projects.core.coreAuth)
 
             implementation(libs.koin.compose.viewmodel)
         }

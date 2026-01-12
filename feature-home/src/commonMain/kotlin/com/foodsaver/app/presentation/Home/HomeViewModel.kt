@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
-import com.foodsaver.app.commonModule.utils.stateFlow
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.model.CategoryModel
@@ -27,12 +26,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,47 +46,12 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
-    private val _searchQuery = MutableStateFlow("")
-    private val _selectedCategories = MutableStateFlow(listOf(""))
-
-    val productsDisplayMode = combine(
-        _searchQuery,
-        _selectedCategories
-    ) { searchQuery, selectedCategories ->
-        val displayMode = when {
-            searchQuery.isNotBlank() -> ProductsDisplayMode.Searched
-            selectedCategories.isNotEmpty() -> ProductsDisplayMode.Searched
-            else -> ProductsDisplayMode.All
-        }
-        displayMode
-    }.stateFlow(ProductsDisplayMode.All)
-
     private val _channel = Channel<HomeAction>()
     val channel = _channel.receiveAsFlow()
 
     private var searchJob: Job? = null
 
     private val pageSize = 15
-
-    init {
-        collectProducts()
-        loadProducts()
-        loadCart()
-        getAllCategories()
-        getProfile()
-    }
-
-    private fun collectProducts() {
-        viewModelScope.launch {
-            combine(_searchQuery, _selectedCategories) {}
-                .debounce(300L)
-                .distinctUntilChanged()
-                .collect {
-                    searchPaginator.reset()
-                    searchPaginator.loadPage()
-                }
-        }
-    }
 
     private val productsPaginator = Paginator(
         initKey = 0,
@@ -123,7 +81,7 @@ class HomeViewModel(
         },
         onRequest = { page ->
             searchProductUseCase.invoke(
-                _state.value.searchQuery,
+                productName = _state.value.searchQuery,
                 categoryIds = _state.value.selectedCategoryIds.toList(),
                 page = page,
                 size = pageSize
@@ -157,6 +115,13 @@ class HomeViewModel(
         },
         endReached = { currentKey, result -> (currentKey * pageSize) >= result.size }
     )
+
+    init {
+        loadProducts()
+        loadCart()
+        getAllCategories()
+        getProfile()
+    }
 
     fun onRefresh() {
         _state.update { it.copy(isRefresh = true) }

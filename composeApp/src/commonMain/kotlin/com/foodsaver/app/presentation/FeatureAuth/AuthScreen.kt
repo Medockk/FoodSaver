@@ -88,7 +88,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AuthScreenRoot(
     navController: NavController,
-    onSuccessAuthentication: () -> Unit,
+    onSuccessAuthentication: (uid: String) -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
 
@@ -102,8 +102,8 @@ fun AuthScreenRoot(
                 snackBarHostState.showSnackbar(it.message)
             }
 
-            AuthAction.OnSuccessAuthentication -> {
-                onSuccessAuthentication()
+            is AuthAction.OnSuccessAuthentication -> {
+                onSuccessAuthentication(it.uid)
             }
         }
     }

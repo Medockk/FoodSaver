@@ -78,7 +78,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -104,7 +104,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -124,7 +124,7 @@ class AuthViewModel(
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication)
+                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }

@@ -1,14 +1,14 @@
-package com.foodsaver.app.utils
+package com.foodsaver.app.coreAuth
 
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.attribute.DosFileAttributeView
 
-actual class IsUserAuthenticated() {
+actual class AuthUserManager {
 
     private val parentFolder = File(System.getProperty("user.home") + ".foodsaver")
-    val file = File(parentFolder, "auth")
+    private val file = File(parentFolder, "auth")
 
     init {
         try {
@@ -23,18 +23,32 @@ actual class IsUserAuthenticated() {
             e.printStackTrace()
         }
     }
-    actual operator fun invoke(): Boolean {
+
+    actual fun getCurrentUid(): String? {
         return try {
-            if (file.exists()) file.readText().trim().toBoolean()
-            else false
-        }catch (_: Exception) {
-            false
+            if (file.exists()) file.readText().trim()
+            else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
-    actual operator fun invoke(value: Boolean) {
+    actual fun setCurrentUid(uid: String) {
         try {
-            file.writeText(value.toString())
+            file.writeText(uid)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    actual fun isUserAuthenticated(): Boolean {
+        return getCurrentUid() != null
+    }
+
+    actual fun logout() {
+        try {
+            file.delete()
         } catch (e: Exception) {
             e.printStackTrace()
         }

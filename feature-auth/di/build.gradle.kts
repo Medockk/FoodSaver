@@ -51,6 +51,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.coreDi)
+            implementation(projects.core.coreAuth)
             // стоит ли так делать? потом
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreDb)

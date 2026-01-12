@@ -5,6 +5,7 @@ import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.mappers.toEntity
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.data.mappers.tpModel
@@ -24,7 +25,8 @@ import kotlinx.coroutines.launch
 
 internal class ProfileRepositoryImpl(
     private val httpClient: HttpClient,
-    private val databaseProvider: DatabaseProvider
+    private val databaseProvider: DatabaseProvider,
+    private val authUserManager: AuthUserManager
 ): ProfileRepository {
 
     override fun getProfile(): Flow<ApiResult<UserModel>> = channelFlow {
@@ -34,9 +36,11 @@ internal class ProfileRepositoryImpl(
         val queries = databaseProvider.get().usersRequestsQueries
 
         val job = launch(Dispatchers.InputOutput) {
-            queries.getUser().asFlow().collect {
-                it.executeAsList().lastOrNull()?.let { user ->
-                    send(ApiResult.Success(user.toModel()))
+            authUserManager.getCurrentUid()?.let { uid ->
+                queries.getUserByUid(uid).asFlow().collect {
+                    it.executeAsList().lastOrNull()?.let { user ->
+                        send(ApiResult.Success(user.toModel()))
+                    }
                 }
             }
         }

@@ -10,7 +10,7 @@ import com.foodsaver.app.navigationModule.Route
 
 fun NavGraphBuilder.featureAuthNavigation(
     navController: NavController,
-    onSuccessAuthentication: () -> Unit,
+    onSuccessAuthentication: (uid: String) -> Unit,
     startDestination: Route = Route.AuthGraph.AuthScreen,
 ) {
 

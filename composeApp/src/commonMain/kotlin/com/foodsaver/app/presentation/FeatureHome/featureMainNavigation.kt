@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureCart.CartScreenRoot
 import com.foodsaver.app.presentation.FeatureProductDetail.ProductScreenRoot
@@ -28,14 +27,9 @@ fun NavGraphBuilder.featureHomeNavigation(
         }
 
         composable<Route.MainGraph.ProductDetailScreen> {
-            val productId = it.toRoute<Route.MainGraph.ProductDetailScreen>().productId
-            val isProductInCart = it.toRoute<Route.MainGraph.ProductDetailScreen>().isProductInCart
-
             scope.ProductScreenRoot(
-                productId = productId,
                 navController = navController,
                 animatedVisibilityScope = this,
-                isProductInCart = isProductInCart
             )
         }
 

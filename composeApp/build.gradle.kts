@@ -72,6 +72,7 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreAuth)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCart)

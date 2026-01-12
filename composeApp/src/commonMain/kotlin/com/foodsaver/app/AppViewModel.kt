@@ -4,21 +4,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.foodsaver.app.utils.IsUserAuthenticated
+import com.foodsaver.app.coreAuth.AuthUserManager
 
 class AppViewModel(
-    private val isUserAuthenticated: IsUserAuthenticated
+    private val isUserAuthenticated: AuthUserManager
 ): ViewModel() {
 
     var isUserLogin by mutableStateOf(false)
         private set
 
     init {
-        val result = isUserAuthenticated()
+        val result = isUserAuthenticated.isUserAuthenticated()
         isUserLogin = result
     }
 
-    fun onUserAuthenticate() {
-        isUserAuthenticated(true)
+    fun onUserAuthenticate(uid: String) {
+        isUserAuthenticated.setCurrentUid(uid)
     }
 }

@@ -12,6 +12,4 @@ interface AuthRepository {
     suspend fun signUp(signUpModel: SignUpModel): ApiResult<AuthResponseModel>
 
     suspend fun authenticateWithGoogle(platformContext: PlatformContext): ApiResult<AuthResponseModel>
-
-    suspend fun isUserLogin(): Boolean
 }

@@ -69,7 +69,11 @@ fun ProfileMenuScreenRoot(
                 snackbarHostState.showSnackbar(it.message)
             }
 
-            ProfileAction.OnSuccessLogout -> TODO()
+            ProfileAction.OnSuccessLogout -> {
+                navController.navigate(Route.AuthGraph) {
+                    popUpTo<Route.MainGraph>()
+                }
+            }
         }
     }
 

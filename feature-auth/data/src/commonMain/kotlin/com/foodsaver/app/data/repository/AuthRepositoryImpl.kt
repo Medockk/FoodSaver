@@ -14,6 +14,7 @@ import com.foodsaver.app.domain.repository.AuthRepository
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import com.foodsaver.app.commonModule.utils.PlatformContext
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.domain.utils.AuthExceptions
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
@@ -27,13 +28,8 @@ class AuthRepositoryImpl(
     private val httpClient: HttpClient,
     private val accessTokenManager: AccessTokenManager,
     private val googleAuthenticator: GoogleAuthenticator,
-
-    private val databaseProvider: DatabaseProvider,
+    private val authUserManager: AuthUserManager
 ): AuthRepository {
-
-    override suspend fun isUserLogin(): Boolean {
-        return databaseProvider.get().usersRequestsQueries.getUser().executeAsOneOrNull() != null
-    }
 
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
         val body = signInModel.toDto()
@@ -44,6 +40,7 @@ class AuthRepositoryImpl(
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
+            authUserManager.setCurrentUid(it.uid)
         }.map {
             it.toModel()
         }
@@ -57,6 +54,7 @@ class AuthRepositoryImpl(
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
+            authUserManager.setCurrentUid(it.uid)
         }.map { it.toModel() }
     }
 
@@ -96,6 +94,7 @@ class AuthRepositoryImpl(
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
+            authUserManager.setCurrentUid(it.uid)
         }.map { it.toModel() }
     }
 

@@ -3,6 +3,7 @@ package com.foodsaver.app.data.repository
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.mappers.toDto
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.domain.repository.DatabaseProvider
@@ -21,6 +22,7 @@ import io.ktor.http.HttpHeaders
 internal class ProfilePersonalInfoRepositoryImpl(
     private val httpClient: HttpClient,
     private val provider: DatabaseProvider,
+    private val authUserManager: AuthUserManager
 ) : ProfilePersonalInfoRepository {
 
     override suspend fun save(profilePersonalInfoModel: ProfilePersonalInfoModel): ApiResult<Unit> {
@@ -64,11 +66,12 @@ internal class ProfilePersonalInfoRepositoryImpl(
             }
         }.onSuccess { url ->
             val queries = provider.get().usersRequestsQueries
-            queries.getUser().executeAsOneOrNull()
-                ?.let { user ->
-                    println("URL IS: $url")
-                    queries.updatePhotoUrl(url, user.uid)
-                }
+            authUserManager.getCurrentUid()?.let { uid ->
+                queries.getUserByUid(uid).executeAsOneOrNull()
+                    ?.let { user ->
+                        queries.updatePhotoUrl(url, user.uid)
+                    }
+            }
         }.map {
             it
         }

@@ -23,20 +23,24 @@ val featureProfileModule = module {
     single<LogoutRepository> {
         LogoutRepositoryImpl(
             httpClient = get(),
-            provider = get()
+            databaseProvider = get(),
+            accessTokenManager = get(),
+            authUserManager = get(),
         )
     }
     single<ProfilePersonalInfoRepository> {
         ProfilePersonalInfoRepositoryImpl(
             httpClient = get(),
-            provider = get()
+            provider = get(),
+            authUserManager = get(),
         )
     }
 
     single<PaymentMethodRepository> {
         PaymentMethodRepositoryImpl(
             httpClient = get(),
-            databaseProvider = get()
+            databaseProvider = get(),
+            authUserManager = get(),
         )
     }
 

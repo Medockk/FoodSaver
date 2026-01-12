@@ -40,11 +40,11 @@ fun App(
                     featureAuthNavigation(
                         navController = navController,
                         startDestination = initialAuthRoute,
-                        onSuccessAuthentication = {
+                        onSuccessAuthentication = { uid ->
                             navController.navigate(Route.MainGraph.HomeScreen) {
                                 popUpTo<Route.AuthGraph>()
                             }
-                            viewModel.onUserAuthenticate()
+                            viewModel.onUserAuthenticate(uid)
                         })
 
                     featureHomeNavigation(navController)
