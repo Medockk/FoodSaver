@@ -63,6 +63,8 @@ kotlin {
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCart)
             implementation(projects.core.coreProfile)
+            implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAddress)
 
             implementation(projects.featureAuth.di)
             implementation(projects.featureHome)

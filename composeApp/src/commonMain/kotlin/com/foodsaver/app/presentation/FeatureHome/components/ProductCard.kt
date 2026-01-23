@@ -11,6 +11,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,8 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,8 +47,8 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.CircularPrimaryButton
 import com.foodsaver.app.common.shimmerEffect
-import com.foodsaver.app.model.ExpiresDateType
-import com.foodsaver.app.model.ProductModel
+import com.foodsaver.app.coreModel.model.ExpiresDateType
+import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.days
@@ -79,20 +79,18 @@ fun SharedTransitionScope.ProductCard(
         animationSpec = tween(durationMillis = 250, easing = LinearEasing)
     )
 
-    Card(
+    Box(
         modifier = modifier
-            .padding(5.dp)
             .dropShadow(
                 shape = RoundedCornerShape(10.dp),
                 shadow = Shadow(radius = 8.dp, color = Color(0x1F000000))
-            ),
-        onClick = {
-            onProductClick(product.productId)
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
-        ),
-        shape = RoundedCornerShape(10.dp)
+            )
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.background)
+            .clickable {
+                onProductClick(product.productId)
+            }
+            .padding(5.dp),
     ) {
         Column(Modifier.padding(10.dp)) {
             Row {

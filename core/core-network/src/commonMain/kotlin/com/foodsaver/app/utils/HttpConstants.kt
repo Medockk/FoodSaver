@@ -14,4 +14,7 @@ object HttpConstants {
     const val PRODUCTS_URL = "${BASE_URL}products"
     const val CART_URL = "${BASE_URL}cart"
     const val USER_URL = "${BASE_URL}user"
+    const val OFFER_URL = "${BASE_URL}offers"
+    const val PAYMENT_URL = "${BASE_URL}payment"
+    const val ADDRESS_URL = "${BASE_URL}address"
 }

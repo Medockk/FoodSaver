@@ -51,12 +51,12 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.coreModel.model.ExpiresDateType
+import com.foodsaver.app.coreModel.model.ProductUnitType
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailActions
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailEvents
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailState
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailViewModel
-import com.foodsaver.app.model.ExpiresDateType
-import com.foodsaver.app.model.ProductUnitType
 import com.foodsaver.app.presentation.FeatureProductDetail.components.ProductCounter
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.ScreenAnimation

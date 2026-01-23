@@ -4,11 +4,12 @@ import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreModel.dto.UserDto
 import com.foodsaver.app.data.mappers.toDto
+import com.foodsaver.app.di.databaseModule
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProfilePersonalInfoRepository
-import com.foodsaver.app.dto.UserDto
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
@@ -31,19 +32,28 @@ internal class ProfilePersonalInfoRepositoryImpl(
                 setBody(profilePersonalInfoModel.toDto())
             }
         }.onSuccess {
-            val queries = provider.get().usersRequestsQueries
-            queries.updateUser(
+            val database = provider.get()
+
+            val userEntityQueries = database.userEntityQueries
+            userEntityQueries.updateUser(
                 name = it.name,
                 email = it.email,
                 photoUrl = it.photoUrl,
                 bio = it.bio,
                 phone = it.phone,
-                addresses = it.addresses,
-                paymentCartNumbers = it.paymentCartNumbers,
-
-                uid = it.uid,
-                currentCity = it.currentCity
+                uid = it.uid
             )
+
+            val addressEntityQueries = database.addressEntityQueries
+            it.addresses.forEach { addressDto ->
+                addressEntityQueries.updateAddress(
+                    name = addressDto.name,
+                    address = addressDto.address,
+                    uid = it.uid,
+                    globalId = addressDto.id,
+                    isCurrentAddress = addressDto.isCurrentAddress,
+                )
+            }
         }.map { }
     }
 
@@ -65,7 +75,7 @@ internal class ProfilePersonalInfoRepositoryImpl(
                     ))
             }
         }.onSuccess { url ->
-            val queries = provider.get().usersRequestsQueries
+            val queries = provider.get().userEntityQueries
             authUserManager.getCurrentUid()?.let { uid ->
                 queries.getUserByUid(uid).executeAsOneOrNull()
                     ?.let { user ->

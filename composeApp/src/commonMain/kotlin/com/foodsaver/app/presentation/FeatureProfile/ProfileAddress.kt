@@ -10,18 +10,22 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.foodsaver.app.common.AuthenticationTextField
 import com.foodsaver.app.common.PrimaryButton
@@ -45,7 +49,7 @@ fun ProfileAddressRoot(
     viewModel: ProfileAddressViewModel = koinViewModel()
 ) {
 
-    val state = viewModel.state
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveActions(viewModel.channel) {
@@ -96,7 +100,15 @@ fun ProfileAddressRoot(
                             )
                         }
                     )
-
+                    Spacer(Modifier.height(5.dp))
+                    Checkbox(
+                        checked = state.dialogIsCurrentAddress,
+                        onCheckedChange = {
+                            viewModel.onEvent(ProfileAddressEvent.OnDialogIsCurrentAddressChange(it))
+                        },
+                        modifier = Modifier
+                            .align(Alignment.End)
+                    )
                 }
             },
             onSaveButtonClick = {

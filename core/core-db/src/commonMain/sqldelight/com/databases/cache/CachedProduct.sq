@@ -1,4 +1,4 @@
-import com.foodsaver.app.dto.ProductDto;
+import com.foodsaver.app.coreModel.dto.ProductDto;
 
 CREATE TABLE IF NOT EXISTS cachedProduct (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

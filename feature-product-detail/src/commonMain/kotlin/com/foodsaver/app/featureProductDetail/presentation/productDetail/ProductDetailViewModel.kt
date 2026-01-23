@@ -1,11 +1,13 @@
 package com.foodsaver.app.featureProductDetail.presentation.productDetail
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.onFailure
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
@@ -33,8 +35,8 @@ class ProductDetailViewModel(
     private val addProductToCartUseCase: AddProductToCartUseCase,
     private val increaseProductCountUseCase: IncreaseProductCountUseCase,
     private val decreaseProductCountUseCase: DecreaseProductCountUseCase,
-    private val removeProductFromCartUseCase: RemoveProductFromCartUseCase
-) : ViewModel() {
+    private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
+) : BaseViewModel<ProductDetailActions>() {
 
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.ProductDetailScreen>()
     private val _state = MutableStateFlow(
@@ -45,8 +47,8 @@ class ProductDetailViewModel(
     )
     val state = _state.asStateFlow()
 
-    private val _channel = Channel<ProductDetailActions>()
-    val channel = _channel.receiveAsFlow()
+    override val baseChannel: Channel<ProductDetailActions> = Channel()
+    val channel = baseChannel.receiveAsFlow()
 
     init {
         getProduct()
@@ -68,7 +70,7 @@ class ProductDetailViewModel(
 
     private fun getProduct(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
-            getCachedProductUseCase(navArgs.productId).collect { product ->
+            getCachedProductUseCase.invoke(navArgs.productId).collect { product ->
                 _state.update {
                     withContext(Dispatchers.Main) {
                         it.copy(
@@ -90,7 +92,7 @@ class ProductDetailViewModel(
                     when (val result = addProductToCartUseCase(request)) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(ProductDetailActions.OnError(result.error.message))
+                            sendError(result.error.message)
                         }
 
                         ApiResult.Loading -> {
@@ -98,8 +100,9 @@ class ProductDetailViewModel(
                         }
 
                         is ApiResult.Success<CartItemModel> -> {
-                            _state.value = state.value.copy(isLoading = false, isProductInCart = true)
-                            _channel.send(ProductDetailActions.OnAddedToCart)
+                            _state.value =
+                                state.value.copy(isLoading = false, isProductInCart = true)
+                            baseChannel.send(ProductDetailActions.OnAddedToCart)
                         }
                     }
                 }
@@ -117,10 +120,10 @@ class ProductDetailViewModel(
                 if (_state.value.isProductInCart) {
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val request = CartRequestModel(productId = navArgs.productId)
-                        val result = decreaseProductCountUseCase(request)
-                        if (result is ApiResult.Error) {
-                            _channel.send(ProductDetailActions.OnError(result.error.message))
-                        }
+                        decreaseProductCountUseCase(request)
+                            .onFailure {
+                                sendError(it.message)
+                            }
                     }
                 }
             }
@@ -131,9 +134,8 @@ class ProductDetailViewModel(
                 if (_state.value.isProductInCart) {
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val request = CartRequestModel(productId = navArgs.productId)
-                        val result = increaseProductCountUseCase(request)
-                        if (result is ApiResult.Error) {
-                            _channel.send(ProductDetailActions.OnError(result.error.message))
+                        increaseProductCountUseCase(request).onFailure {
+                            sendError(it.message)
                         }
                     }
                 }
@@ -141,16 +143,18 @@ class ProductDetailViewModel(
 
             ProductDetailEvents.OnRemoveProductFromCart -> {
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    val result = removeProductFromCartUseCase(navArgs.productId)
-
-                    if (result is ApiResult.Error) {
-                        _channel.send(ProductDetailActions.OnError(result.error.message))
-                    }
-                    if (result is ApiResult.Success) {
-                        _state.update { it.copy(isProductInCart = false) }
-                    }
+                    removeProductFromCartUseCase(navArgs.productId)
+                        .onSuccess {
+                            _state.update { it.copy(isProductInCart = false) }
+                        }.onFailure {
+                            sendError(it.message)
+                        }
                 }
             }
         }
+    }
+
+    override fun mapBaseError(message: String): ProductDetailActions {
+        return ProductDetailActions.OnError(message)
     }
 }

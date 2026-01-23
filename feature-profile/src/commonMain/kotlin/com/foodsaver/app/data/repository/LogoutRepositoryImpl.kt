@@ -15,7 +15,7 @@ internal class LogoutRepositoryImpl(
 ) : LogoutRepository {
 
     override suspend fun logout(): ApiResult<Unit> {
-        val queries = databaseProvider.get().usersRequestsQueries
+        val queries = databaseProvider.get().userEntityQueries
         accessTokenManager.clearTokens()
         authUserManager.logout()
 

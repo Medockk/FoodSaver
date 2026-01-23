@@ -2,27 +2,30 @@
 
 package com.foodsaver.app.presentation.Home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.onFailure
+import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
-import com.foodsaver.app.domain.model.CategoryModel
-import com.foodsaver.app.domain.model.UserModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
-import com.foodsaver.app.domain.usecase.GetProfileUseCase
+import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.domain.usecase.SearchProductUseCase
+import com.foodsaver.app.domain.usecase.offer.GetOffersUseCase
+import com.foodsaver.app.presentation.Home.HomeAction.OnError
 import com.foodsaver.app.utils.Paginator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,17 +44,20 @@ class HomeViewModel(
     private val searchProductUseCase: SearchProductUseCase,
 
     private val getProfileUseCase: GetProfileUseCase,
-) : ViewModel() {
+    private val getOffersUseCase: GetOffersUseCase,
+    private val readAddressRepository: ReadAddressRepository
+) : BaseViewModel<HomeAction>() {
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
-    private val _channel = Channel<HomeAction>()
-    val channel = _channel.receiveAsFlow()
+    override val baseChannel: Channel<HomeAction> = Channel()
+
+    val channel = baseChannel.receiveAsFlow()
 
     private var searchJob: Job? = null
 
-    private val pageSize = 15
+    private val pageSize = 8
 
     private val productsPaginator = Paginator(
         initKey = 0,
@@ -62,17 +68,18 @@ class HomeViewModel(
             getProductsUseCase.invoke(currentKey, pageSize)
         },
         onNextKey = { currentKey, _ -> currentKey + 1 },
-        onError = {
-            _channel.send(HomeAction.OnError(it?.message ?: "Unknown error"))
+        onError = { errorResponse ->
+            sendError(errorResponse?.message ?: "Unknown error")
         },
         onSuccess = { _, result ->
             _state.update {
                 it.copy(
-                    products = _state.value.products + result
+                    products = _state.value.products + result,
+                    isProductsLoading = false
                 )
             }
         },
-        endReached = { currentKey, result -> (currentKey * pageSize) >= result.size }
+        endReached = { _, result -> pageSize > result.size }
     )
     private val searchPaginator = Paginator(
         initKey = 0,
@@ -88,15 +95,17 @@ class HomeViewModel(
             )
         },
         onNextKey = { currentKey, _ -> currentKey + 1 },
-        onError = {
-            _channel.send(HomeAction.OnError(it?.message ?: "Unknown error"))
+        onError = { errorResponse ->
+            sendError(errorResponse?.message ?: "Unknown error")
         },
         onSuccess = { key, result ->
+            println("key is $key")
             if (key == 0) {
                 _state.update {
                     it.copy(
                         searchedProducts = result,
-                        productsDisplayMode = ProductsDisplayMode.Searched
+                        productsDisplayMode = ProductsDisplayMode.Searched,
+                        isProductsLoading = false
                     )
                 }
             } else {
@@ -108,7 +117,8 @@ class HomeViewModel(
                 _state.update {
                     it.copy(
                         searchedProducts = it.searchedProducts + uniqueNewProducts,
-                        productsDisplayMode = ProductsDisplayMode.Searched
+                        productsDisplayMode = ProductsDisplayMode.Searched,
+                        isProductsLoading = false
                     )
                 }
             }
@@ -117,24 +127,41 @@ class HomeViewModel(
     )
 
     init {
+        getOffers()
         loadProducts()
         loadCart()
         getAllCategories()
         getProfile()
+        getCurrentAddress()
+    }
+
+    private fun getCurrentAddress() = viewModelScope.launch(Dispatchers.InputOutput) {
+        readAddressRepository.getCurrentAddress().collectRequest(
+            onSuccess = { address ->
+                _state.update { it.copy(currentAddress = address) }
+                println("Current address ${_state.value.currentAddress}")
+            }
+        )
+    }
+
+    private fun getOffers() = viewModelScope.launch(Dispatchers.InputOutput) {
+        _state.update { it.copy(isOffersLoading = true) }
+        getOffersUseCase.invoke()
+            .onSuccess { response ->
+                _state.update { it.copy(offers = response, isOffersLoading = false) }
+            }
     }
 
     fun onRefresh() {
         _state.update { it.copy(isRefresh = true) }
         viewModelScope.launch(Dispatchers.InputOutput) {
-
-            val jobs = async {
-                arrayOf(
-                    loadProducts(),
-                    loadCart(),
-                    getAllCategories(),
-                    getProfile(),
-                )
-            }
+            arrayOf(
+                loadProducts(),
+                loadCart(),
+                getAllCategories(),
+                getProfile(),
+                getCurrentAddress(),
+            )
 
             delay(1000)
             withContext(Dispatchers.Main) {
@@ -145,38 +172,19 @@ class HomeViewModel(
 
     private fun getProfile(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
-            getProfileUseCase().collect { result ->
-                when (result) {
-                    is ApiResult.Error -> {
-                        _channel.send(HomeAction.OnError(result.error.message))
-                    }
-
-                    ApiResult.Loading -> Unit
-                    is ApiResult.Success<UserModel> -> {
-                        _state.update { it.copy(profile = result.data) }
-                    }
+            getProfileUseCase().collectRequest(
+                onSuccess = { result ->
+                    _state.update { it.copy(profile = result) }
                 }
-            }
+            )
         }
     }
 
     private fun getAllCategories(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
-            when (val result = getAllCategoriesUseCase.invoke()) {
-                is ApiResult.Error -> {
-                    _state.update { it.copy(isLoading = false) }
-                    _channel.send(HomeAction.OnError(result.error.message))
-                }
-
-                ApiResult.Loading -> Unit
-                is ApiResult.Success<List<CategoryModel>> -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            categories = result.data
-                        )
-                    }
-                }
+            _state.update { it.copy(isCategoriesLoading = true) }
+            getAllCategoriesUseCase().onSuccess { result ->
+                _state.update { it.copy(categories = result, isCategoriesLoading = false) }
             }
         }
     }
@@ -189,26 +197,17 @@ class HomeViewModel(
 
     private fun loadCart(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
-            getCartUseCase().collect { result ->
-                when (result) {
-                    is ApiResult.Error -> {
-                        println(result.error)
-                    }
-
-                    ApiResult.Loading -> Unit
-                    is ApiResult.Success<List<CartItemModel>> -> {
-                        withContext(Dispatchers.Main) {
-                            val cartIds = result.data.map { item -> item.product.productId }.toSet()
-                            _state.update {
-                                it.copy(
-                                    cartProducts = result.data,
-                                    cartProductIds = cartIds,
-                                )
-                            }
-                        }
+            getCartUseCase().collectRequest(
+                onSuccess = { result ->
+                    val cartIds = result.map { item -> item.product.productId }.toSet()
+                    _state.update {
+                        it.copy(
+                            cartProducts = result,
+                            cartProductIds = cartIds,
+                        )
                     }
                 }
-            }
+            )
         }
     }
 
@@ -229,12 +228,9 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (currentCategories.contains(event.value)) {
-                    // remove cayegory
+                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.isBlank()) {
                     _state.update {
-                        it.copy(
-                            productsDisplayMode = ProductsDisplayMode.All
-                        )
+                        it.copy(productsDisplayMode = ProductsDisplayMode.All)
                     }
                     return
                 }
@@ -250,7 +246,7 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (_state.value.searchQuery.isBlank()) {
+                if (_state.value.searchQuery.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
                     _state.update { it.copy(productsDisplayMode = ProductsDisplayMode.All) }
                     return
                 }
@@ -279,7 +275,7 @@ class HomeViewModel(
                         val result = removeProductFromCartUseCase(event.productId)
 
                         if (result is ApiResult.Error) {
-                            _channel.send(HomeAction.OnError(result.error.message))
+                            baseChannel.send(OnError(result.error.message))
                         }
                     }
                 } else {
@@ -287,7 +283,7 @@ class HomeViewModel(
                         val request = CartRequestModel(event.productId)
                         when (val result = addProductToCartUseCase.invoke(request)) {
                             is ApiResult.Error -> {
-                                _channel.send(HomeAction.OnError(result.error.message))
+                                baseChannel.send(OnError(result.error.message))
                             }
 
                             ApiResult.Loading -> Unit
@@ -296,6 +292,34 @@ class HomeViewModel(
                     }
                 }
             }
+
+            is HomeEvent.OnOfferClick -> {
+                val cart = _state.value.cartProducts
+                    .find { it.product.productId == event.productId }
+                val isProductInCart = cart != null
+
+                val actionElement =
+                    HomeAction.OnProductNavigation(event.productId, isProductInCart, cart?.quantity)
+                baseChannel.trySend(actionElement)
+                    .onFailure {
+                        viewModelScope.launch { baseChannel.send(actionElement) }
+                    }
+            }
+
+            is HomeEvent.OnProductClick -> {
+                val cartItem = _state.value.cartProducts
+                    .find { it.product.productId == event.productId }
+
+                baseChannel.trySend(HomeAction.OnProductNavigation(
+                    productId = event.productId,
+                    isProductInCart = cartItem != null,
+                    cartProductCount = cartItem?.quantity
+                ))
+            }
         }
+    }
+
+    override fun mapBaseError(message: String): HomeAction {
+        return OnError(message)
     }
 }

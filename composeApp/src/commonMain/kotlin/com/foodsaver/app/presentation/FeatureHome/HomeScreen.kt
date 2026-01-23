@@ -1,11 +1,18 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+    FlowPreview::class
+)
 
 package com.foodsaver.app.presentation.FeatureHome
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,40 +22,44 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.foodsaver.app.common.PrimaryPullToRefreshBox
@@ -56,7 +67,11 @@ import com.foodsaver.app.common.SearchTextField
 import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.FeatureHome.components.CategoryChip
+import com.foodsaver.app.presentation.FeatureHome.components.HomeTopAppBar
+import com.foodsaver.app.presentation.FeatureHome.components.OfferCard
 import com.foodsaver.app.presentation.FeatureHome.components.ProductCard
+import com.foodsaver.app.presentation.FeatureHome.components.ShimmerOfferCard
+import com.foodsaver.app.presentation.FeatureHome.components.ShimmerProductCard
 import com.foodsaver.app.presentation.Home.HomeAction
 import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.presentation.Home.HomeState
@@ -64,13 +79,13 @@ import com.foodsaver.app.presentation.Home.HomeViewModel
 import com.foodsaver.app.presentation.Home.ProductsDisplayMode
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
-import foodsaver.composeapp.generated.resources.ic_burger_icon
-import foodsaver.composeapp.generated.resources.ic_cart_icon
-import foodsaver.composeapp.generated.resources.ic_location_icon
-import foodsaver.composeapp.generated.resources.poppins_black
 import foodsaver.composeapp.generated.resources.search
 import foodsaver.composeapp.generated.resources.search_icon
-import org.jetbrains.compose.resources.Font
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -89,7 +104,26 @@ fun SharedTransitionScope.HomeScreenRoot(
     ObserveActions(channel) {
         when (it) {
             is HomeAction.OnError -> {
-                snackBarHostState.showSnackbar(it.message)
+                val currentMessage = snackBarHostState.currentSnackbarData
+                    ?.visuals?.message
+
+                if (currentMessage != it.message) {
+                    snackBarHostState.showSnackbar(
+                        message = it.message,
+                        withDismissAction = true,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+
+            is HomeAction.OnProductNavigation -> {
+                navController.navigate(
+                    Route.MainGraph.ProductDetailScreen(
+                        it.productId,
+                        it.isProductInCart,
+                        it.cartProductCount ?: 1L
+                    )
+                )
             }
         }
     }
@@ -118,7 +152,31 @@ private fun SharedTransitionScope.HomeScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    val lazyColumnState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
+    var shouldLoadNextPage by remember { mutableStateOf(false) }
+    val isProductsLoading by rememberUpdatedState(state)
+
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            val lastItem = lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()
+            val totalItems = lazyGridState.layoutInfo.totalItemsCount
+
+            (lastItem?.index ?: 0) >= totalItems - 2
+        }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
+            .collect { isEnd ->
+                if (isEnd && !isProductsLoading.isProductsLoading) {
+                    onEvent(HomeEvent.LoadNextProducts)
+                }
+                shouldLoadNextPage = isEnd
+            }
+    }
+
+    val offerPagerState = rememberPagerState {
+        if (state.offers.isEmpty() && state.isOffersLoading) 3
+        else state.offers.size
+    }
 
     Scaffold(
         snackbarHost = {
@@ -129,104 +187,112 @@ private fun SharedTransitionScope.HomeScreen(
             .imePadding(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    if (state.profile != null) {
-                        state.profile?.let { profile ->
-                            Text(
-                                text = profile.currentCity ?: "",
-                                color = MaterialTheme.colorScheme.secondaryFixedDim,
-                                fontSize = 12.sp
-                            )
-                        }
-                    } else {
-                        Box(Modifier.size(100.dp, 15.dp).shimmerEffect())
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
-                navigationIcon = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = {
-                                navController.navigate(Route.ProfileGraph)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_burger_icon),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(15.dp),
-                                tint = Color.Unspecified
-                            )
-                        }
-                        Spacer(Modifier.width(30.dp))
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_location_icon),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(16.dp),
-                                tint = Color.Unspecified
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    BadgedBox(
-                        badge = {
-                            Badge(
-                                modifier = Modifier
-                                    .size(15.dp)
-                                    .align(Alignment.TopEnd)
-                                    .background(MaterialTheme.colorScheme.background, CircleShape)
-                                    .padding(0.5.dp)
-                                    .background(MaterialTheme.colorScheme.error, CircleShape),
-                                containerColor = Color.Unspecified
-                            ) {
-                                if (state.cartProducts.isNotEmpty()) {
-                                    Text(
-                                        text = state.cartProducts.size.toString(),
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Black,
-                                        fontSize = 9.sp,
-                                        fontFamily = FontFamily(Font(Res.font.poppins_black))
-                                    )
-                                }
-                            }
-                        }
-                    ) {
-                        IconButton(
-                            onClick = {
-                                navController.navigate(Route.MainGraph.CartScreen)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_cart_icon),
-                                contentDescription = null,
-                                tint = Color.Unspecified,
-                                modifier = Modifier
-                                    .size(24.dp)
-                            )
-                        }
-                    }
-                }
+            HomeTopAppBar(
+                currentAddress = state.currentAddress,
+                cartProductQuantity = state.cartProducts.size,
+                onBurgerClick = { navController.navigate(Route.ProfileGraph) },
+                onCartClick = { navController.navigate(Route.MainGraph.CartScreen) }
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            state = lazyColumnState,
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            state = lazyGridState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentPadding = PaddingValues(horizontal = 20.dp)
+            contentPadding = PaddingValues(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+
+                if (state.offers.isNotEmpty()) {
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            delay(5000L)
+                            if (!offerPagerState.isScrollInProgress) {
+                                val nextPage =
+                                    (offerPagerState.currentPage + 1) % offerPagerState.pageCount
+                                offerPagerState.animateScrollToPage(
+                                    nextPage,
+                                    animationSpec = tween(650)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HorizontalPager(
+                        state = offerPagerState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp),
+                        pageSpacing = 20.dp,
+                    )
+                    { page ->
+                        val isLoading = remember(state.isOffersLoading, state.offers) {
+                            state.isOffersLoading && state.offers.isEmpty()
+                        }
+                        AnimatedVisibility(
+                            visible = isLoading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            ShimmerOfferCard()
+                        }
+                        AnimatedVisibility(
+                            visible = !isLoading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            remember(state.offers) {
+                                state.offers.getOrNull(page)
+                            }?.let {
+                                OfferCard(
+                                    offer = it,
+                                    onClick = { id: String ->
+                                        onEvent(HomeEvent.OnOfferClick(id))
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val primarySelectedColor = MaterialTheme.colorScheme.primary
+                        val primaryUnselectedColor = Color(0xFFE2E2E2)
+                        repeat(offerPagerState.pageCount) { index ->
+                            Box(
+                                Modifier
+                                    .size(9.dp)
+                                    .clip(CircleShape)
+                                    .drawWithCache {
+                                        onDrawWithContent {
+                                            val isSelected = offerPagerState.currentPage == index
+                                            drawCircle(if (isSelected) primarySelectedColor else primaryUnselectedColor)
+                                        }
+                                    }
+                            )
+                            Spacer(Modifier.width(4.dp))
+                        }
+                    }
+                }
+            }
+
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Column {
                     Spacer(Modifier.height(20.dp))
                     SearchTextField(
@@ -248,70 +314,92 @@ private fun SharedTransitionScope.HomeScreen(
                     )
                     Spacer(Modifier.height(20.dp))
                 }
-
             }
 
-            item {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Crossfade(
+                    targetState = state.isCategoriesLoading && state.categories.isEmpty()
+                ) { isLoading ->
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                    itemsIndexed(
-                        items = state.categories,
-                        key = { _, category -> category.categoryId }
-                    ) { _, category ->
-                        val isSelected = state.selectedCategoryIds.contains(category.categoryId)
-                        CategoryChip(
-                            label = category.categoryName,
-                            isSelected = isSelected,
-                            onClick = {
-                                onEvent(HomeEvent.OnCategoryIndexChange(category.categoryId))
+                        if (isLoading) {
+                            items(6) {
+                                Box(
+                                    Modifier.size(70.dp, 30.dp).clip(RoundedCornerShape(20.dp))
+                                        .shimmerEffect()
+                                )
                             }
-                        )
+                        } else {
+                            items(
+                                items = state.categories,
+                                key = { category -> category.categoryId }
+                            ) { category ->
+                                val isSelected =
+                                    state.selectedCategoryIds.contains(category.categoryId)
+                                CategoryChip(
+                                    label = category.categoryName,
+                                    isSelected = isSelected,
+                                    onClick = {
+                                        onEvent(HomeEvent.OnCategoryIndexChange(category.categoryId))
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
                 Spacer(Modifier.height(28.dp))
             }
 
-            item {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    modifier = Modifier
-                        .fillParentMaxSize()
-                ) {
-                    this@LazyVerticalGrid.items(
-                        items = when (state.productsDisplayMode) {
-                            ProductsDisplayMode.All -> state.products
-                            ProductsDisplayMode.Searched -> state.searchedProducts
-                        },
-                        key = { it.productId }
-                    ) { product ->
-                        with(animatedContentScope) {
-                            val isInCart = state.cartProductIds.contains(product.productId)
-                            ProductCard(
-                                product = product,
-                                isInCart = isInCart,
-                                onProductClick = { productId ->
-                                    navController.navigate(
-                                        route = Route.MainGraph.ProductDetailScreen(
-                                            productId = productId,
-                                            isProductInCart = isInCart,
-                                            initialQuantity = state.cartProducts.find {
-                                                it.product.productId == productId
-                                            }?.quantity ?: 1L
-                                        )
-                                    )
-                                },
-                                onAddProductClick = {
-                                    onEvent(HomeEvent.OnAddProductToCart(it))
-                                },
-                                modifier = Modifier
-                                    .fillParentMaxWidth(0.5f)
-                                    .animateItem()
-                            )
+            if (state.isProductsLoading && (state.products.isEmpty() || state.searchedProducts.isEmpty())) {
+                items(6) {
+                    ShimmerProductCard(Modifier.fillMaxWidth(0.5f).animateItem())
+                }
+            } else {
+                items(
+                    items = when (state.productsDisplayMode) {
+                        ProductsDisplayMode.All -> state.products
+                        ProductsDisplayMode.Searched -> state.searchedProducts
+                    },
+                    key = { it.productId }
+                ) { product ->
+                    with(animatedContentScope) {
+                        val isInCart = state.cartProductIds.contains(product.productId)
+                        ProductCard(
+                            product = product,
+                            isInCart = isInCart,
+                            onProductClick = { productId: String ->
+                                onEvent(HomeEvent.OnProductClick(productId))
+                            },
+                            onAddProductClick = {
+                                onEvent(HomeEvent.OnAddProductToCart(it))
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .animateItem()
+                        )
+                    }
+                }
+            }
+
+            if (shouldLoadNextPage && state.isProductsLoading) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    AnimatedVisibility(
+                        visible = shouldLoadNextPage && state.isProductsLoading,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                            .animateItem()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 40.dp),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }

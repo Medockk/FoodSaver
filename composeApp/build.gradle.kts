@@ -40,16 +40,16 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.splash)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.animation)
+//            implementation(compose.runtime)
+//            implementation(compose.foundation)
+//            implementation(compose.material3)
+//            implementation(compose.ui)
+//            implementation(compose.animation)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
@@ -78,6 +78,8 @@ kotlin {
             implementation(projects.core.coreCart)
             implementation(projects.core.coreProfile)
             implementation(projects.core.coreNavigation)
+            implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAddress)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)

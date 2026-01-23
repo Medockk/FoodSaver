@@ -11,6 +11,13 @@ fun <T: Any, R: Any> ApiResult<T>.map(transform: (T) -> R): ApiResult<R> {
         is ApiResult.Success -> ApiResult.Success(transform(this.data))
     }
 }
+fun <T: Any?, R: Any?> ApiResult<T?>.mapNullable(transform: (T?) -> R): ApiResult<R?> {
+    return when (this) {
+        is ApiResult.Error -> this
+        ApiResult.Loading -> ApiResult.Loading
+        is ApiResult.Success -> ApiResult.Success(transform(this.data))
+    }
+}
 
 fun <T: Any> ApiResult<T>.onFailure(scope: CoroutineScope, action: (GlobalErrorResponse) -> Unit): ApiResult<T> {
     if (this is ApiResult.Error) {
@@ -31,6 +38,13 @@ suspend fun <T: Any> ApiResult<T>.onFailure(action: suspend (GlobalErrorResponse
 }
 
 suspend fun <T: Any> ApiResult<T>.onSuccess(action: suspend (T) -> Unit): ApiResult<T> {
+    if (this is ApiResult.Success) {
+        action(this.data)
+    }
+
+    return this
+}
+suspend fun <T: Any?> ApiResult<T?>.onSuccessNullable(action: suspend (T?) -> Unit): ApiResult<T?> {
     if (this is ApiResult.Success) {
         action(this.data)
     }

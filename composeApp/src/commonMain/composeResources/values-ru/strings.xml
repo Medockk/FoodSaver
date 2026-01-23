@@ -37,9 +37,11 @@
     <string name="profile_phone">НОМЕР ТЕЛЕФОНА</string>
     <string name="profile_bio">О СЕБЕ</string>
 
-    <string name="cart">Cart</string>
+    <string name="cart">Корзина</string>
     <string name="time_to_delivery">Срок поставки</string>
     <string name="addresses">Адреса</string>
     <string name="add_new_address">Добавить адрес</string>
     <string name="add_new_card">Добавить карту</string>
+
+    <string name="buy">Купить</string>
 </resources>
