@@ -19,7 +19,11 @@ class Paginator<Key, Item>(
     private var isEndReached = false
 
     suspend fun loadPage() {
-        if (isMakingRequest || isEndReached) return
+        if (isMakingRequest || isEndReached) {
+            println("isMakingRequest: $isMakingRequest")
+            println("isEndReached: $isEndReached")
+            return
+        }
 
         isMakingRequest = true
         onLoadUpdated(true)
@@ -33,8 +37,8 @@ class Paginator<Key, Item>(
             return
         }
 
-        currentKey = onNextKey(currentKey, item)
         onSuccess(currentKey, item)
+        currentKey = onNextKey(currentKey, item)
         onLoadUpdated(false)
 
         isEndReached = endReached(currentKey, item)

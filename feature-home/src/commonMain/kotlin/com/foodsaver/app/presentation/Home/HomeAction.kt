@@ -1,6 +1,13 @@
 package com.foodsaver.app.presentation.Home
 
-sealed interface HomeAction {
+import com.foodsaver.app.commonModule.presentation.AppAction
 
-    data class OnError(val message: String): HomeAction
+sealed interface HomeAction : AppAction {
+
+    data class OnError(val message: String) : HomeAction
+    data class OnProductNavigation(
+        val productId: String,
+        val isProductInCart: Boolean,
+        val cartProductCount: Long?,
+    ) : HomeAction
 }

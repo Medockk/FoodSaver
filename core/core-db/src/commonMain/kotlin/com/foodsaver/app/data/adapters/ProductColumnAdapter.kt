@@ -1,7 +1,7 @@
 package com.foodsaver.app.data.adapters
 
 import app.cash.sqldelight.ColumnAdapter
-import com.foodsaver.app.dto.ProductDto
+import com.foodsaver.app.coreModel.dto.ProductDto
 import kotlinx.serialization.json.Json
 
 internal val ProductColumnAdapter = object : ColumnAdapter<ProductDto, String> {

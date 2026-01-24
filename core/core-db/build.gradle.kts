@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -82,7 +81,7 @@ kotlin {
             implementation(libs.sqldelight.web.driver)
 
             implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.1.0"))
-            implementation("app.cash.sqldelight:runtime-js:2.0.2")
+            implementation("app.cash.sqldelight:runtime-js:2.2.1")
             implementation(npm("sql.js", "1.8.0"))
 
             implementation(npm("path-browserify", "1.0.1"))
@@ -99,7 +98,7 @@ sqldelight {
         create("MainAppDatabase") {
             packageName.set("com.databases.cache")
             verifyMigrations.set(true)
-            version = 3
+            version = 5
 
             generateAsync.set(true)
         }

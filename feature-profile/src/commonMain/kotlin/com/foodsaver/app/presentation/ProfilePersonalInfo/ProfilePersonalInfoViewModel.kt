@@ -1,15 +1,13 @@
 package com.foodsaver.app.presentation.ProfilePersonalInfo
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
-import com.foodsaver.app.domain.model.UserModel
-import com.foodsaver.app.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.usecase.personalInfo.SavePersonalInfoUseCase
 import com.foodsaver.app.domain.usecase.personalInfo.UploadAvatarUseCase
-import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoAction.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,15 +21,15 @@ class ProfilePersonalInfoViewModel(
     private val getProfileUseCase: GetProfileUseCase,
 
     private val uploadAvatarUseCase: UploadAvatarUseCase,
-) : ViewModel() {
+) : BaseViewModel<ProfilePersonalInfoAction>() {
 
     private val _state = MutableStateFlow(ProfilePersonalInfoState())
     val state = _state.asStateFlow()
 
     private var initialProfileData = ProfilePersonalInfoState().profile
 
-    private val _channel = Channel<ProfilePersonalInfoAction>()
-    val channel = _channel.receiveAsFlow()
+    override val baseChannel: Channel<ProfilePersonalInfoAction> = Channel()
+    val channel = baseChannel.receiveAsFlow()
 
     init {
         getProfileInfo()
@@ -39,28 +37,24 @@ class ProfilePersonalInfoViewModel(
 
     private fun getProfileInfo() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            getProfileUseCase.invoke().collect { result ->
-                when (result) {
-                    is ApiResult.Error -> {
-                        _state.update { it.copy(isLoading = false) }
-                        _channel.send(OnError(result.error.message))
+            getProfileUseCase.invoke().collectRequest(
+                onSuccess = { result ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            profile = result
+                        )
                     }
-
-                    ApiResult.Loading -> {
-                        _state.update { it.copy(isLoading = true) }
-                    }
-
-                    is ApiResult.Success<UserModel> -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                profile = result.data,
-                            )
-                        }
-                        initialProfileData = result.data
-                    }
+                    initialProfileData = result
+                },
+                onLoading = {
+                    _state.update { it.copy(isLoading = true) }
+                },
+                onError = {
+                    _state.update { it.copy(isLoading = false) }
+                    sendError(it.message)
                 }
-            }
+            )
         }
     }
 
@@ -92,10 +86,10 @@ class ProfilePersonalInfoViewModel(
 
             ProfilePersonalInfoEvent.OnSave -> {
                 if (_state.value.fullName.isBlank() && _state.value.profile?.name.isNullOrBlank()) {
-                    _channel.trySend(OnError("Full name must be not empty"))
+                    trySendError("Full name must be not empty")
                     return
                 } else if (_state.value.email.isBlank() && _state.value.profile?.email.isNullOrBlank()) {
-                    _channel.trySend(OnError("Email must be not empty"))
+                    trySendError("Email must be not empty")
                     return
                 }
 
@@ -106,7 +100,7 @@ class ProfilePersonalInfoViewModel(
                     _state.value.phone == initialProfileData?.phone &&
                     _state.value.bio == initialProfileData?.bio
                 ) {
-                    _channel.trySend(ProfilePersonalInfoAction.OnSuccessSave)
+                    baseChannel.trySend(ProfilePersonalInfoAction.OnSuccessSave)
                 } else {
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         _state.update { it.copy(isLoading = true) }
@@ -122,13 +116,13 @@ class ProfilePersonalInfoViewModel(
                         when (val result = savePersonalInfoUseCase(request)) {
                             is ApiResult.Error -> {
                                 _state.update { it.copy(isLoading = false) }
-                                _channel.send(OnError(result.error.message))
+                                sendError(result.error.message)
                             }
 
                             ApiResult.Loading -> Unit
                             is ApiResult.Success<*> -> {
                                 _state.update { it.copy(isLoading = false) }
-                                _channel.send(ProfilePersonalInfoAction.OnSuccessSave)
+                                baseChannel.send(ProfilePersonalInfoAction.OnSuccessSave)
                             }
                         }
                     }
@@ -142,5 +136,9 @@ class ProfilePersonalInfoViewModel(
                 _state.update { it.copy(showGallery = true) }
             }
         }
+    }
+
+    override fun mapBaseError(message: String): ProfilePersonalInfoAction {
+        return ProfilePersonalInfoAction.OnError(message)
     }
 }

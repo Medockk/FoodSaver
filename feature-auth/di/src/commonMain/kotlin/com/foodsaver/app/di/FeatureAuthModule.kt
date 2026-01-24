@@ -8,7 +8,6 @@ import com.foodsaver.app.domain.usecase.SignInUseCase
 import com.foodsaver.app.domain.usecase.SignUpUseCase
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

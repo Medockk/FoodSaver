@@ -5,10 +5,8 @@ import com.databases.cache.CartEntity
 import com.databases.cache.MainAppDatabase
 import com.databases.cache.UserEntity
 import com.foodsaver.app.data.adapters.ProductColumnAdapter
-import com.foodsaver.app.data.adapters.addressColumnAdapter
 import com.foodsaver.app.data.adapters.instantAdapter
 import com.foodsaver.app.data.adapters.listAdapter
-import com.foodsaver.app.data.adapters.paymentCardColumnAdapter
 import com.foodsaver.app.data.factory.SqlDriverFactory
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import kotlinx.coroutines.sync.Mutex
@@ -38,9 +36,7 @@ internal class DatabaseProviderImpl(
             ),
             userEntityAdapter = UserEntity.Adapter(
                 createdAtAdapter = instantAdapter,
-                rolesAdapter = listAdapter,
-                addressesAdapter = addressColumnAdapter,
-                paymentCartNumbersAdapter = paymentCardColumnAdapter
+                rolesAdapter = listAdapter
             ),
             cachedProductAdapter = CachedProduct.Adapter(
                 productAdapter = ProductColumnAdapter

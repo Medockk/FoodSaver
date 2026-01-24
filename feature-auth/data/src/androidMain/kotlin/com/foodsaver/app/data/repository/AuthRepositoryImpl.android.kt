@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.foodsaver.app.commonModule.utils.PlatformContext

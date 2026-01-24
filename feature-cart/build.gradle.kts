@@ -1,6 +1,5 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -55,6 +54,8 @@ kotlin {
             implementation(projects.core.coreCart)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreProfile)
+            implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAddress)
 
             implementation(libs.koin.compose.viewmodel)
         }

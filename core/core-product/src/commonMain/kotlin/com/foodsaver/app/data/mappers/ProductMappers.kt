@@ -2,14 +2,11 @@
 
 package com.foodsaver.app.data.mappers
 
-import com.foodsaver.app.dto.OrganizationDto
-import com.foodsaver.app.dto.ProductDto
-import com.foodsaver.app.dto.castExpiresDate
-import com.foodsaver.app.dto.getCostSymbol
-import com.foodsaver.app.dto.getExpiresType
-import com.foodsaver.app.dto.getUnitType
-import com.foodsaver.app.model.OrganizationModel
-import com.foodsaver.app.model.ProductModel
+import com.foodsaver.app.coreModel.dto.OrganizationDto
+import com.foodsaver.app.coreModel.dto.ProductDto
+import com.foodsaver.app.coreModel.model.OrganizationModel
+import com.foodsaver.app.coreModel.model.ProductModel
+import com.foodsaver.app.coreModel.utils.ProductUtils
 import kotlin.time.ExperimentalTime
 
 internal fun ProductDto.toModel(): ProductModel {
@@ -22,7 +19,7 @@ internal fun ProductDto.toModel(): ProductModel {
         photoUrl = photoUrl,
 
         cost = cost,
-        costUnit = getCostSymbol(costUnit),
+        costUnit = ProductUtils.getCostSymbol(costUnit),
         oldCost = oldCost,
 
         rating = rating,
@@ -30,11 +27,11 @@ internal fun ProductDto.toModel(): ProductModel {
         organization = organization.toModel(),
 
         unit = unit,
-        unitType = getUnitType(unitName),
+        unitType = ProductUtils.getUnitType(unitName),
 
         categoryIds = categoryIds,
-        expiresAt = expiresAt.castExpiresDate().toString(),
-        expiresDateType = expiresAt.getExpiresType(),
+        expiresAt = ProductUtils.castExpiresDate(expiresAt).toString(),
+        expiresDateType = ProductUtils.getExpiresType(expiresAt),
     )
 }
 

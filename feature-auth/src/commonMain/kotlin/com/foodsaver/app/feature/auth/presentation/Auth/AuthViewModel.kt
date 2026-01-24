@@ -2,10 +2,10 @@ package com.foodsaver.app.feature.auth.presentation.Auth
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
@@ -22,14 +22,14 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase,
-    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase
-) : ViewModel() {
+    private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase,
+) : BaseViewModel<AuthAction>() {
 
     private val _state = mutableStateOf(AuthState())
     val state: State<AuthState> = _state
 
-    private val _channel = Channel<AuthAction>()
-    val channel = _channel.receiveAsFlow()
+    override val baseChannel: Channel<AuthAction> = Channel()
+    val channel = baseChannel.receiveAsFlow()
 
     fun onEvent(event: AuthEvent) {
         when (event) {
@@ -72,17 +72,18 @@ class AuthViewModel(
                     ) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(OnError(result.error.message))
+                            sendError(result.error.message)
                         }
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
+                            baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
             }
+
             AuthEvent.OnSignUpClick -> {
                 viewModelScope.launch(Dispatchers.InputOutput) {
                     if (!checkInputData(true)) return@launch
@@ -98,13 +99,13 @@ class AuthViewModel(
                     ) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(OnError(result.error.message))
+                            sendError(result.error.message)
                         }
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
+                            baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -118,13 +119,13 @@ class AuthViewModel(
                     )) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(OnError(result.error.message))
+                            sendError(result.error.message)
                         }
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
                             _state.value = state.value.copy(isLoading = false)
-                            _channel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
+                            baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
                 }
@@ -142,22 +143,26 @@ class AuthViewModel(
 
     private suspend fun checkInputData(shouldCheckFio: Boolean = false): Boolean {
         if (shouldCheckFio && _state.value.fio.isBlank()) {
-            _channel.send(OnError("Fio must be not empty"))
+            sendError("Fio must be not empty")
             return false
         }
         if (_state.value.email.isBlank()) {
-            _channel.send(OnError("Email must be not empty"))
+            sendError("Email must be not empty")
             return false
         }
         if (!EmailValidator.validate(_state.value.email)) {
-            _channel.send(OnError("Email invalid"))
+            sendError("Email invalid")
             return false
         }
         if (_state.value.password.isBlank()) {
-            _channel.send(OnError("Password must be not empty"))
+            sendError("Password must be not empty")
             return false
         }
 
         return true
+    }
+
+    override fun mapBaseError(message: String): AuthAction {
+        return OnError(message)
     }
 }

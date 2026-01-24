@@ -10,19 +10,27 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.foodsaver.app.common.AuthenticationTextField
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
+import com.foodsaver.app.presentation.FeatureProfile.components.AddProfileInfoAlert
 import com.foodsaver.app.presentation.FeatureProfile.components.ProfilePaymentCard
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodAction
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodEvent
@@ -41,6 +49,7 @@ fun ProfilePaymentMethodScreenRoot(
     viewModel: ProfilePaymentMethodViewModel = koinViewModel(),
 ) {
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveActions(viewModel.channel) {
@@ -53,10 +62,64 @@ fun ProfilePaymentMethodScreenRoot(
 
     ProfilePaymentMethodScreen(
         navController = navController,
-        state = viewModel.state,
+        state = state,
         onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState
     )
+
+    if (state.isDialogOpen) {
+        AddProfileInfoAlert(
+            modifier = Modifier
+                .fillMaxWidth(),
+            content = {
+                Column {
+                    AuthenticationTextField(
+                        value = state.dialogBankName,
+                        onValueChange = {
+                            viewModel.onEvent(ProfilePaymentMethodEvent.OnNewCardBankChange(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "Bank name",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    AuthenticationTextField(
+                        value = state.dialogCardNumber,
+                        onValueChange = {
+                            viewModel.onEvent(ProfilePaymentMethodEvent.OnNewCardNumberChange(it))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "Card number",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+                    Checkbox(
+                        checked = state.dialogIsSelectedCard,
+                        onCheckedChange = { viewModel.onEvent(ProfilePaymentMethodEvent.OnNewIsSelectedCardChange(it)) },
+                        modifier = Modifier
+                            .align(Alignment.End)
+                    )
+                }
+            },
+            onSaveButtonClick = {
+                viewModel.onEvent(ProfilePaymentMethodEvent.OnAddNewCardClick)
+            },
+            onDismissRequestClick = {
+                viewModel.onEvent(ProfilePaymentMethodEvent.OnCloseDialogClick)
+            }
+        )
+    }
 }
 
 @Composable
@@ -74,6 +137,9 @@ private fun ProfilePaymentMethodScreen(
                     navController.popBackStack()
                 }
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { paddingValues ->
         Column(
@@ -94,7 +160,10 @@ private fun ProfilePaymentMethodScreen(
                         paymentCardModel = card,
                         isSelected = index == 0,
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        onRemoveClick = {
+                            onEvent(ProfilePaymentMethodEvent.OnRemovePaymentMethod(card.globalId))
+                        }
                     )
                 }
             }
@@ -115,7 +184,7 @@ private fun ProfilePaymentMethodScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 onClick = {
-                    onEvent(ProfilePaymentMethodEvent.OnAddNewCardClick)
+                    onEvent(ProfilePaymentMethodEvent.OnOpenDialogClick)
                 }
             )
         }

@@ -1,6 +1,6 @@
 package com.foodsaver.app.presentation.ProfileAddress
 
-import com.foodsaver.app.domain.model.AddressModel
+import com.foodsaver.app.coreModel.model.AddressModel
 
 data class ProfileAddressState(
     val addresses: List<AddressModel> = emptyList(),
@@ -10,4 +10,5 @@ data class ProfileAddressState(
 
     val dialogAddressName: String = "",
     val dialogAddressValue: String = "",
+    val dialogIsCurrentAddress: Boolean = false,
 )

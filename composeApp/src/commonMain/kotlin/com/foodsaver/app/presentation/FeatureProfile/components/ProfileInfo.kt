@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.SubcomposeAsyncImageContent
 import com.foodsaver.app.common.shimmerEffect
-import com.foodsaver.app.domain.model.UserModel
+import com.foodsaver.app.coreProfile.domain.model.UserModel
 
 @Composable
 fun ProfileInfo(

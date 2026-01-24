@@ -40,6 +40,7 @@ plugins {
 }
 
 include(":composeApp")
+include(":androidApp")
 include(":shared")
 
 include(":core")
@@ -53,6 +54,8 @@ include(":core:core-product")
 include(":core:core-navigation")
 include(":core:core-cart")
 include(":core:core-profile")
+include(":core:core-paymentMethod")
+include(":core:core-address")
 
 include(":feature-auth")
 include(":feature-auth:data")

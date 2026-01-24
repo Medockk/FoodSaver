@@ -1,10 +1,8 @@
-import com.foodsaver.app.dto.AddressDto;
-import com.foodsaver.app.dto.PaymentCardDto;
 import kotlin.String;
 import kotlin.collections.List;
 import kotlin.time.Instant;
 
-CREATE TABLE IF NOT EXISTS userEntity (
+CREATE TABLE IF NOT EXISTS userEntity(
     uid TEXT NOT NULL PRIMARY KEY,
     username TEXT NOT NULL,
     email TEXT,
@@ -12,10 +10,33 @@ CREATE TABLE IF NOT EXISTS userEntity (
     photoUrl TEXT,
     createdAt INTEGER AS Instant NOT NULL,
     roles TEXT AS List<String> NOT NULL,
-
     phone TEXT,
-    bio TEXT,
-    addresses TEXT AS List<AddressDto> NOT NULL,
-    paymentCartNumbers TEXT AS List<PaymentCardDto> NOT NULL,
-    currentCity TEXT
+    bio TEXT
 );
+
+insertUser:
+INSERT OR REPLACE INTO userEntity
+VALUES ?;
+
+deleteUser:
+DELETE FROM userEntity
+WHERE uid = ?;
+
+getUserByUid:
+SELECT *
+FROM userEntity
+WHERE uid = :uid;
+
+updateUser:
+UPDATE userEntity
+SET name = ?,
+email = ?,
+photoUrl = ?,
+bio = ?,
+phone = ?
+WHERE uid = ?;
+
+updatePhotoUrl:
+UPDATE userEntity
+SET photoUrl = ?
+WHERE uid = ?;

@@ -1,0 +1,61 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS addressEntity(
+    localId INTEGER PRIMARY KEY AUTOINCREMENT,
+    globalId TEXT UNIQUE,
+    name TEXT,
+    address TEXT NOT NULL,
+    isCurrentAddress INTEGER AS Boolean NOT NULL,
+    tempId TEXT NOT NULL,
+    uid TEXT NOT NULL
+);
+
+getAllAddresses:
+SELECT * FROM addressEntity
+WHERE uid = ?;
+
+getAddressByGlobalId:
+SELECT * FROM addressEntity
+WHERE uid = ? AND globalId = ?;
+
+getCurrentAddress:
+SELECT * FROM addressEntity
+WHERE uid = ? AND isCurrentAddress = 1;
+
+insertAddressWithGlobalId:
+INSERT INTO addressEntity(globalId, name, address, isCurrentAddress, tempId, uid)
+VALUES (?,?,?,?, ?, ?);
+
+insertAddressWithoutGlobalId:
+INSERT INTO addressEntity(name, address, isCurrentAddress, tempId, uid)
+VALUES (?,?,?, ?, ?);
+
+updateAddress:
+UPDATE addressEntity
+SET
+name = ?,
+address = ?,
+isCurrentAddress = ?
+WHERE uid = ? AND globalId = ?;
+
+updateGlobalId:
+UPDATE addressEntity
+SET globalId = ?
+WHERE uid = ? AND tempId = ?;
+
+deleteAddressByTempId:
+DELETE FROM addressEntity
+WHERE uid = ? AND tempId = ?;
+
+deleteAddressByGlobalId:
+DELETE FROM addressEntity
+WHERE uid = ? AND globalId = ?;
+
+disableCurrentAddress:
+DELETE FROM addressEntity
+WHERE uid = ? AND isCurrentAddress = 1;
+
+setCurrentAddress:
+UPDATE addressEntity
+SET isCurrentAddress = ?
+WHERE uid = ? AND globalId = ?;

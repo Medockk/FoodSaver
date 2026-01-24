@@ -1,6 +1,6 @@
 package com.foodsaver.app.presentation.ProfilePersonalInfo
 
-import com.foodsaver.app.domain.model.UserModel
+import com.foodsaver.app.coreProfile.domain.model.UserModel
 
 data class ProfilePersonalInfoState(
     val profile: UserModel? = null,

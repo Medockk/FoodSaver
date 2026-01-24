@@ -1,29 +1,33 @@
 package com.foodsaver.app.presentation.ProfilePaymentMethod
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.InputOutput
-import com.foodsaver.app.domain.usecase.paymentCard.GetPaymentMethodUseCase
-import com.foodsaver.app.model.PaymentCardModel
+import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
+import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
+import com.foodsaver.app.corePaymentMethod.domain.usecase.AddPaymentMethodUseCase
+import com.foodsaver.app.corePaymentMethod.domain.usecase.RemovePaymentMethodUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProfilePaymentMethodViewModel(
-    private val getPaymentMethodUseCase: GetPaymentMethodUseCase
-): ViewModel() {
+    private val readPaymentMethodRepository: ReadPaymentMethodRepository,
+    private val addPaymentMethodUseCase: AddPaymentMethodUseCase,
+    private val removePaymentMethodUseCase: RemovePaymentMethodUseCase,
+) : BaseViewModel<ProfilePaymentMethodAction>() {
 
-    var state by mutableStateOf(ProfilePaymentMethodState())
-        private set
+    private val _state = MutableStateFlow(ProfilePaymentMethodState())
+    val state = _state.asStateFlow()
 
-    private val _channel = Channel<ProfilePaymentMethodAction>()
-    val channel = _channel.receiveAsFlow()
+    override val baseChannel: Channel<ProfilePaymentMethodAction> = Channel()
+    val channel = baseChannel.receiveAsFlow()
 
     init {
         getPaymentMethods()
@@ -31,31 +35,82 @@ class ProfilePaymentMethodViewModel(
 
     private fun getPaymentMethods() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            getPaymentMethodUseCase().collect {
-                when (it) {
-                    is ApiResult.Error -> {
-                        state = state.copy(isLoading = true)
-                        _channel.send(ProfilePaymentMethodAction.OnError(it.error.message))
-                    }
-                    ApiResult.Loading -> {
-                        state = state.copy(isLoading = true)
-                    }
-                    is ApiResult.Success<List<PaymentCardModel>> -> {
-                        withContext(Dispatchers.Main) {
-                            println("Cards ${it.data}")
-                            state = state.copy(
-                                cards = it.data
+            readPaymentMethodRepository.getPaymentMethod().collectRequest(
+                onSuccess = { response ->
+                    withContext(Dispatchers.Main) {
+                        _state.update {
+                            it.copy(
+                                cards = response,
+                                isLoading = false
                             )
                         }
                     }
+                },
+                onLoading = {
+                    _state.update { it.copy(isLoading = true) }
+                },
+                onError = { error ->
+                    _state.update { it.copy(isLoading = true) }
+                    sendError(error.message)
                 }
-            }
+            )
         }
     }
 
     fun onEvent(event: ProfilePaymentMethodEvent) {
         when (event) {
-            ProfilePaymentMethodEvent.OnAddNewCardClick -> TODO()
+            ProfilePaymentMethodEvent.OnAddNewCardClick -> {
+                viewModelScope.launch(Dispatchers.InputOutput) {
+                    addPaymentMethodUseCase.invoke(
+                        addPaymentMethodModel = AddPaymentMethodModel(
+                            bank = _state.value.dialogBankName,
+                            cardNumber = _state.value.dialogCardNumber,
+                            isSelected = _state.value.dialogIsSelectedCard
+                        )
+                    ).onFailure {
+                        sendError(it.message)
+                    }
+
+                    _state.update {
+                        it.copy(
+                            isDialogOpen = false,
+                            dialogCardNumber = "",
+                            dialogBankName = "",
+                            dialogIsSelectedCard = false
+                        )
+                    }
+                }
+            }
+
+            is ProfilePaymentMethodEvent.OnNewCardBankChange -> {
+                _state.update { it.copy(dialogBankName = event.value) }
+            }
+
+            is ProfilePaymentMethodEvent.OnNewCardNumberChange -> {
+                _state.update { it.copy(dialogCardNumber = event.value) }
+            }
+
+            is ProfilePaymentMethodEvent.OnNewIsSelectedCardChange -> {
+                _state.update { it.copy(dialogIsSelectedCard = event.value) }
+            }
+
+            ProfilePaymentMethodEvent.OnOpenDialogClick -> {
+                _state.update { it.copy(isDialogOpen = true) }
+            }
+
+            ProfilePaymentMethodEvent.OnCloseDialogClick -> {
+                _state.update { it.copy(isDialogOpen = false) }
+            }
+
+            is ProfilePaymentMethodEvent.OnRemovePaymentMethod -> {
+                viewModelScope.launch(Dispatchers.InputOutput) {
+                    removePaymentMethodUseCase(event.methodId)
+                }
+            }
         }
+    }
+
+    override fun mapBaseError(message: String): ProfilePaymentMethodAction {
+        return ProfilePaymentMethodAction.OnError(message)
     }
 }

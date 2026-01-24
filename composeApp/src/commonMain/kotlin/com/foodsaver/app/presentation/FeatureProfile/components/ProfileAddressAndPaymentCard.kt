@@ -13,18 +13,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.domain.model.AddressModel
-import com.foodsaver.app.model.PaymentCardModel
+import com.foodsaver.app.coreModel.model.AddressModel
+import com.foodsaver.app.coreModel.model.PaymentMethodModel
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_mastercard_icon
+import foodsaver.composeapp.generated.resources.ic_minus_icon
 import foodsaver.composeapp.generated.resources.selected_address_icon
 import org.jetbrains.compose.resources.painterResource
 
@@ -85,8 +88,9 @@ fun ProfileAddressCard(
 
 @Composable
 fun ProfilePaymentCard(
-    paymentCardModel: PaymentCardModel,
+    paymentCardModel: PaymentMethodModel,
     isSelected: Boolean,
+    onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -117,6 +121,19 @@ fun ProfilePaymentCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1
             )
+
+            Spacer(Modifier.weight(1f))
+            IconButton(
+                onClick = onRemoveClick
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.ic_minus_icon),
+                    contentDescription = "Remove",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error),
+                    modifier = Modifier
+                        .size(25.dp)
+                )
+            }
         }
     }
 }

@@ -112,7 +112,7 @@ private fun SharedTransitionScope.CartScreen(
             PrimaryCenterAlignedTopAppBar(
                 title = stringResource(Res.string.cart),
                 onNavigationButtonClick = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             )
         }
@@ -158,66 +158,75 @@ private fun SharedTransitionScope.CartScreen(
             }
 
             item {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.inverseSurface)
                         .padding(top = 20.dp, bottom = 10.dp)
                         .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.cart_location),
-                        contentDescription = null,
+                    Row(
                         modifier = Modifier
-                            .size(28.dp),
-                        tint = Color.Unspecified
-                    )
-
-                    Spacer(Modifier.width(8.dp))
-
-                    Column(Modifier.weight(1f)) {
-                        if (state.profile != null) {
-                            state.profile?.currentCity?.let {
-                                Text(
-                                    text = it,
-                                    color = MaterialTheme.colorScheme.inverseOnSurface
-                                )
-                            }
-
-                            val subTitle = (state.profile?.name ?: "") + " " + (state.profile?.phone ?: "")
-
-                            if (subTitle.isNotBlank()) {
-                                Text(
-                                    text = subTitle,
-                                    color = MaterialTheme.colorScheme.inversePrimary
-                                )
-                            }
-                        } else {
-                            with(this@Row) {
-                                Box(Modifier.weight(0.25f).shimmerEffect())
-                                Box(Modifier.weight(0.5f).shimmerEffect())
-                            }
-                        }
-                    }
-
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                        }
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(Res.drawable.ic_back_icon),
+                            painter = painterResource(Res.drawable.cart_location),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(24.dp)
-                                .graphicsLayer {
-                                    rotationY = 180f
-                                },
-                            tint = Color(0xFF4E60FF)
+                                .size(28.dp),
+                            tint = Color.Unspecified
                         )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Column(Modifier.weight(1f)) {
+                            if (state.profile != null) {
+
+                                val subTitle =
+                                    (state.profile?.name ?: "") + " " + (state.profile?.phone ?: "")
+
+                                if (subTitle.isNotBlank()) {
+                                    Text(
+                                        text = subTitle,
+                                        color = MaterialTheme.colorScheme.inversePrimary
+                                    )
+                                }
+                            } else {
+                                with(this@Row) {
+                                    Box(Modifier.weight(0.25f).shimmerEffect())
+                                    Box(Modifier.weight(0.5f).shimmerEffect())
+                                }
+                            }
+                        }
+
+                        IconButton(
+                            onClick = {
+                                navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_back_icon),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .graphicsLayer {
+                                        rotationY = 180f
+                                    },
+                                tint = Color(0xFF4E60FF)
+                            )
+                        }
+                    }
+
+                    state.paymentMethod?.let {
+                        Text(
+                            text = it.cardSecretNumber,
+                            color = MaterialTheme.colorScheme.inversePrimary
+                        )
+                        Spacer(Modifier.height(5.dp))
                     }
                 }
+
             }
 
             item {

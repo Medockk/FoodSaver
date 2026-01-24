@@ -3,6 +3,9 @@ package com.foodsaver.app.data.repository
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.utils.PlatformContext
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.dto.AuthResponseModelDto
 import com.foodsaver.app.data.dto.GoogleAuthRequestDto
 import com.foodsaver.app.data.mappers.toDto
@@ -11,10 +14,6 @@ import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
 import com.foodsaver.app.domain.repository.AuthRepository
-import com.foodsaver.app.domain.repository.DatabaseProvider
-import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
-import com.foodsaver.app.commonModule.utils.PlatformContext
-import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.domain.utils.AuthExceptions
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants

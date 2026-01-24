@@ -1,6 +1,6 @@
 package com.foodsaver.app.domain.model
 
-import com.foodsaver.app.model.ProductModel
+import com.foodsaver.app.coreModel.model.ProductModel
 
 data class CartItemModel(
     val localId: Long,

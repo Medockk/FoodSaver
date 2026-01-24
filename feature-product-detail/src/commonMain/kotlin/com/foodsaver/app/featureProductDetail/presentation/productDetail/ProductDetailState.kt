@@ -1,6 +1,6 @@
 package com.foodsaver.app.featureProductDetail.presentation.productDetail
 
-import com.foodsaver.app.model.ProductModel
+import com.foodsaver.app.coreModel.model.ProductModel
 
 data class ProductDetailState(
     val product: ProductModel? = null,

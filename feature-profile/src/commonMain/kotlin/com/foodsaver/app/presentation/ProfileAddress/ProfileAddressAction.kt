@@ -1,6 +1,8 @@
 package com.foodsaver.app.presentation.ProfileAddress
 
-sealed interface ProfileAddressAction {
+import com.foodsaver.app.commonModule.presentation.AppAction
+
+sealed interface ProfileAddressAction: AppAction {
 
     data class OnError(val message: String): ProfileAddressAction
 }

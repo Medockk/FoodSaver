@@ -5,7 +5,7 @@ import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.di.initSharedKoin
 import com.foodsaver.app.di.uiModule
-import com.foodsaver.app.presentation.routing.Route
+import com.foodsaver.app.navigationModule.Route
 import kotlinx.browser.window
 
 @OptIn(ExperimentalComposeUiApi::class)
