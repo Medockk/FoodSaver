@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
-import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
+import com.foodsaver.app.domain.usecase.GetCartUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.foodsaver.app
+package com.foodsaver.app.androidApp
 
 import android.app.Application
 import com.foodsaver.app.di.initSharedKoin

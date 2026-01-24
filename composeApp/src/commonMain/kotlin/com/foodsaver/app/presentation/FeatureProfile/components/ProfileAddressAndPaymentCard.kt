@@ -23,8 +23,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.coreModel.model.PaymentMethodModel
 import com.foodsaver.app.coreModel.model.AddressModel
+import com.foodsaver.app.coreModel.model.PaymentMethodModel
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_mastercard_icon
 import foodsaver.composeapp.generated.resources.ic_minus_icon

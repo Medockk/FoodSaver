@@ -6,7 +6,6 @@ import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreModel.dto.UserDto
 import com.foodsaver.app.data.mappers.toDto
-import com.foodsaver.app.di.databaseModule
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProfilePersonalInfoRepository

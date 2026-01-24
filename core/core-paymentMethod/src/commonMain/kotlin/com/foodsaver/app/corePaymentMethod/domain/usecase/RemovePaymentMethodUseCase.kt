@@ -1,6 +1,5 @@
 package com.foodsaver.app.corePaymentMethod.domain.usecase
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRepository
 
 class RemovePaymentMethodUseCase(

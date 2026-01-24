@@ -4,18 +4,17 @@ package com.foodsaver.app.presentation.Home
 
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
+import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.domain.usecase.GetProductsUseCase
-import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.domain.usecase.SearchProductUseCase
 import com.foodsaver.app.domain.usecase.offer.GetOffersUseCase

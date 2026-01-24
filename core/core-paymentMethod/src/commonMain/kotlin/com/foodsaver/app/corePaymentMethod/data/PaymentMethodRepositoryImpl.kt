@@ -7,8 +7,10 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.ApiResult.mapNullable
 import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreModel.dto.PaymentMethodDto
@@ -20,6 +22,7 @@ import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRe
 import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
+import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -87,7 +90,7 @@ internal class PaymentMethodRepositoryImpl(
         }
     }
 
-    override fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel>> = channelFlow {
+    override fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel?>> = channelFlow {
 
         send(ApiResult.Loading)
 
@@ -106,17 +109,19 @@ internal class PaymentMethodRepositoryImpl(
             }
         }
 
-        val httpResult = saveNetworkCall<PaymentMethodDto> {
+        val httpResult = saveNetworkCallWithEmptyContent<PaymentMethodDto> {
             httpClient.get(HttpConstants.PAYMENT_URL + "/current")
-        }.onSuccess { dto ->
-            uid?.let {
-                queries.setCurrentPaymentMethodByGlobalId(
-                    isSelected = dto.isSelected,
-                    globalId = dto.id,
-                    uid = uid
-                )
+        }.onSuccessNullable { dto ->
+            dto?.let {
+                uid?.let {
+                    queries.setCurrentPaymentMethodByGlobalId(
+                        isSelected = dto.isSelected,
+                        globalId = dto.id,
+                        uid = uid
+                    )
+                }
             }
-        }.map { it.toModel() }
+        }.mapNullable { it?.toModel() }
 
         send(httpResult)
 

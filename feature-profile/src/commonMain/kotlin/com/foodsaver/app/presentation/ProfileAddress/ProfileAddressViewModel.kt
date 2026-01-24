@@ -9,7 +9,6 @@ import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreAddress.domain.usecase.AddAddressUseCase
 import com.foodsaver.app.coreAddress.domain.usecase.RemoveAddressUseCase
 import com.foodsaver.app.coreAddress.domain.usecase.SetCurrentAddressUseCase
-import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

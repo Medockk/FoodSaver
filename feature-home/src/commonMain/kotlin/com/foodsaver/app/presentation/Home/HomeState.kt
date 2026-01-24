@@ -1,11 +1,11 @@
 package com.foodsaver.app.presentation.Home
 
-import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreModel.model.AddressModel
+import com.foodsaver.app.coreModel.model.ProductModel
+import com.foodsaver.app.coreProfile.domain.model.UserModel
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CategoryModel
 import com.foodsaver.app.domain.model.OfferModel
-import com.foodsaver.app.coreProfile.domain.model.UserModel
 
 data class HomeState(
     val searchQuery: String = "",

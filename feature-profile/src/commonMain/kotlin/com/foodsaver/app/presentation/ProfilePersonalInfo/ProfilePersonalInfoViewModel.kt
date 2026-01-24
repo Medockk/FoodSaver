@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
-import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
+import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
 import com.foodsaver.app.domain.usecase.personalInfo.SavePersonalInfoUseCase
 import com.foodsaver.app.domain.usecase.personalInfo.UploadAvatarUseCase
 import kotlinx.coroutines.Dispatchers
