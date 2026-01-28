@@ -67,6 +67,7 @@ import com.foodsaver.app.feature.auth.presentation.Auth.AuthEvent
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthPage
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthState
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.rememberPlatformContext
 import foodsaver.composeapp.generated.resources.Res
@@ -75,7 +76,7 @@ import foodsaver.composeapp.generated.resources.create
 import foodsaver.composeapp.generated.resources.create_account
 import foodsaver.composeapp.generated.resources.email
 import foodsaver.composeapp.generated.resources.fio
-import foodsaver.composeapp.generated.resources.forgot_password
+import foodsaver.composeapp.generated.resources.forgot_password_question
 import foodsaver.composeapp.generated.resources.google_icon
 import foodsaver.composeapp.generated.resources.password
 import foodsaver.composeapp.generated.resources.sign_in
@@ -117,6 +118,7 @@ fun AuthScreenRoot(
             state = state,
             onEvent = viewModel::onEvent,
             snackBarHostState = snackBarHostState,
+            navController = navController,
             modifier = Modifier
                 .widthIn(max = 500.dp)
                 .fillMaxWidth()
@@ -129,6 +131,7 @@ private fun AuthScreen(
     state: AuthState,
     onEvent: (AuthEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
+    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val platformContext = rememberPlatformContext()
@@ -348,7 +351,7 @@ private fun AuthScreen(
                                             onValueChange = {
                                                 onEvent(AuthEvent.OnPasswordChange(it))
                                             },
-                                            keyboardType = KeyboardType.Email,
+                                            keyboardType = KeyboardType.Password,
                                             placeholder = "**** **** ****",
 
                                             isPasswordVisible = state.isPasswordVisible,
@@ -363,12 +366,17 @@ private fun AuthScreen(
                                 Spacer(Modifier.height(5.dp))
 
                                 TextButton(
-                                    onClick = { TODO() },
+                                    onClick = {
+                                        navController.navigate(Route.AuthGraph.ForgotPasswordScreen) {
+                                            restoreState = true
+                                            launchSingleTop = true
+                                        }
+                                    },
                                     modifier = Modifier
                                         .align(Alignment.End)
                                 ) {
                                     Text(
-                                        text = stringResource(Res.string.forgot_password),
+                                        text = stringResource(Res.string.forgot_password_question),
                                         style = TextStyle(
                                             brush = Brush.linearGradient(
                                                 colors = listOf(

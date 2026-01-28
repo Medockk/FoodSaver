@@ -6,7 +6,13 @@
     <string name="email">Эл. почта</string>
     <string name="fio">Имя Фамилия</string>
     <string name="password">Пароль</string>
-    <string name="forgot_password">Забыли пароль?</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+
+    <string name="forgot_password_question">Забыли пароль?</string>
+    <string name="forgot_password">Забыли пароль</string>
+    <string name="send_reset_link">Отправить ссылку на почту</string>
+    <string name="reset_password">Сброс пароля</string>
+
     <string name="sign_in">Войти</string>
     <string name="create_account">Создать аккаунт</string>
     <string name="create">Создать</string>

@@ -22,14 +22,18 @@ fun NavGraphBuilder.featureAuthNavigation(
             AuthScreenRoot(navController, onSuccessAuthentication)
         }
 
+        composable<Route.AuthGraph.ForgotPasswordScreen> {
+            ForgotPasswordScreenRoot(navController)
+        }
+
         composable<Route.AuthGraph.ResetPasswordScreen>(
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "http://localhost:8087/auth/reset_password/{token}"
+                    uriPattern = "http://0.0.0.0:8087/auth/reset_password/{token}"
                 }
             )
         ) {
-            val token = it.toRoute<Route.AuthGraph.ResetPasswordScreen>().token
+            ResetPasswordScreenRoot(navController)
         }
     }
 

@@ -12,6 +12,9 @@ sealed class Route {
         data object AuthScreen: Route()
 
         @Serializable
+        data object ForgotPasswordScreen: Route()
+
+        @Serializable
         data class ResetPasswordScreen(val token: String): Route()
     }
 

@@ -159,7 +159,7 @@ private fun ProfileAddress(
                 itemsIndexed(state.addresses) { index, address ->
                     ProfileAddressCard(
                         addressModel = address,
-                        isSelected = index == 0,
+                        isSelected = address.isCurrentAddress,
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem(),

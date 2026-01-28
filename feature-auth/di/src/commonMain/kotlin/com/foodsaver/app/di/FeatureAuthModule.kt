@@ -4,10 +4,15 @@ import com.foodsaver.app.data.repository.AuthRepositoryImpl
 import com.foodsaver.app.data.repository.GoogleAuthenticator
 import com.foodsaver.app.domain.repository.AuthRepository
 import com.foodsaver.app.domain.usecase.AuthenticateWithGoogleUseCase
+import com.foodsaver.app.domain.usecase.ForgotPasswordUseCase
+import com.foodsaver.app.domain.usecase.ResetPasswordUseCase
 import com.foodsaver.app.domain.usecase.SignInUseCase
 import com.foodsaver.app.domain.usecase.SignUpUseCase
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
+import com.foodsaver.app.feature.auth.presentation.ForgotPassword.ForgotPasswordViewModel
+import com.foodsaver.app.feature.auth.presentation.ResetPassword.ResetPasswordViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -28,8 +33,12 @@ private val module = module {
     factory { SignInUseCase(get()) }
     factory { SignUpUseCase(get()) }
     factory { AuthenticateWithGoogleUseCase(get()) }
+    factoryOf(::ForgotPasswordUseCase)
+    factoryOf(::ResetPasswordUseCase)
 
     viewModelOf(::AuthViewModel)
+    viewModelOf(::ForgotPasswordViewModel)
+    viewModelOf(::ResetPasswordViewModel)
 }
 val featureAuthModule = arrayOf(
     featurePlatformModule,

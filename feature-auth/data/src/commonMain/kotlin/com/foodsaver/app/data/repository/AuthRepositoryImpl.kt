@@ -11,6 +11,8 @@ import com.foodsaver.app.data.dto.GoogleAuthRequestDto
 import com.foodsaver.app.data.mappers.toDto
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.model.AuthResponseModel
+import com.foodsaver.app.domain.model.ForgotPasswordModel
+import com.foodsaver.app.domain.model.ResetPasswordModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
 import com.foodsaver.app.domain.repository.AuthRepository
@@ -19,7 +21,9 @@ import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
 
@@ -68,6 +72,7 @@ class AuthRepositoryImpl(
             val message = when (e) {
                 is AuthExceptions.FailedToExactActivityFromContext -> "Failed to authenticate user"
                 is AuthExceptions.NoGoogleAccount -> "Authenticate in Google account, to login in app"
+                else -> "Unknown error"
             }
             return ApiResult.Error(
                 error = GlobalErrorResponse(
@@ -95,6 +100,23 @@ class AuthRepositoryImpl(
             setAccessTokens(it.jwtToken, it.refreshToken)
             authUserManager.setCurrentUid(it.uid)
         }.map { it.toModel() }
+    }
+
+    override suspend fun forgotPassword(forgotPasswordModel: ForgotPasswordModel): ApiResult<Unit> {
+        return saveNetworkCall<Unit> {
+            httpClient.put(HttpConstants.AUTH_URL + "/reset-password") {
+                setBody(forgotPasswordModel.toDto())
+            }
+        }
+    }
+
+    override suspend fun resetPassword(resetPasswordModel: ResetPasswordModel): ApiResult<Unit> {
+        return saveNetworkCall<Unit> {
+            httpClient.put(HttpConstants.AUTH_URL + "/reset-password") {
+                setBody(resetPasswordModel.toDto())
+                parameter("id", resetPasswordModel.resetPasswordToken)
+            }
+        }
     }
 
     private suspend fun setAccessTokens(jwt: String, refresh: String) {

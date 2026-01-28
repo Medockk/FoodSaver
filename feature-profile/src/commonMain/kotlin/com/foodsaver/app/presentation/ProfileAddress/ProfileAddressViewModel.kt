@@ -75,11 +75,12 @@ class ProfileAddressViewModel(
 
             ProfileAddressEvent.OnSaveAddress -> {
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    addAddressUseCase.invoke(AddAddressModel(
+                    val requestModel = AddAddressModel(
                         name = _state.value.dialogAddressName,
                         address = _state.value.dialogAddressValue,
                         isCurrentAddress = _state.value.dialogIsCurrentAddress
-                    )).onFailure {
+                    )
+                    addAddressUseCase.invoke(requestModel).onFailure {
                         sendError(it.message)
                     }
                 }

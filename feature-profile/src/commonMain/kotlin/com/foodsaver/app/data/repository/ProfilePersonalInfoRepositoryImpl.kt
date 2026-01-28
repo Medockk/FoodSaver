@@ -7,7 +7,7 @@ import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreModel.dto.UserDto
 import com.foodsaver.app.data.mappers.toDto
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
-import com.foodsaver.app.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProfilePersonalInfoRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall

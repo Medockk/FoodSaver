@@ -26,8 +26,11 @@ fun App(
     initialAuthRoute: Route = Route.AuthGraph.AuthScreen,
 ) {
 
-    val startDestination = if (viewModel.isUserLogin) Route.MainGraph
-    else Route.AuthGraph
+    val startDestination = when {
+        initialAuthRoute is Route.AuthGraph.ResetPasswordScreen -> Route.AuthGraph
+        viewModel.isUserLogin -> Route.MainGraph
+        else -> Route.AuthGraph
+    }
 
     MaterialTheme(
         colorScheme = colorScheme()

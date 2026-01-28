@@ -20,7 +20,7 @@ import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreModel.dto.AddressDto
 import com.foodsaver.app.coreModel.model.AddressModel
-import com.foodsaver.app.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
@@ -174,6 +174,11 @@ internal class AddressRepositoryImpl(
         val uid = authUserManager.getCurrentUid()
 
         uid?.let {
+
+            if (addAddressModel.isCurrentAddress) {
+                queries.disableCurrentAddress(uid)
+            }
+
             queries.insertAddressWithoutGlobalId(
                 name = addAddressModel.name,
                 address = addAddressModel.address,
@@ -189,7 +194,14 @@ internal class AddressRepositoryImpl(
             }
         }.onSuccess { addressDto ->
             uid?.let {
-                queries.updateGlobalId(addressDto.id, uid, tempId)
+                queries.updateAddressByTempId(
+                    name = addressDto.name,
+                    address = addressDto.address,
+                    isCurrentAddress = addressDto.isCurrentAddress,
+                    uid = uid,
+                    globalId = addressDto.id,
+                    tempId = tempId
+                )
             }
         }.onFailure {
             uid?.let {

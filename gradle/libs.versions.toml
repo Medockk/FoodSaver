@@ -38,13 +38,13 @@ sqldelight = "2.2.1"
 sqliteFramework = "2.6.2"
 kotlinxDateTime = "0.7.1"
 imagePicker = "1.0.29"
+datastore = "1.2.0"
 
 #Android Libraries
 androidSecurity = "1.1.0"
 splashScreen = "1.2.0"
 lifecycleRuntimeKtx = "2.10.0"
 composeBom = "2026.01.00"
-material = "1.10.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -79,6 +79,9 @@ material3 = { module = "org.jetbrains.compose.material3:material3", version.ref 
 jetbrains-compose-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime" }
+
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 
 image-picker = { module = "io.github.ismoy:imagepickerkmp", version.ref = "imagePicker" }
 
@@ -127,7 +130,6 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [bundles]
 coil = [

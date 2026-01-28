@@ -6,7 +6,7 @@ import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.data.mappers.toModel
-import com.foodsaver.app.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProductRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall

@@ -14,6 +14,7 @@ fun main() {
     ComposeViewport {
         val route = getRoute()
         val navController = rememberNavController()
+        println("ROUTE IS $route")
         App(navController, initialAuthRoute = route)
     }
 }

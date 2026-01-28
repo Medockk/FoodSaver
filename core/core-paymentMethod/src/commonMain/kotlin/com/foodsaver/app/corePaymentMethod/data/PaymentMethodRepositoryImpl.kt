@@ -19,7 +19,7 @@ import com.foodsaver.app.coreModel.model.PaymentMethodModel
 import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRepository
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
-import com.foodsaver.app.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
@@ -114,6 +114,7 @@ internal class PaymentMethodRepositoryImpl(
         }.onSuccessNullable { dto ->
             dto?.let {
                 uid?.let {
+                    queries.disablePaymentMethods(uid)
                     queries.setCurrentPaymentMethodByGlobalId(
                         isSelected = dto.isSelected,
                         globalId = dto.id,
@@ -152,6 +153,11 @@ internal class PaymentMethodRepositoryImpl(
         }.onSuccess { response ->
             uid?.let {
                 queries.transaction {
+
+                    if (methodModel.isSelected) {
+                        queries.disablePaymentMethods(uid)
+                    }
+
                     queries.updateLocalPaymentMethod(
                         globalId = response.id,
                         isSelected = response.isSelected,
@@ -164,7 +170,7 @@ internal class PaymentMethodRepositoryImpl(
             }
         }.onFailure {
             queries.deleteLocalPaymentMethod(tempId)
-        }.map {  }
+        }.map { }
     }
 
     override suspend fun removePaymentMethod(methodId: String): ApiResult<Unit> {

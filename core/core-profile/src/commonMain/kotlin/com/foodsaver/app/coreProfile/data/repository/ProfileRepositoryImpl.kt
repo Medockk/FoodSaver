@@ -12,7 +12,7 @@ import com.foodsaver.app.coreProfile.data.mappers.toModel
 import com.foodsaver.app.coreProfile.data.mappers.tpModel
 import com.foodsaver.app.coreProfile.domain.model.UserModel
 import com.foodsaver.app.coreProfile.domain.repository.ProfileRepository
-import com.foodsaver.app.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient

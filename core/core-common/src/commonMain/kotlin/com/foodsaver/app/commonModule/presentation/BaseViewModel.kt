@@ -15,7 +15,7 @@ abstract class BaseViewModel<A: AppAction>: ViewModel() {
 
     protected abstract val baseChannel: Channel<A>
 
-    abstract fun mapBaseError(message: String): A
+    protected abstract fun mapBaseError(message: String): A
 
     protected suspend fun <T> Flow<ApiResult<T>>.collectRequest(
         onSuccess: suspend (T) -> Unit,

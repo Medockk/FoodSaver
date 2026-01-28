@@ -12,6 +12,10 @@ plugins {
 
 kotlin {
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+
     androidLibrary {
         namespace = "com.foodsaver.app.feature.auth"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -52,6 +56,9 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.featureAuth.domain)
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.jetbrains.compose.navigation)
+            implementation(projects.core.coreNavigation)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(projects.core.coreCommon)

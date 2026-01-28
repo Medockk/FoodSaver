@@ -8,19 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
-@Preview(showBackground = true)
-@Composable
-fun A() {
-    AuthenticationTextField(
-        value = "dddd",
-        onValueChange = {}
-    )
-}
 
 @Composable
 fun AuthenticationTextField(
@@ -30,6 +21,7 @@ fun AuthenticationTextField(
     placeholder: String? = null,
     label: (@Composable () -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
+    trailingIcon: (@Composable () -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
 
@@ -45,6 +37,10 @@ fun AuthenticationTextField(
                 fontSize = 14.sp
             )
         },
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.onBackground
+        ),
+        trailingIcon = trailingIcon,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.outline,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,

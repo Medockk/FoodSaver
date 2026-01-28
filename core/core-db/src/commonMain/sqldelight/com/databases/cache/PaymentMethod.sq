@@ -17,7 +17,8 @@ WHERE uid = ?;
 getCurrentPaymentMethod:
 SELECT * FROM paymentMethodEntity
 WHERE uid = ?
-AND isSelected = 1;
+AND isSelected = 1
+LIMIT 1;
 
 addPaymentMethod:
 INSERT INTO paymentMethodEntity(globalId, bank, cardNumber, isSelected, uid, tempId)
@@ -27,6 +28,11 @@ setCurrentPaymentMethodByLocalId:
 UPDATE paymentMethodEntity
 SET isSelected = ?
 WHERE localId = ? AND uid = ?;
+
+disablePaymentMethods:
+UPDATE paymentMethodEntity
+SET isSelected = 0
+WHERE uid = ?;
 
 setCurrentPaymentMethodByGlobalId:
 UPDATE paymentMethodEntity
