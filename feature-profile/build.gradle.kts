@@ -60,6 +60,7 @@ kotlin {
             implementation(projects.core.coreAuth)
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
 
             implementation(libs.koin.compose.viewmodel)
         }

@@ -1,7 +1,9 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
+import org.gradle.kotlin.dsl.buildConfig
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -11,6 +13,22 @@ plugins {
     alias(libs.plugins.composeHotReload)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.github.gmazzo.buildconfig")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName.set("com.foodsaver.app.composeApp")
+    buildConfigField(
+        type = "String",
+        name = "YANDEX_MAPKIT",
+        value = "\"${localProperties.getProperty("YANDEX_MAPKIT")}\""
+    )
 }
 
 kotlin {
@@ -80,6 +98,7 @@ kotlin {
             implementation(projects.core.coreNavigation)
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
 
             implementation(projects.featureAuth)
             implementation(projects.featureAuth.di)

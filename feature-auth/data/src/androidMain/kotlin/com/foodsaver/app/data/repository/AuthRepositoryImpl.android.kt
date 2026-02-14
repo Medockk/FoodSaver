@@ -33,8 +33,7 @@ actual class GoogleAuthenticator {
             .build()
 
         val result = try {
-            val activity = platformContext.activity
-                .findActivity() ?: throw AuthExceptions.FailedToExactActivityFromContext()
+            val activity = platformContext.getActivity() ?: throw AuthExceptions.FailedToExactActivityFromContext()
             credentialManager.getCredential(
                 context = activity,
                 request = request
@@ -58,16 +57,6 @@ actual class GoogleAuthenticator {
             val idToken = googleIdTokenCredential.idToken
             return idToken
 
-        }
-
-        return null
-    }
-
-    private fun Context.findActivity(): Activity? {
-        var currentContext = this
-        while (currentContext is ContextWrapper) {
-            if (currentContext is Activity) return currentContext
-            currentContext = currentContext.baseContext
         }
 
         return null

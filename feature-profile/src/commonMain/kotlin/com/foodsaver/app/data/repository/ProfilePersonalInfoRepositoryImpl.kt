@@ -4,10 +4,10 @@ import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.map
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.UserDto
 import com.foodsaver.app.data.mappers.toDto
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
-import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.ProfilePersonalInfoRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
@@ -42,17 +42,6 @@ internal class ProfilePersonalInfoRepositoryImpl(
                 phone = it.phone,
                 uid = it.uid
             )
-
-            val addressEntityQueries = database.addressEntityQueries
-            it.addresses.forEach { addressDto ->
-                addressEntityQueries.updateAddress(
-                    name = addressDto.name,
-                    address = addressDto.address,
-                    uid = it.uid,
-                    globalId = addressDto.id,
-                    isCurrentAddress = addressDto.isCurrentAddress,
-                )
-            }
         }.map { }
     }
 

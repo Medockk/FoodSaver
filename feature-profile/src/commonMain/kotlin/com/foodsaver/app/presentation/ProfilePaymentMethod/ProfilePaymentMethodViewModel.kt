@@ -40,7 +40,7 @@ class ProfilePaymentMethodViewModel(
                     withContext(Dispatchers.Main) {
                         _state.update {
                             it.copy(
-                                cards = response,
+                                cards = response ?: emptyList(),
                                 isLoading = false
                             )
                         }
@@ -62,44 +62,11 @@ class ProfilePaymentMethodViewModel(
             ProfilePaymentMethodEvent.OnAddNewCardClick -> {
                 viewModelScope.launch(Dispatchers.InputOutput) {
                     addPaymentMethodUseCase.invoke(
-                        addPaymentMethodModel = AddPaymentMethodModel(
-                            bank = _state.value.dialogBankName,
-                            cardNumber = _state.value.dialogCardNumber,
-                            isSelected = _state.value.dialogIsSelectedCard
-                        )
+                        addPaymentMethodModel = AddPaymentMethodModel()
                     ).onFailure {
                         sendError(it.message)
                     }
-
-                    _state.update {
-                        it.copy(
-                            isDialogOpen = false,
-                            dialogCardNumber = "",
-                            dialogBankName = "",
-                            dialogIsSelectedCard = false
-                        )
-                    }
                 }
-            }
-
-            is ProfilePaymentMethodEvent.OnNewCardBankChange -> {
-                _state.update { it.copy(dialogBankName = event.value) }
-            }
-
-            is ProfilePaymentMethodEvent.OnNewCardNumberChange -> {
-                _state.update { it.copy(dialogCardNumber = event.value) }
-            }
-
-            is ProfilePaymentMethodEvent.OnNewIsSelectedCardChange -> {
-                _state.update { it.copy(dialogIsSelectedCard = event.value) }
-            }
-
-            ProfilePaymentMethodEvent.OnOpenDialogClick -> {
-                _state.update { it.copy(isDialogOpen = true) }
-            }
-
-            ProfilePaymentMethodEvent.OnCloseDialogClick -> {
-                _state.update { it.copy(isDialogOpen = false) }
             }
 
             is ProfilePaymentMethodEvent.OnRemovePaymentMethod -> {

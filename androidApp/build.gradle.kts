@@ -30,6 +30,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.datastore:datastore-preferences:1.2.0")
+            force("androidx.datastore:datastore-preferences-core:1.2.0")
+            force("androidx.datastore:datastore-core:1.2.0")
+        }
+    }
 }
 
 dependencies {

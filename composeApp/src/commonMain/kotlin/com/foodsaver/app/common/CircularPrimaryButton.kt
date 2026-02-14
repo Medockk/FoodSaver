@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -28,7 +27,7 @@ fun CircularPrimaryButton(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
+            .background(com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary, CircleShape)
             .clickable(interactionSource = mutableInteractionSource, indication = ripple(), onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -41,9 +40,9 @@ fun CircularPrimaryButton(
 fun CircularPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
+    backgroundColor: Color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
     mutableInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    border: BorderStroke = BorderStroke(1.5.dp, color = MaterialTheme.colorScheme.primary),
+    border: BorderStroke = BorderStroke(1.5.dp, color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary),
     content: @Composable () -> Unit,
 ) {
     Box(

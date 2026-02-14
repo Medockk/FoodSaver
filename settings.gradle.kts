@@ -56,6 +56,7 @@ include(":core:core-cart")
 include(":core:core-profile")
 include(":core:core-paymentMethod")
 include(":core:core-address")
+include(":core:core-settings")
 
 include(":feature-auth")
 include(":feature-auth:data")

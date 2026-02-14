@@ -11,6 +11,7 @@ import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.CartItemDto
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.data.mappers.mapToModel
@@ -19,7 +20,6 @@ import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.repository.CartRepository
-import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient

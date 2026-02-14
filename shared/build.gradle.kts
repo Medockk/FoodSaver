@@ -64,6 +64,7 @@ kotlin {
             implementation(projects.core.coreProfile)
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
 
             implementation(projects.featureAuth.di)
             implementation(projects.featureHome)

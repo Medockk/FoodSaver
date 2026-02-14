@@ -18,9 +18,9 @@ import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
 import com.foodsaver.app.coreAddress.domain.repository.EditAddressRepository
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.AddressDto
 import com.foodsaver.app.coreModel.model.AddressModel
-import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent

@@ -1,6 +1,5 @@
 package com.foodsaver.app.common
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
@@ -30,8 +29,8 @@ fun PrimaryPullToRefreshBox(
             PullToRefreshDefaults.Indicator(
                 state = state,
                 isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.onPrimary,
-                color = MaterialTheme.colorScheme.primary
+                containerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onPrimary,
+                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
             )
         }
     )

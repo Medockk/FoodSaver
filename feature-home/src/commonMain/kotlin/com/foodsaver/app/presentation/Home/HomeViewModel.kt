@@ -44,7 +44,7 @@ class HomeViewModel(
 
     private val getProfileUseCase: GetProfileUseCase,
     private val getOffersUseCase: GetOffersUseCase,
-    private val readAddressRepository: ReadAddressRepository
+    private val readAddressRepository: ReadAddressRepository,
 ) : BaseViewModel<HomeAction>() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -155,11 +155,12 @@ class HomeViewModel(
         _state.update { it.copy(isRefresh = true) }
         viewModelScope.launch(Dispatchers.InputOutput) {
             arrayOf(
+                getOffers(),
                 loadProducts(),
                 loadCart(),
                 getAllCategories(),
                 getProfile(),
-                getCurrentAddress(),
+                getCurrentAddress()
             )
 
             delay(1000)
@@ -309,11 +310,13 @@ class HomeViewModel(
                 val cartItem = _state.value.cartProducts
                     .find { it.product.productId == event.productId }
 
-                baseChannel.trySend(HomeAction.OnProductNavigation(
-                    productId = event.productId,
-                    isProductInCart = cartItem != null,
-                    cartProductCount = cartItem?.quantity
-                ))
+                baseChannel.trySend(
+                    HomeAction.OnProductNavigation(
+                        productId = event.productId,
+                        isProductInCart = cartItem != null,
+                        cartProductCount = cartItem?.quantity
+                    )
+                )
             }
         }
     }

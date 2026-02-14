@@ -3,7 +3,6 @@ package com.foodsaver.app.common
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.foodsaver.app.ui.FoodSaverTheme
 
 @Composable
 fun SearchTextField(
@@ -31,7 +31,7 @@ fun SearchTextField(
         placeholder = {
             Text(
                 text = hint,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onSecondary
             )
         },
         leadingIcon = leadingIcon,
@@ -44,9 +44,9 @@ fun SearchTextField(
         maxLines = maxLines,
         shape = RoundedCornerShape(7.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
-            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            focusedContainerColor = FoodSaverTheme.colorScheme.secondary,
+            unfocusedContainerColor = FoodSaverTheme.colorScheme.secondary,
+            disabledContainerColor = FoodSaverTheme.colorScheme.secondary,
 
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,

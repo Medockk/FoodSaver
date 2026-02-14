@@ -7,7 +7,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -31,7 +30,7 @@ fun PrimaryCenterAlignedTopAppBar(
         title = {
             Text(
                 text = title,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -50,7 +49,7 @@ fun PrimaryCenterAlignedTopAppBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.background
         )
     )
 }
