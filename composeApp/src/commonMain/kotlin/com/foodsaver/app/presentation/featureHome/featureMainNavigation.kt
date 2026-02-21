@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.foodsaver.app.navigationModule.Route
+import com.foodsaver.app.presentation.featureAddProduct.AddProductScreenRoot
 import com.foodsaver.app.presentation.featureCart.CartScreenRoot
 import com.foodsaver.app.presentation.featureProductDetail.ProductScreenRoot
 
@@ -38,6 +39,10 @@ fun NavGraphBuilder.featureHomeNavigation(
                 navController = navController,
                 animatedVisibilityScope = this,
             )
+        }
+
+        composable<Route.MainGraph.AddProductScreen> {
+            AddProductScreenRoot(navController)
         }
     }
 }

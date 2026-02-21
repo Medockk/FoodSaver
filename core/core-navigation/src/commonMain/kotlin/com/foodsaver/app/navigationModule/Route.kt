@@ -33,6 +33,9 @@ sealed class Route {
 
         @Serializable
         data object CartScreen: Route()
+
+        @Serializable
+        data object AddProductScreen: Route()
     }
 
     @Serializable

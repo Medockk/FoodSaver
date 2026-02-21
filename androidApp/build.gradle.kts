@@ -6,9 +6,12 @@ plugins {
 android {
     namespace = "com.foodsaver.app"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    version = "1.0.0-debug"
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

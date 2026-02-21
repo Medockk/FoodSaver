@@ -7,14 +7,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
-
-    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
 
     androidLibrary {
-        namespace = "com.foodsaver.app.shared"
+        namespace = "com.foodsaver.app.feature.auth.di"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -29,7 +27,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Shared"
+            baseName = "FeatureAuthDI"
             isStatic = true
         }
     }
@@ -51,27 +49,18 @@ kotlin {
         }
 
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
-            api(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines)
-
             implementation(projects.core.coreDi)
             implementation(projects.core.coreAuth)
-            implementation(projects.core.coreDb)
+            // стоит ли так делать? потом
             implementation(projects.core.coreNetwork)
-            implementation(projects.core.coreProduct)
-            implementation(projects.core.coreCart)
-            implementation(projects.core.coreProfile)
-            implementation(projects.core.corePaymentMethod)
-            implementation(projects.core.coreAddress)
-            implementation(projects.core.coreSettings)
+            implementation(projects.core.coreDb)
 
-            implementation(projects.feature.featureAuth.di)
-            implementation(projects.feature.featureHome)
-            implementation(projects.feature.featureProductDetail)
-            implementation(projects.feature.featureCart)
-            implementation(projects.feature.featureProfile)
-            implementation(projects.feature.featureAddProduct)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(projects.feature.featureAuth)
+            implementation(projects.feature.featureAuth.data)
+            implementation(projects.feature.featureAuth.domain)
         }
         jvmMain.dependencies {
 

@@ -38,6 +38,11 @@ fun HomeModalDrawerSheet(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val closeDrawer = {
+        coroutineScope.launch {
+            modalDrawerState.close()
+        }
+    }
 
     ModalDrawerSheet(
         modifier = modifier
@@ -63,9 +68,7 @@ fun HomeModalDrawerSheet(
                     IconButton(
                         onClick = {
                             navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                            coroutineScope.launch {
-                                modalDrawerState.close()
-                            }
+                            closeDrawer()
                         }
                     ) {
                         Image(
@@ -80,9 +83,7 @@ fun HomeModalDrawerSheet(
                 selected = false,
                 onClick = {
                     navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                    coroutineScope.launch {
-                        modalDrawerState.close()
-                    }
+                    closeDrawer()
                 }
             )
             NavigationDrawerItem(
@@ -95,9 +96,7 @@ fun HomeModalDrawerSheet(
                     IconButton(
                         onClick = {
                             navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                            coroutineScope.launch {
-                                modalDrawerState.close()
-                            }
+                            closeDrawer()
                         }
                     ) {
                         Image(
@@ -112,9 +111,7 @@ fun HomeModalDrawerSheet(
                 selected = false,
                 onClick = {
                     navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                    coroutineScope.launch {
-                        modalDrawerState.close()
-                    }
+                    closeDrawer()
                 }
             )
 
@@ -131,9 +128,7 @@ fun HomeModalDrawerSheet(
                         IconButton(
                             onClick = {
                                 navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                                coroutineScope.launch {
-                                    modalDrawerState.close()
-                                }
+                                closeDrawer()
                             }
                         ) {
                             Image(
@@ -148,9 +143,7 @@ fun HomeModalDrawerSheet(
                     selected = false,
                     onClick = {
                         TODO()
-                        coroutineScope.launch {
-                            modalDrawerState.close()
-                        }
+                        closeDrawer()
                     }
                 )
                 NavigationDrawerItem(
@@ -163,9 +156,7 @@ fun HomeModalDrawerSheet(
                         IconButton(
                             onClick = {
                                 navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                                coroutineScope.launch {
-                                    modalDrawerState.close()
-                                }
+                                closeDrawer()
                             }
                         ) {
                             Image(
@@ -180,9 +171,38 @@ fun HomeModalDrawerSheet(
                     selected = false,
                     onClick = {
                         TODO()
-                        coroutineScope.launch {
-                            modalDrawerState.close()
+                        closeDrawer()
+                    }
+                )
+
+                HorizontalDivider()
+
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            text = "Add product",
+                        )
+                    },
+                    icon = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(Route.MainGraph.AddProductScreen)
+                                closeDrawer()
+                            }
+                        ) {
+                            Image(
+                                painter = painterResource(Res.drawable.ic_personal_info_icon),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp),
+                                contentScale = ContentScale.Crop
+                            )
                         }
+                    },
+                    selected = false,
+                    onClick = {
+                        navController.navigate(Route.MainGraph.AddProductScreen)
+                        closeDrawer()
                     }
                 )
             }
