@@ -56,6 +56,8 @@ kotlin {
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreDb)
+
+            implementation(libs.kotlinx.datetime)
         }
         jvmMain.dependencies {
 

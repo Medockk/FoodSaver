@@ -61,15 +61,18 @@ kotlin {
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.splash)
+            implementation(libs.compose.ui.tooling)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.animation)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime.runtime)
+            implementation(libs.compose.foundation.foundation)
+//            implementation(compose.material3)
+            implementation(libs.compose.ui.ui)
+            implementation(libs.compose.animation.animation)
+            implementation(libs.components.components.resources)
+//            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.ui.tooling.preview)
+
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
@@ -99,6 +102,7 @@ kotlin {
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
             implementation(projects.core.coreSettings)
+            implementation(projects.core.coreCategory)
 
             implementation(projects.feature.featureAuth)
             implementation(projects.feature.featureAuth.di)
@@ -117,6 +121,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.compose.ui.tooling)
         }
 
         webMain.dependencies {

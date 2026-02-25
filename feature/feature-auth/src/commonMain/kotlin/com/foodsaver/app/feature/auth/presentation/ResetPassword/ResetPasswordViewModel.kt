@@ -27,7 +27,7 @@ class ResetPasswordViewModel(
 ) : BaseViewModel<ResetPasswordAction>() {
 
     override val baseChannel: Channel<ResetPasswordAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     private val navArgs = savedStateHandle.toRoute<Route.AuthGraph.ResetPasswordScreen>()
 

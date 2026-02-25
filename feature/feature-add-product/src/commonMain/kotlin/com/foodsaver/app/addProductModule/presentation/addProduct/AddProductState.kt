@@ -1,25 +1,27 @@
 package com.foodsaver.app.addProductModule.presentation.addProduct
 
-//import kotlinx.datetime.LocalDateTime
-//import kotlinx.datetime.TimeZone
-//import kotlinx.datetime.format
-//import kotlinx.datetime.format.char
-//import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
+import androidx.compose.ui.text.input.TextFieldValue
+import com.foodsaver.app.coreModel.model.CategoryModel
 
 data class AddProductState(
-    val title: String = "",
-    val description: String = "",
-    val cost: String = "",
-    val costUnit: String = "",
-    val selectedCategories: List<String> = emptyList(),
+    val title: TextFieldValue = TextFieldValue(text = ""),
+    val description: TextFieldValue = TextFieldValue(text = ""),
 
-    val count: String = "1",
-    val unit: String = "",
-    val unitName: String = "",
+    val cost: TextFieldValue = TextFieldValue(text = ""),
+    val costUnit: TextFieldValue = TextFieldValue(text = ""),
+    val isCostUnitDropDownMenuVisible: Boolean = false,
 
-//    val expiresAt: String = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-//        .format(LocalDateTime.Format {
-//            day(); char('-') ;monthNumber(); char('-'); year()
-//        })
+    val categories: List<CategoryModel> = emptyList(),
+    val selectedCategories: List<CategoryModel> = emptyList(),
+    val isCategoryDropDownMenuVisible: Boolean = false,
+
+    val count: TextFieldValue = TextFieldValue(text = ""),
+
+    val unit: TextFieldValue = TextFieldValue(text = ""),
+    val unitName: TextFieldValue = TextFieldValue(text = ""),
+    val isUnitNameDropDownMenuVisible: Boolean = false,
+
+    val expiresAt: TextFieldValue = TextFieldValue(text = ""),
+    val isExpiresAtDropDownMenuVisible: Boolean = false,
+    val isExpiresAtError: Boolean = false,
 )

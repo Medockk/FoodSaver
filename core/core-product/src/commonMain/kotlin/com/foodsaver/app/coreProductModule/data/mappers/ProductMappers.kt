@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package com.foodsaver.app.coreProductModule.data.mappers
 
 import com.foodsaver.app.coreModel.dto.OrganizationDto
@@ -9,7 +7,8 @@ import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreModel.utils.ProductUtils
 import com.foodsaver.app.coreProductModule.data.dto.AddProductDto
 import com.foodsaver.app.coreProductModule.domain.model.AddProductModel
-import kotlin.time.ExperimentalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 
 internal fun ProductDto.toModel(): ProductModel {
 
@@ -55,5 +54,5 @@ internal fun AddProductModel.toDto() = AddProductDto(
     count = count,
     unit = unit,
     unitName = unitName,
-    expiresAt = expiresAt
+    expiresAt = expiresAt.atStartOfDayIn(TimeZone.currentSystemDefault())
 )

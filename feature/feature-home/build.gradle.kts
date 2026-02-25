@@ -64,6 +64,7 @@ kotlin {
             implementation(projects.core.coreProfile)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreCategory)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.datetime)

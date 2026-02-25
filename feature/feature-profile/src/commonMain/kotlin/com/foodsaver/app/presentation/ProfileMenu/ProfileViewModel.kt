@@ -25,7 +25,7 @@ class ProfileViewModel(
     val state: State<ProfileState> = _state
 
     override val baseChannel: Channel<ProfileAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     init {
         getProfile()

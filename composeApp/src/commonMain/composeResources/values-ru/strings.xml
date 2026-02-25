@@ -51,4 +51,15 @@
 
     <string name="buy">Купить</string>
     <string name="settings">Настройки</string>
+    <string name="addProduct">Добавить продукт</string>
+
+    <string name="addProductTitle">Название</string>
+    <string name="addProductDescription">Описание</string>
+    <string name="addProductCount">Количество</string>
+    <string name="addProductCost">Стоимость</string>
+    <string name="addProductCostUnit">Единица стоимости</string>
+    <string name="addProductUnit">Единица измерения продукта</string>
+    <string name="addProductUnitName">Имя единицы измерения продукта</string>
+    <string name="addProductExpiresAt">Когда срок годности истечёт</string>
+    <string name="addProductCategories">Категории</string>
 </resources>

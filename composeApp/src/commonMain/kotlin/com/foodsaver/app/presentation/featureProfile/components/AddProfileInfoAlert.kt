@@ -21,11 +21,11 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.save
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private enum class AddProfileInfoAlertIds {
     GLOBAL_CONTENT_ID,

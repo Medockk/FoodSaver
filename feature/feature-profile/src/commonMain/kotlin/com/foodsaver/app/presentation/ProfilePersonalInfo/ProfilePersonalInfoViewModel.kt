@@ -29,7 +29,7 @@ class ProfilePersonalInfoViewModel(
     private var initialProfileData = ProfilePersonalInfoState().profile
 
     override val baseChannel: Channel<ProfilePersonalInfoAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     init {
         getProfileInfo()

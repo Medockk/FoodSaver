@@ -23,6 +23,7 @@ import com.foodsaver.app.presentation.featureAuth.featureAuthNavigation
 import com.foodsaver.app.presentation.featureHome.featureHomeNavigation
 import com.foodsaver.app.presentation.featureProfile.featureProfileNavigation
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
+import com.foodsaver.app.ui.colorScheme
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -41,7 +42,7 @@ fun App(
     val locale by viewModel.currentLocale.collectAsStateWithLifecycle()
     println("Locale from composition $locale")
 
-    LocalFoodSaverThemeComposition(locale = locale) {
+    LocalFoodSaverThemeComposition(locale = locale, colorScheme = colorScheme(isSystemInDarkTheme = false)) {
         SharedTransitionLayout {
             Scaffold(
                 contentWindowInsets = WindowInsets.statusBars,
@@ -49,9 +50,7 @@ fun App(
             ) { _ ->
                 NavHost(
                     navController,
-                    startDestination = startDestination,
-                    enterTransition = { fadeIn(tween()) + scaleIn(initialScale = 0.95f) },
-                    exitTransition = { fadeOut(tween()) + scaleOut(targetScale = 0.9f) }
+                    startDestination = startDestination
                 ) {
                     featureAuthNavigation(
                         navController = navController,

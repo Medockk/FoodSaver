@@ -9,7 +9,7 @@ plugins {
 kotlin {
 
     androidLibrary {
-        namespace = "com.foodsaver.app.feature.module.feature.add.product.module"
+        namespace = "com.foodsaver.app.core.module.core.category"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -24,7 +24,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "AddProductModule"
+            baseName = "CoreCategory"
             isStatic = true
         }
     }
@@ -49,12 +49,7 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
-
             implementation(projects.core.coreNetwork)
-            implementation(projects.core.coreProduct)
-            implementation(projects.core.coreCategory)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.kotlinx.datetime)
         }
         jvmMain.dependencies {
 

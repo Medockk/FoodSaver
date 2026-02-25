@@ -15,7 +15,8 @@ val coreProductModule = module {
     single<ProductRepositoryImpl> {
         ProductRepositoryImpl(
             httpClient = get(),
-            databaseProvider = get()
+            databaseProvider = get(),
+            json = get()
         )
     }
 

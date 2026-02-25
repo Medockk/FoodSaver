@@ -20,12 +20,16 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.serialization.json.Json
 
 internal class ProductRepositoryImpl(
     private val httpClient: HttpClient,
-    private val databaseProvider: DatabaseProvider
+    private val databaseProvider: DatabaseProvider,
+    private val json: Json,
 ) : ReadProductRepository, EditProductRepository {
 
     override suspend fun getProducts(
@@ -60,7 +64,7 @@ internal class ProductRepositoryImpl(
         name: String,
         categoryIds: List<String>,
         page: Int,
-        size: Int
+        size: Int,
     ): ApiResult<List<ProductModel>> {
         return saveNetworkCall<List<ProductDto>> {
             httpClient.get(HttpConstants.PRODUCTS_URL + "/search") {
@@ -77,21 +81,30 @@ internal class ProductRepositoryImpl(
     }
 
     override suspend fun addProduct(addProductModel: AddProductModel): ApiResult<Unit> {
+
+        val dto = json.encodeToString(addProductModel.toDto())
+
         return saveNetworkCall<ProductDto> {
             httpClient.post(HttpConstants.PRODUCTS_URL) {
-                setBody(addProductModel.toDto())
                 setBody(
                     MultiPartFormDataContent(
-                        parts = formData {
-                            append("file", addProductModel.photo)
-                        }
-                    )
+                    parts = formData {
+                        append("file", addProductModel.photo, Headers.build {
+                            append(HttpHeaders.ContentType, "image/png")
+                            append(HttpHeaders.ContentDisposition, "filename=\"photo.png\"")
+                        })
+
+                        append("product", dto, Headers.build {
+                            append(HttpHeaders.ContentType, "application/json")
+                        })
+                    }
+                )
                 )
             }
         }.onSuccess {
             val queries = databaseProvider.get().cachedProductQueries
             queries.insertCachedProduct(it)
-        }.map {  }
+        }.map { }
     }
 
     override suspend fun deleteProduct(productId: String): ApiResult<Unit> {

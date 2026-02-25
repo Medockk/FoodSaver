@@ -8,15 +8,15 @@ import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
+import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
+import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
+import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
-import com.foodsaver.app.domain.usecase.GetAllCategoriesUseCase
 import com.foodsaver.app.domain.usecase.GetCartUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import com.foodsaver.app.domain.usecase.offer.GetOffersUseCase
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
 import com.foodsaver.app.utils.Paginator
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel(
-    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val categoryRepository: CategoryRepository,
     private val getProductsUseCase: GetProductsUseCase,
     private val getCartUseCase: GetCartUseCase,
 
@@ -51,8 +51,7 @@ class HomeViewModel(
     val state = _state.asStateFlow()
 
     override val baseChannel: Channel<HomeAction> = Channel()
-
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     private var searchJob: Job? = null
 
@@ -71,9 +70,13 @@ class HomeViewModel(
             sendError(errorResponse?.message ?: "Unknown error")
         },
         onSuccess = { _, result ->
-            _state.update {
-                it.copy(
-                    products = _state.value.products + result,
+            _state.update { currentState ->
+
+                val uniqueItems = (currentState.products + result)
+                    .toSet()
+
+                currentState.copy(
+                    products = uniqueItems.toList(),
                     isProductsLoading = false
                 )
             }
@@ -152,8 +155,10 @@ class HomeViewModel(
     }
 
     fun onRefresh() {
-        _state.update { it.copy(isRefresh = true) }
+        _state.update { it.copy(isRefresh = true, isProductsLoading = true, products = emptyList()) }
         viewModelScope.launch(Dispatchers.InputOutput) {
+            productsPaginator.reset()
+            searchPaginator.reset()
             arrayOf(
                 getOffers(),
                 loadProducts(),
@@ -183,7 +188,7 @@ class HomeViewModel(
     private fun getAllCategories(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
             _state.update { it.copy(isCategoriesLoading = true) }
-            getAllCategoriesUseCase().onSuccess { result ->
+            categoryRepository.getAllCategories().onSuccess { result ->
                 _state.update { it.copy(categories = result, isCategoriesLoading = false) }
             }
         }

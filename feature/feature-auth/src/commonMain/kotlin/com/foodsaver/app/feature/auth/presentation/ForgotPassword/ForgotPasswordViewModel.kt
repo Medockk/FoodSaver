@@ -32,7 +32,7 @@ class ForgotPasswordViewModel(
         }.stateFlow(false)
 
     override val baseChannel: Channel<ForgotPasswordAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     override fun mapBaseError(message: String): ForgotPasswordAction {
         return ForgotPasswordAction.OnError(message)

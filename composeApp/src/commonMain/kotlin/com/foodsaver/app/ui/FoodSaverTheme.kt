@@ -3,10 +3,11 @@ package com.foodsaver.app.ui
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.foodsaver.app.ui.provider.LocalAppLocale
 
-private val LocalAppColorScheme = staticCompositionLocalOf {
+val LocalAppColorScheme: ProvidableCompositionLocal<ColorScheme> = staticCompositionLocalOf {
     lightColorScheme
 }
 

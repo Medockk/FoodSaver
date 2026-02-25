@@ -25,7 +25,7 @@ class CartViewModel(
     val state = _state.asStateFlow()
 
     override val baseChannel: Channel<CartAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     init {
         getCart()

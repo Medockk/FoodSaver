@@ -5,6 +5,7 @@ import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.time.Clock
 
 abstract class BaseViewModel<A: AppAction>: ViewModel() {
@@ -14,6 +15,7 @@ abstract class BaseViewModel<A: AppAction>: ViewModel() {
     private val errorBounceMs = 5000L
 
     protected abstract val baseChannel: Channel<A>
+    abstract val channel: Flow<A>
 
     protected abstract fun mapBaseError(message: String): A
 

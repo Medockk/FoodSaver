@@ -29,7 +29,7 @@ class AuthViewModel(
     val state: State<AuthState> = _state
 
     override val baseChannel: Channel<AuthAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     fun onEvent(event: AuthEvent) {
         when (event) {

@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.foodsaver.app.navigationModule.Route
+import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_personal_info_icon
 import foodsaver.composeapp.generated.resources.profile
@@ -45,7 +46,9 @@ fun HomeModalDrawerSheet(
     }
 
     ModalDrawerSheet(
-        modifier = modifier
+        modifier = modifier,
+        drawerContainerColor = FoodSaverTheme.colorScheme.background,
+        drawerContentColor = FoodSaverTheme.colorScheme.onBackground
     ) {
         Column(Modifier.padding(horizontal = 16.dp).verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(16.dp))
@@ -53,7 +56,8 @@ fun HomeModalDrawerSheet(
             Text(
                 text = "General",
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(16.dp),
+                color = FoodSaverTheme.colorScheme.onBackground
             )
             HorizontalDivider()
 
@@ -142,7 +146,6 @@ fun HomeModalDrawerSheet(
                     },
                     selected = false,
                     onClick = {
-                        TODO()
                         closeDrawer()
                     }
                 )
@@ -170,7 +173,6 @@ fun HomeModalDrawerSheet(
                     },
                     selected = false,
                     onClick = {
-                        TODO()
                         closeDrawer()
                     }
                 )

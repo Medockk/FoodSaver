@@ -4,6 +4,9 @@ package com.foodsaver.app.presentation.featureHome
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -27,7 +30,9 @@ fun NavGraphBuilder.featureHomeNavigation(
             scope.HomeScreenRoot(navController, this)
         }
 
-        composable<Route.MainGraph.ProductDetailScreen> {
+        composable<Route.MainGraph.ProductDetailScreen>(
+            enterTransition = { fadeIn(tween()) + scaleIn(initialScale = 0.95f) },
+        ) {
             scope.ProductScreenRoot(
                 navController = navController,
                 animatedVisibilityScope = this,

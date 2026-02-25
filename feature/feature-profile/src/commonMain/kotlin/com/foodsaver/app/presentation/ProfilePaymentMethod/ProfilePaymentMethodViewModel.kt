@@ -27,7 +27,7 @@ class ProfilePaymentMethodViewModel(
     val state = _state.asStateFlow()
 
     override val baseChannel: Channel<ProfilePaymentMethodAction> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     init {
         getPaymentMethods()

@@ -48,7 +48,7 @@ class ProductDetailViewModel(
     val state = _state.asStateFlow()
 
     override val baseChannel: Channel<ProductDetailActions> = Channel()
-    val channel = baseChannel.receiveAsFlow()
+    override val channel = baseChannel.receiveAsFlow()
 
     init {
         getProduct()

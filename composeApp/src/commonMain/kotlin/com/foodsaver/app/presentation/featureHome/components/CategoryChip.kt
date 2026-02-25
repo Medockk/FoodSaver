@@ -20,7 +20,8 @@ fun CategoryChip(
         onClick = onClick,
         label = {
             Text(
-                text = label
+                text = label,
+                maxLines = 1
             )
         },
         shape = RoundedCornerShape(20.dp),

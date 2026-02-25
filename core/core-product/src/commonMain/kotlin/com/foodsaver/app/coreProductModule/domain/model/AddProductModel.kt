@@ -1,5 +1,7 @@
 package com.foodsaver.app.coreProductModule.domain.model
 
+import kotlinx.datetime.LocalDate
+
 data class AddProductModel(
     val title: String,
     val description: String,
@@ -13,7 +15,7 @@ data class AddProductModel(
     val unit: Long,
     val unitName: String,
 
-    val expiresAt: String
+    val expiresAt: LocalDate
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -45,7 +47,7 @@ data class AddProductModel(
         result = 31 * result + costUnit.hashCode()
         result = 31 * result + categoryIds.hashCode()
         result = 31 * result + unitName.hashCode()
-        result = 31 * result + (expiresAt?.hashCode() ?: 0)
+        result = 31 * result + expiresAt.hashCode()
         return result
     }
 }
