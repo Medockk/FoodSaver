@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.ui.FoodSaverTheme
+import com.foodsaver.app.presentation.featureEnterprise.MapKit
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_personal_info_icon
 import foodsaver.composeapp.generated.resources.profile
@@ -119,19 +120,17 @@ fun HomeModalDrawerSheet(
                 }
             )
 
-            if (roles.contains("ADMIN")) {
-                Text(text = "Additional", Modifier.padding(16.dp))
-                HorizontalDivider()
+            if (MapKit.isMapKitSupported) {
                 NavigationDrawerItem(
                     label = {
                         Text(
-                            text = "Edit products",
+                            text = "MapKit",
                         )
                     },
                     icon = {
                         IconButton(
                             onClick = {
-                                navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
+                                navController.navigate(Route.MainGraph.MapScreen())
                                 closeDrawer()
                             }
                         ) {
@@ -146,13 +145,19 @@ fun HomeModalDrawerSheet(
                     },
                     selected = false,
                     onClick = {
+                        navController.navigate(Route.MainGraph.MapScreen())
                         closeDrawer()
                     }
                 )
+            }
+
+            if (roles.contains("ADMIN")) {
+                Text(text = "Additional", Modifier.padding(16.dp))
+                HorizontalDivider()
                 NavigationDrawerItem(
                     label = {
                         Text(
-                            text = "Anything also u",
+                            text = "Edit products",
                         )
                     },
                     icon = {

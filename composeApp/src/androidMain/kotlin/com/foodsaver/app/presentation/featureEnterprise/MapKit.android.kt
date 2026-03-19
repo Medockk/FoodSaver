@@ -1,0 +1,101 @@
+package com.foodsaver.app.presentation.featureEnterprise
+
+import android.Manifest
+import android.content.Context
+import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
+import com.foodsaver.app.composeApp.BuildConfig
+import com.foodsaver.app.featureEnterprises.domain.model.CameraPositionModel
+import com.foodsaver.app.utils.AndroidMapKitController
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
+
+actual object MapKit {
+
+    actual val isMapKitSupported: Boolean = true
+
+    @Composable
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    actual fun DrawMap(
+        initialPosition: CameraPositionModel?,
+        onMapKitControllerReady: (MapKitController) -> Unit,
+        onEvent: (MapKitEvent) -> Unit,
+    ) {
+
+        val context = LocalContext.current
+        val mapView = remember { MapView(context) }
+
+        LaunchedEffect(mapView) {
+            onMapKitControllerReady(
+                AndroidMapKitController(
+                    context = context, mapView = mapView
+                )
+            )
+        }
+
+        AndroidView(
+            modifier = Modifier
+                .fillMaxSize(),
+            factory = {
+                initialPosition?.let {
+                    val cameraPosition = CameraPosition(
+                        Point(initialPosition.latitude, initialPosition.longitude),
+                        initialPosition.zoom,
+                        0f, 0f
+                    )
+                    mapView.mapWindow.map.move(cameraPosition)
+                }
+                mapView
+            }
+        )
+
+        DisposableEffect(mapView) {
+            val cameraListener =
+                CameraListener { _, cameraPosition, _, isFinished ->
+                    if (isFinished) {
+                        val event = MapKitEvent.OnCameraChanged(
+                            latitude = cameraPosition.target.latitude,
+                            longitude = cameraPosition.target.longitude,
+                            zoom = cameraPosition.zoom
+                        )
+                        println("Camera position $event")
+
+                        onEvent(event)
+                    }
+                }
+
+            mapView.mapWindow.map.addCameraListener(cameraListener)
+            mapView.onStart()
+            onDispose {
+                mapView.mapWindow.map.removeCameraListener(cameraListener)
+                mapView.onStop()
+                onStop()
+            }
+        }
+    }
+
+    fun setApiKey(context: Context) {
+        MapKitFactory.setApiKey(BuildConfig.YANDEX_MAPKIT)
+        MapKitFactory.initialize(context)
+    }
+
+    fun onStart() {
+        MapKitFactory.getInstance().onStart()
+    }
+
+    fun onStop() {
+        MapKitFactory.getInstance().onStop()
+    }
+
+
+}

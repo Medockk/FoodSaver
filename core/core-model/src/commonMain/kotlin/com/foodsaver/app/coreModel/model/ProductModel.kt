@@ -14,11 +14,12 @@ data class ProductModel(
     val count: Int,
     val rating: Float?,
 
-    val organization: OrganizationModel,
     val categoryIds: List<String>,
 
     val unit: Long,
     val unitType: ProductUnitType,
+
+    val enterpriseId: String,
 
     val expiresAt: String,
     val expiresDateType: ExpiresDateType,

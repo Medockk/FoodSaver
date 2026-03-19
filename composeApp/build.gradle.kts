@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
+import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
 import org.gradle.kotlin.dsl.buildConfig
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -40,8 +41,12 @@ kotlin {
     androidLibrary {
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
-        namespace = "com.foodsaver.app.composeApp"
+        namespace = "com.foodsaver.app.composeApp.androidMain"
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+    }
+
+    sourceSets.getByName("androidMain") {
+        resources.srcDirs("src/androidMain/res")
     }
 
     jvm()
@@ -62,15 +67,14 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.splash)
             implementation(libs.compose.ui.tooling)
+            implementation(libs.yandex.mapkit)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime.runtime)
             implementation(libs.compose.foundation.foundation)
-//            implementation(compose.material3)
             implementation(libs.compose.ui.ui)
             implementation(libs.compose.animation.animation)
             implementation(libs.components.components.resources)
-//            implementation(compose.components.uiToolingPreview)
             implementation(libs.compose.ui.tooling.preview)
 
             implementation(libs.androidx.lifecycle.viewmodelCompose)
@@ -103,6 +107,7 @@ kotlin {
             implementation(projects.core.coreAddress)
             implementation(projects.core.coreSettings)
             implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
 
             implementation(projects.feature.featureAuth)
             implementation(projects.feature.featureAuth.di)
@@ -112,6 +117,7 @@ kotlin {
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
 
             implementation(libs.image.picker)
         }

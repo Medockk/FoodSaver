@@ -56,6 +56,7 @@ import com.foodsaver.app.featureProductDetail.presentation.productDetail.Product
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailEvents
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailState
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailViewModel
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureProductDetail.components.ProductCounter
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.ScreenAnimation
@@ -68,6 +69,7 @@ import foodsaver.composeapp.generated.resources.ic_clock_icon
 import foodsaver.composeapp.generated.resources.ic_heart_icon
 import foodsaver.composeapp.generated.resources.ic_kilogram_icon
 import foodsaver.composeapp.generated.resources.ic_liters_icon
+import foodsaver.composeapp.generated.resources.ic_map_icon
 import foodsaver.composeapp.generated.resources.ic_rating_icon
 import foodsaver.composeapp.generated.resources.remove_product_from_cart
 import foodsaver.composeapp.generated.resources.total_items
@@ -121,6 +123,9 @@ private fun SharedTransitionScope.ProductScreen(
     modifier: Modifier = Modifier,
 ) {
 
+    val isScreenVisible =
+        animatedVisibilityScope.transition.currentState == animatedVisibilityScope.transition.targetState
+    println("IsScreenVisible $isScreenVisible")
     val topAppBarState = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -161,9 +166,22 @@ private fun SharedTransitionScope.ProductScreen(
                                 .size(24.dp)
                         )
                     }
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Route.MainGraph.MapScreen(state.product?.enterpriseId))
+                        },
+                        enabled = isScreenVisible
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_map_icon),
+                            contentDescription = "Open in nap",
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.background,
+                    containerColor = Color.Transparent,
                     scrolledContainerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.background
                 )
             )
@@ -171,13 +189,10 @@ private fun SharedTransitionScope.ProductScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize()
-                .padding(paddingValues)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             state.product?.let { product ->
-                Spacer(Modifier.height(80.dp))
-
                 SubcomposeAsyncImage(
                     model = product.photoUrl,
                     contentDescription = null,
@@ -189,14 +204,15 @@ private fun SharedTransitionScope.ProductScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .weight(0.45f)
                         .sharedElement(
                             sharedContentState = rememberSharedContentState(
                                 ScreenAnimation.Home_ProductDetail.imageAnim(
                                     product.productId
                                 )
                             ),
-                            animatedVisibilityScope = animatedVisibilityScope
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            renderInOverlayDuringTransition = true
                         )
                         .sharedElement(
                             sharedContentState = rememberSharedContentState(
@@ -211,175 +227,181 @@ private fun SharedTransitionScope.ProductScreen(
 
                 Spacer(Modifier.height(15.dp))
 
-                Text(
-                    text = product.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 26.sp,
-                    color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primaryFixed
-                )
-                Text(
-                    text = "${product.costUnit} ${product.cost}",
-                    color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                Spacer(Modifier.height(30.dp))
-
-                ProductCounter(
-                    count = state.productCount,
-                    onIncreaseClick = {
-                        onEvent(ProductDetailEvents.OnIncreaseCountClick)
-                    },
-                    onDecreaseClick = {
-                        onEvent(ProductDetailEvents.OnDecreaseCountClick)
-                    }
-                )
-
-
-                Spacer(Modifier.height(30.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 25.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .weight(0.7f)
                 ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_rating_icon),
-                        contentDescription = "rating",
-                        modifier = Modifier
-                            .size(24.dp),
-                        tint = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.width(5.dp))
-                    Text(
-                        text = product.rating?.toString() ?: "0",
-                        color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                    Spacer(Modifier.weight(1f))
 
-                    Row{
+                    Text(
+                        text = product.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 26.sp,
+                        color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primaryFixed
+                    )
+                    Text(
+                        text = "${product.costUnit} ${product.cost}",
+                        color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.height(30.dp))
+
+                    ProductCounter(
+                        count = state.productCount,
+                        onIncreaseClick = {
+                            onEvent(ProductDetailEvents.OnIncreaseCountClick)
+                        },
+                        onDecreaseClick = {
+                            onEvent(ProductDetailEvents.OnDecreaseCountClick)
+                        }
+                    )
+
+
+                    Spacer(Modifier.height(30.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp)
+                    ) {
                         Icon(
-                            painter = painterResource(
-                                resource = when (product.unitType) {
-                                    ProductUnitType.KILOGRAM, ProductUnitType.GRAM -> Res.drawable.ic_kilogram_icon
-                                    ProductUnitType.LITERS, ProductUnitType.MILLILITERS -> Res.drawable.ic_liters_icon
-                                }
-                            ),
-                            contentDescription = "liters",
+                            painter = painterResource(Res.drawable.ic_rating_icon),
+                            contentDescription = "rating",
                             modifier = Modifier
                                 .size(24.dp),
                             tint = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
                         )
                         Spacer(Modifier.width(5.dp))
                         Text(
-                            text = "${product.unit} ${product.unitType.value}",
+                            text = product.rating?.toString() ?: "0",
                             color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Normal
                         )
-                    }
-                    Spacer(Modifier.weight(1f))
+                        Spacer(Modifier.weight(1f))
 
-                    Row{
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_clock_icon),
-                            contentDescription = "expires at",
-                            modifier = Modifier
-                                .size(24.dp),
-                            tint = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+                        Row {
+                            Icon(
+                                painter = painterResource(
+                                    resource = when (product.unitType) {
+                                        ProductUnitType.KILOGRAM, ProductUnitType.GRAM -> Res.drawable.ic_kilogram_icon
+                                        ProductUnitType.LITERS, ProductUnitType.MILLILITERS -> Res.drawable.ic_liters_icon
+                                    }
+                                ),
+                                contentDescription = "liters",
+                                modifier = Modifier
+                                    .size(24.dp),
+                                tint = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(5.dp))
+                            Text(
+                                text = "${product.unit} ${product.unitType.value}",
+                                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+
+                        Row {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_clock_icon),
+                                contentDescription = "expires at",
+                                modifier = Modifier
+                                    .size(24.dp),
+                                tint = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(5.dp))
+                            val dateType = when (product.expiresDateType) {
+                                ExpiresDateType.DAYS -> stringResource(Res.string.days)
+                                ExpiresDateType.HOURS -> stringResource(Res.string.hours)
+                            }
+
+                            Text(
+                                text = "${product.expiresAt} $dateType",
+                                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(15.dp))
+
+                    Text(
+                        text = product.description,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp),
+                        maxLines = 4,
+                        fontSize = 15.sp,
+                        color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primaryFixed,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.Normal,
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 15.sp,
+                            maxFontSize = 25.sp
                         )
-                        Spacer(Modifier.width(5.dp))
-                        val dateType = when (product.expiresDateType) {
-                            ExpiresDateType.DAYS -> stringResource(Res.string.days)
-                            ExpiresDateType.HOURS -> stringResource(Res.string.hours)
+                    )
+                    Spacer(Modifier.height(20.dp))
+
+                    Spacer(Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 25.dp, end = 20.dp),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "${stringResource(Res.string.total_items)} x${state.productCount}",
+                                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
+                                fontSize = 15.sp
+                            )
+
+                            Text(
+                                text = "${product.costUnit}${product.cost}",
+                                fontSize = 25.sp,
+                                color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+                            )
                         }
 
-                        Text(
-                            text = "${product.expiresAt} $dateType",
-                            color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(15.dp))
-
-                Text(
-                    text = product.description,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 25.dp),
-                    maxLines = 4,
-                    fontSize = 15.sp,
-                    color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primaryFixed,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Normal,
-                    autoSize = TextAutoSize.StepBased(
-                        minFontSize = 15.sp,
-                        maxFontSize = 25.sp
-                    )
-                )
-                Spacer(Modifier.height(20.dp))
-
-                Spacer(Modifier.weight(1f))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 25.dp, end = 20.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "${stringResource(Res.string.total_items)} x${state.productCount}",
-                            color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
-                            fontSize = 15.sp
-                        )
-
-                        Text(
-                            text = "${product.costUnit}${product.cost}",
-                            fontSize = 25.sp,
-                            color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
-                        )
-                    }
-
-                    Spacer(Modifier.weight(1f))
-                    Button(
-                        onClick = {
-                            if (state.isProductInCart) {
-                                onEvent(ProductDetailEvents.OnRemoveProductFromCart)
-                            } else {
-                                onEvent(ProductDetailEvents.OnAddProductToCart)
-                            }
-                        },
-                        modifier = Modifier
-                            .heightIn(min = 55.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
-                        ),
-                        shape = RoundedCornerShape(7.dp)
-                    ) {
-                        Text(
-                            text = if (state.isProductInCart) {
-                                stringResource(Res.string.remove_product_from_cart)
-                            } else {
-                                stringResource(Res.string.add_product_to_cart)
+                        Spacer(Modifier.weight(1f))
+                        Button(
+                            onClick = {
+                                if (state.isProductInCart) {
+                                    onEvent(ProductDetailEvents.OnRemoveProductFromCart)
+                                } else {
+                                    onEvent(ProductDetailEvents.OnAddProductToCart)
+                                }
                             },
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 17.sp,
-                            maxLines = 1
-                        )
+                            modifier = Modifier
+                                .heightIn(min = 55.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+                            ),
+                            shape = RoundedCornerShape(7.dp)
+                        ) {
+                            Text(
+                                text = if (state.isProductInCart) {
+                                    stringResource(Res.string.remove_product_from_cart)
+                                } else {
+                                    stringResource(Res.string.add_product_to_cart)
+                                },
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 17.sp,
+                                maxLines = 1
+                            )
+                        }
                     }
-                }
 
-                Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(10.dp))
+                }
             }
         }
     }

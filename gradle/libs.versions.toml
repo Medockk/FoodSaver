@@ -43,8 +43,12 @@ datastore = "1.2.0"
 #Android Libraries
 androidSecurity = "1.1.0"
 splashScreen = "1.2.0"
+yandexMapKitAndroid = "4.30.0-lite"
+exifInterface = "1.4.2"
+
 lifecycleRuntimeKtx = "2.10.0"
 composeBom = "2026.01.01"
+playServicesLocation = "21.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -63,6 +67,8 @@ kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",
 #Android Libraries
 android-security = { module = "androidx.security:security-crypto", version.ref = "androidSecurity"}
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
+yandex-mapkit = { module = "com.yandex.android:maps.mobile", version.ref = "yandexMapKitAndroid" }
+androidx-exifInterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifInterface" }
 #Android Auth with Google OAuth2
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
@@ -140,6 +146,7 @@ compose-ui-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose
 compose-foundation-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 compose-runtime-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [bundles]
 coil = [

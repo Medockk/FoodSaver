@@ -17,7 +17,7 @@ internal class CategoryRepositoryImpl(
 
     override suspend fun getAllCategories(): ApiResult<List<CategoryModel>> {
         return saveNetworkCall<List<CategoryDto>> {
-            httpClient.get("${HttpConstants.BASE_URL}products/allCategories")
+            httpClient.get(HttpConstants.CATEGORY_URL)
         }.map { it.mapToCategoryModel() }
     }
 }

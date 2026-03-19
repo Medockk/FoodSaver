@@ -2,10 +2,12 @@
 
 package com.foodsaver.app.presentation.featureHome
 
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -14,6 +16,7 @@ import androidx.navigation.navigation
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAddProduct.AddProductScreenRoot
 import com.foodsaver.app.presentation.featureCart.CartScreenRoot
+import com.foodsaver.app.presentation.featureEnterprise.EnterpriseScreenRoot
 import com.foodsaver.app.presentation.featureProductDetail.ProductScreenRoot
 
 context(scope: SharedTransitionScope)
@@ -32,11 +35,16 @@ fun NavGraphBuilder.featureHomeNavigation(
 
         composable<Route.MainGraph.ProductDetailScreen>(
             enterTransition = { fadeIn(tween()) + scaleIn(initialScale = 0.95f) },
+            exitTransition = { fadeOut(tween(150)) }
         ) {
             scope.ProductScreenRoot(
                 navController = navController,
                 animatedVisibilityScope = this,
             )
+        }
+
+        composable<Route.MainGraph.MapScreen> {
+            EnterpriseScreenRoot(navController)
         }
 
         composable<Route.MainGraph.CartScreen> {

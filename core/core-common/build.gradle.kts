@@ -51,7 +51,7 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-
+            implementation(libs.androidx.exifInterface)
         }
 
         commonMain.dependencies {

@@ -36,7 +36,7 @@ import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressEvent
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressState
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressViewModel
 import com.foodsaver.app.ui.FoodSaverTheme
-import com.foodsaver.app.utils.MapKit
+import com.foodsaver.app.presentation.featureEnterprise.MapKit
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_new_address
@@ -187,7 +187,7 @@ private fun ProfileAddress(
             )
 
             if (MapKit.isMapKitSupported) {
-                MapKit.DrawMap()
+//                MapKit.DrawMap(coords, state)
             }
         }
     }

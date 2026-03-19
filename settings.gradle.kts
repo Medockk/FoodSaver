@@ -58,6 +58,7 @@ include(":core:core-paymentMethod")
 include(":core:core-address")
 include(":core:core-settings")
 include(":core:core-category")
+include(":core:core-location")
 
 include(":feature")
 
@@ -71,3 +72,4 @@ include(":feature:feature-profile")
 include(":feature:feature-product-detail")
 include(":feature:feature-cart")
 include(":feature:feature-add-product")
+include(":feature:feature-enterprises")

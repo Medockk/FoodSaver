@@ -25,10 +25,11 @@ internal fun ProductDto.toModel(): ProductModel {
 
         rating = rating,
         count = count,
-        organization = organization.toModel(),
 
         unit = unit,
         unitType = ProductUtils.getUnitType(unitName),
+
+        enterpriseId = enterpriseId,
 
         categoryIds = categoryIds,
         expiresAt = ProductUtils.castExpiresDate(expiresAt).toString(),

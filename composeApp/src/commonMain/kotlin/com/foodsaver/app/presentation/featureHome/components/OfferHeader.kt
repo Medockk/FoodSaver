@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.domain.model.OfferModel
-import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.ui.FoodSaverTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,10 +48,13 @@ fun OfferHeader(
                         if (!offerPagerState.isScrollInProgress) {
                             val nextPage =
                                 (offerPagerState.currentPage + 1) % offerPagerState.pageCount
-                            offerPagerState.animateScrollToPage(
-                                nextPage,
-                                animationSpec = tween(650)
-                            )
+
+                            withContext(Dispatchers.Main) {
+                                offerPagerState.animateScrollToPage(
+                                    nextPage,
+                                    animationSpec = tween(650)
+                                )
+                            }
                         }
                     }
                 }

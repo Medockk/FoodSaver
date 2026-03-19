@@ -125,8 +125,9 @@ fun SharedTransitionScope.ProductCard(
                                 product.productId
                             )
                         ),
-                        animatedVisibilityScope = scope
-                    ),
+                        animatedVisibilityScope = scope,
+                        zIndexInOverlay = 1f
+                    ).clip(RoundedCornerShape(5.dp)),
                 loading = {
                     this@Column.AnimatedVisibility(
                         visible = true,

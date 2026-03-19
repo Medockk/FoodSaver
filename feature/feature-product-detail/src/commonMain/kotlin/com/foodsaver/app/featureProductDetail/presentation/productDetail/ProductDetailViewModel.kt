@@ -8,11 +8,12 @@ import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
+import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.DecreaseProductCountUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
 import com.foodsaver.app.domain.usecase.IncreaseProductCountUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.navigationModule.Route
@@ -31,6 +32,7 @@ import kotlinx.coroutines.withContext
 class ProductDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val getCachedProductUseCase: GetCachedProductUseCase,
+    private val getProductsUseCase: GetProductsUseCase,
 
     private val addProductToCartUseCase: AddProductToCartUseCase,
     private val increaseProductCountUseCase: IncreaseProductCountUseCase,
@@ -71,12 +73,15 @@ class ProductDetailViewModel(
     private fun getProduct(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
             getCachedProductUseCase.invoke(navArgs.productId).collect { product ->
-                _state.update {
-                    withContext(Dispatchers.Main) {
+
+                if (product != null) {
+                    _state.update {
                         it.copy(
                             product = product
                         )
                     }
+                } else {
+                    getProductsUseCase
                 }
             }
         }

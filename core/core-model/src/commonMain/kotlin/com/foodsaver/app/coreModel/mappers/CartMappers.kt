@@ -19,11 +19,11 @@ fun ProductDto.toModel(): ProductModel {
         oldCost = oldCost,
         count = count,
         rating = rating,
-        organization = organization.toModel(),
         categoryIds = categoryIds,
         unit = unit,
         unitType = ProductUtils.getUnitType(unitName),
         expiresAt = ProductUtils.castExpiresDate(expiresAt).toString(),
+        enterpriseId = enterpriseId,
         expiresDateType = ProductUtils.getExpiresType(expiresAt),
     )
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Text
@@ -51,7 +52,11 @@ fun SharedTransitionScope.CartProductCard(
                         .clip(CircleShape)
                         .sizeIn(minWidth = 25.dp, minHeight = 25.dp, maxHeight = 28.dp)
                         .sharedElement(
-                            sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.countAnim(cartItem.product.productId)),
+                            sharedContentState = rememberSharedContentState(
+                                ScreenAnimation.Cart_ProductDetail.countAnim(
+                                    cartItem.product.productId
+                                )
+                            ),
                             animatedVisibilityScope = animatedVisibilityScope,
                             boundsTransform = { _, _ ->
                                 tween()
@@ -74,14 +79,14 @@ fun SharedTransitionScope.CartProductCard(
                 modifier = Modifier
                     .size(100.dp, 80.dp)
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.imageAnim(cartItem.product.productId)),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        boundsTransform = { _, _ ->
-                            tween()
-                        },
-                        renderInOverlayDuringTransition = false
-                    ),
-                contentScale = ContentScale.Crop
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Cart_ProductDetail.imageAnim(
+                                cartItem.product.productId
+                            )
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ).clip(RoundedCornerShape(5.dp)),
+                contentScale = ContentScale.FillBounds
             )
         }
 
@@ -93,7 +98,11 @@ fun SharedTransitionScope.CartProductCard(
                 color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.nameAnim(cartItem.product.productId)),
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Cart_ProductDetail.nameAnim(
+                                cartItem.product.productId
+                            )
+                        ),
                         animatedVisibilityScope = animatedVisibilityScope,
                         boundsTransform = { _, _ ->
                             tween()
@@ -106,7 +115,11 @@ fun SharedTransitionScope.CartProductCard(
                 color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.inversePrimary,
                 modifier = Modifier
                     .sharedElement(
-                        sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.unitAnim(cartItem.product.productId)),
+                        sharedContentState = rememberSharedContentState(
+                            ScreenAnimation.Cart_ProductDetail.unitAnim(
+                                cartItem.product.productId
+                            )
+                        ),
                         animatedVisibilityScope = animatedVisibilityScope,
                         boundsTransform = { _, _ ->
                             tween()
@@ -124,7 +137,11 @@ fun SharedTransitionScope.CartProductCard(
             color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onBackground,
             modifier = Modifier
                 .sharedElement(
-                    sharedContentState = rememberSharedContentState(ScreenAnimation.Cart_ProductDetail.costAnim(cartItem.product.productId)),
+                    sharedContentState = rememberSharedContentState(
+                        ScreenAnimation.Cart_ProductDetail.costAnim(
+                            cartItem.product.productId
+                        )
+                    ),
                     animatedVisibilityScope = animatedVisibilityScope,
                     boundsTransform = { _, _ ->
                         tween()

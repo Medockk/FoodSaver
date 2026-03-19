@@ -36,6 +36,9 @@ sealed class Route {
 
         @Serializable
         data object AddProductScreen: Route()
+
+        @Serializable
+        data class MapScreen(val enterpriseId: String? = null): Route()
     }
 
     @Serializable

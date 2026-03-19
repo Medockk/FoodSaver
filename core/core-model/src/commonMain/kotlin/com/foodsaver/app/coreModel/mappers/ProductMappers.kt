@@ -16,10 +16,10 @@ fun ProductModel.toDto() =
         oldCost = oldCost,
         count = count,
         rating = rating,
-        organization = organization.toDto(),
         categoryIds = categoryIds,
         unit = unit,
         unitName = unitType.value,
+        enterpriseId = enterpriseId,
         expiresAt = try {
             Instant.parse(expiresAt)
         } catch (_: Exception) {

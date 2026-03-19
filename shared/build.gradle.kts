@@ -66,6 +66,7 @@ kotlin {
             implementation(projects.core.coreAddress)
             implementation(projects.core.coreSettings)
             implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
 
             implementation(projects.feature.featureAuth.di)
             implementation(projects.feature.featureHome)
@@ -73,6 +74,7 @@ kotlin {
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
         }
         jvmMain.dependencies {
 

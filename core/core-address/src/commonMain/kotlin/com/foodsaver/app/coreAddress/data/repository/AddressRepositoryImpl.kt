@@ -45,7 +45,7 @@ internal class AddressRepositoryImpl(
     private val authUserManager: AuthUserManager,
 ) : ReadAddressRepository, EditAddressRepository {
 
-    override fun getAddresses(): Flow<ApiResult<List<AddressModel>>> = channelFlow {
+    override fun getAddresses(): Flow<ApiResult<List<AddressModel>?>> = channelFlow {
 
         send(ApiResult.Loading)
         val addressEntityQueries = databaseProvider.get().addressEntityQueries
@@ -63,14 +63,14 @@ internal class AddressRepositoryImpl(
             }
         }
 
-        val httpResult = saveNetworkCall<List<AddressDto>> {
+        val httpResult = saveNetworkCallWithEmptyContent<List<AddressDto>> {
             httpClient.get(HttpConstants.ADDRESS_URL + "/all")
-        }.onSuccess { addressDtos ->
+        }.onSuccessNullable { addressDtos ->
             uid?.let {
                 val localAddresses = addressEntityQueries.getAllAddresses(uid)
                     .executeAsList()
 
-                addressDtos.forEach { addressDto ->
+                addressDtos?.forEach { addressDto ->
                     if (localAddresses.any { it.globalId == addressDto.id }) {
                         addressEntityQueries.updateAddress(
                             name = addressDto.name,
@@ -92,15 +92,14 @@ internal class AddressRepositoryImpl(
                     }
                 }
             }
-        }.map { addressDtos ->
-            addressDtos.map { it.mapToModel() }
+        }.mapNullable { addressDtos ->
+            addressDtos?.map { it.mapToModel() }
         }
 
         send(httpResult)
 
         awaitClose { databaseJob.cancel() }
     }
-
     override fun getCurrentAddress(): Flow<ApiResult<AddressModel?>> = channelFlow {
 
         send(ApiResult.Loading)

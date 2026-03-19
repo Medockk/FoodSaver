@@ -39,7 +39,7 @@ class ProfileAddressViewModel(
             onSuccess = { addresses ->
                 println("ADDRESSES IS $addresses")
                 _state.update { it.copy(
-                    addresses = addresses,
+                    addresses = addresses ?: emptyList(),
                     isLoading = false
                 ) }
             },
