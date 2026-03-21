@@ -25,6 +25,7 @@ import kotlinx.coroutines.sync.withLock
 internal class AuthInterceptor(
     private val accessTokenManager: AccessTokenManager,
     private val cookiesStorage: CookiesStorage,
+    private val csrfTokenManager: CsrfTokenManager
 ) {
 
     private val mutex = Mutex()
@@ -39,7 +40,7 @@ internal class AuthInterceptor(
             }
 
             // setup CSRF-token before executing original request
-            accessTokenManager.getCsrfToken()?.let { csrfToken ->
+            (csrfTokenManager.getCsrfToken() ?: accessTokenManager.getCsrfToken())?.let { csrfToken ->
                 originalRequest.replaceCsrfHeader(csrfToken)
             }
 
@@ -174,6 +175,7 @@ internal class AuthInterceptor(
             httpOnly = false
         )
         cookiesStorage.addCookie(this.url.build(), cookie)
+        csrfTokenManager.setCsrfToken(token)
 
         if (this.headers.contains(headerName)) {
             this.headers.remove(headerName)

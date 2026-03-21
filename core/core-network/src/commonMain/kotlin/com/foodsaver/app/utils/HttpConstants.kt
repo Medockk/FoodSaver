@@ -2,8 +2,10 @@ package com.foodsaver.app.utils
 
 object HttpConstants {
 
-    internal const val ROOT_URL = "http://10.152.104.227:8088"
-    const val BASE_URL = "$ROOT_URL/api/"
+    private const val VERSION = "v1"
+
+    internal const val ROOT_URL = "http://10.222.73.227:8088"
+    const val BASE_URL = "$ROOT_URL/api/$VERSION/"
 
     internal const val REFRESH_URL = "${BASE_URL}auth/refresh"
 
@@ -13,8 +15,11 @@ object HttpConstants {
     const val AUTH_URL = "${BASE_URL}auth"
     const val PRODUCTS_URL = "${BASE_URL}products"
     const val CART_URL = "${BASE_URL}cart"
+    const val CATEGORY_URL = "${BASE_URL}category"
     const val USER_URL = "${BASE_URL}user"
     const val OFFER_URL = "${BASE_URL}offers"
-    const val PAYMENT_URL = "${BASE_URL}payment"
+    const val BANK_URL = "${BASE_URL}bank"
     const val ADDRESS_URL = "${BASE_URL}address"
+    const val ENTERPRISE_URL = "${BASE_URL}enterprises"
+    const val FCM_URL = "${BASE_URL}fcm"
 }

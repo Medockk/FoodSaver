@@ -3,6 +3,7 @@ package com.foodsaver.app.di
 import com.foodsaver.app.client.HttpClientFactory
 import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.manager.AuthInterceptor
+import com.foodsaver.app.manager.CsrfTokenManager
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.CookiesStorage
@@ -22,6 +23,10 @@ val networkModule = module {
         AcceptAllCookiesStorage()
     }
 
+    single<CsrfTokenManager> {
+        CsrfTokenManager()
+    }
+
     single<HttpClientFactory> {
         HttpClientFactory(
             json = get(),
@@ -35,7 +40,8 @@ val networkModule = module {
     single<AuthInterceptor> {
         AuthInterceptor(
             accessTokenManager = get(),
-            cookiesStorage = get()
+            cookiesStorage = get(),
+            csrfTokenManager = get()
         )
     }
 

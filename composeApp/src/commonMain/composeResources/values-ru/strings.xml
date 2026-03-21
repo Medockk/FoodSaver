@@ -6,7 +6,13 @@
     <string name="email">Эл. почта</string>
     <string name="fio">Имя Фамилия</string>
     <string name="password">Пароль</string>
-    <string name="forgot_password">Забыли пароль?</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+
+    <string name="forgot_password_question">Забыли пароль?</string>
+    <string name="forgot_password">Забыли пароль</string>
+    <string name="send_reset_link">Отправить ссылку на почту</string>
+    <string name="reset_password">Сброс пароля</string>
+
     <string name="sign_in">Войти</string>
     <string name="create_account">Создать аккаунт</string>
     <string name="create">Создать</string>
@@ -44,4 +50,16 @@
     <string name="add_new_card">Добавить карту</string>
 
     <string name="buy">Купить</string>
+    <string name="settings">Настройки</string>
+    <string name="addProduct">Добавить продукт</string>
+
+    <string name="addProductTitle">Название</string>
+    <string name="addProductDescription">Описание</string>
+    <string name="addProductCount">Количество</string>
+    <string name="addProductCost">Стоимость</string>
+    <string name="addProductCostUnit">Единица стоимости</string>
+    <string name="addProductUnit">Единица измерения продукта</string>
+    <string name="addProductUnitName">Имя единицы измерения продукта</string>
+    <string name="addProductExpiresAt">Когда срок годности истечёт</string>
+    <string name="addProductCategories">Категории</string>
 </resources>

@@ -20,7 +20,8 @@ WHERE uid = ? AND globalId = ?;
 
 getCurrentAddress:
 SELECT * FROM addressEntity
-WHERE uid = ? AND isCurrentAddress = 1;
+WHERE uid = ? AND isCurrentAddress = 1
+LIMIT 1;
 
 insertAddressWithGlobalId:
 INSERT INTO addressEntity(globalId, name, address, isCurrentAddress, tempId, uid)
@@ -38,6 +39,15 @@ address = ?,
 isCurrentAddress = ?
 WHERE uid = ? AND globalId = ?;
 
+updateAddressByTempId:
+UPDATE addressEntity
+SET
+name = ?,
+address = ?,
+isCurrentAddress = ?,
+globalId = ?
+WHERE uid = ? AND tempId = ?;
+
 updateGlobalId:
 UPDATE addressEntity
 SET globalId = ?
@@ -52,8 +62,9 @@ DELETE FROM addressEntity
 WHERE uid = ? AND globalId = ?;
 
 disableCurrentAddress:
-DELETE FROM addressEntity
-WHERE uid = ? AND isCurrentAddress = 1;
+UPDATE addressEntity
+SET isCurrentAddress = 0
+WHERE uid = ?;
 
 setCurrentAddress:
 UPDATE addressEntity

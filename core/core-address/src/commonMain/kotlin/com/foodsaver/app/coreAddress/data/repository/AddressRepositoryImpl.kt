@@ -18,9 +18,9 @@ import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
 import com.foodsaver.app.coreAddress.domain.repository.EditAddressRepository
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.AddressDto
 import com.foodsaver.app.coreModel.model.AddressModel
-import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
@@ -45,7 +45,7 @@ internal class AddressRepositoryImpl(
     private val authUserManager: AuthUserManager,
 ) : ReadAddressRepository, EditAddressRepository {
 
-    override fun getAddresses(): Flow<ApiResult<List<AddressModel>>> = channelFlow {
+    override fun getAddresses(): Flow<ApiResult<List<AddressModel>?>> = channelFlow {
 
         send(ApiResult.Loading)
         val addressEntityQueries = databaseProvider.get().addressEntityQueries
@@ -63,14 +63,14 @@ internal class AddressRepositoryImpl(
             }
         }
 
-        val httpResult = saveNetworkCall<List<AddressDto>> {
+        val httpResult = saveNetworkCallWithEmptyContent<List<AddressDto>> {
             httpClient.get(HttpConstants.ADDRESS_URL + "/all")
-        }.onSuccess { addressDtos ->
+        }.onSuccessNullable { addressDtos ->
             uid?.let {
                 val localAddresses = addressEntityQueries.getAllAddresses(uid)
                     .executeAsList()
 
-                addressDtos.forEach { addressDto ->
+                addressDtos?.forEach { addressDto ->
                     if (localAddresses.any { it.globalId == addressDto.id }) {
                         addressEntityQueries.updateAddress(
                             name = addressDto.name,
@@ -92,15 +92,14 @@ internal class AddressRepositoryImpl(
                     }
                 }
             }
-        }.map { addressDtos ->
-            addressDtos.map { it.mapToModel() }
+        }.mapNullable { addressDtos ->
+            addressDtos?.map { it.mapToModel() }
         }
 
         send(httpResult)
 
         awaitClose { databaseJob.cancel() }
     }
-
     override fun getCurrentAddress(): Flow<ApiResult<AddressModel?>> = channelFlow {
 
         send(ApiResult.Loading)
@@ -174,6 +173,11 @@ internal class AddressRepositoryImpl(
         val uid = authUserManager.getCurrentUid()
 
         uid?.let {
+
+            if (addAddressModel.isCurrentAddress) {
+                queries.disableCurrentAddress(uid)
+            }
+
             queries.insertAddressWithoutGlobalId(
                 name = addAddressModel.name,
                 address = addAddressModel.address,
@@ -189,7 +193,14 @@ internal class AddressRepositoryImpl(
             }
         }.onSuccess { addressDto ->
             uid?.let {
-                queries.updateGlobalId(addressDto.id, uid, tempId)
+                queries.updateAddressByTempId(
+                    name = addressDto.name,
+                    address = addressDto.address,
+                    isCurrentAddress = addressDto.isCurrentAddress,
+                    uid = uid,
+                    globalId = addressDto.id,
+                    tempId = tempId
+                )
             }
         }.onFailure {
             uid?.let {

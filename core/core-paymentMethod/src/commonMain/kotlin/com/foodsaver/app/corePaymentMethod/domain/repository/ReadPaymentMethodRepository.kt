@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReadPaymentMethodRepository {
 
-    fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>>>
+    fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>?>>
     fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel?>>
 }

@@ -13,13 +13,13 @@ import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.coreAuth.AuthUserManager
-import com.foodsaver.app.coreModel.dto.PaymentMethodDto
+import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
+import com.foodsaver.app.coreModel.dto.BankResponseDto
 import com.foodsaver.app.coreModel.mappers.toModel
 import com.foodsaver.app.coreModel.model.PaymentMethodModel
 import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRepository
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
-import com.foodsaver.app.domain.repository.DatabaseProvider
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
@@ -28,7 +28,6 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import io.ktor.client.request.setBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -43,11 +42,11 @@ internal class PaymentMethodRepositoryImpl(
     private val authUserManager: AuthUserManager,
 ) : ReadPaymentMethodRepository, EditPaymentMethodRepository {
 
-    override fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>>> = channelFlow {
+    override fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>?>> = channelFlow {
         send(ApiResult.Loading)
 
         val database = databaseProvider.get()
-        val paymentQueries = database.paymentMethodQueries
+        val paymentQueries = database.bankEntityQueries
 
         val databaseJob = launch(Dispatchers.InputOutput) {
             authUserManager.getCurrentUid()?.let { uid ->
@@ -61,16 +60,15 @@ internal class PaymentMethodRepositoryImpl(
             }
         }
 
-        val httpResult = saveNetworkCall<List<PaymentMethodDto>> {
-            httpClient.get(HttpConstants.PAYMENT_URL + "/all")
-        }.onSuccess { dtos ->
+        val httpResult = saveNetworkCallWithEmptyContent<List<BankResponseDto>> {
+            httpClient.get(HttpConstants.BANK_URL + "/all")
+        }.onSuccessNullable { dtos ->
             paymentQueries.transaction {
                 authUserManager.getCurrentUid()?.let { uid ->
                     paymentQueries.clear(uid)
-                    dtos.forEach { dto ->
+                    dtos?.forEach { dto ->
                         paymentQueries.addPaymentMethod(
                             globalId = dto.id,
-                            bank = dto.bank,
                             cardNumber = dto.cardNumber,
                             isSelected = dto.isSelected,
                             uid = uid,
@@ -79,9 +77,11 @@ internal class PaymentMethodRepositoryImpl(
                     }
                 }
             }
-        }.map { dto ->
-            dto.map { it.toModel() }
+        }.mapNullable { dto ->
+            dto?.map { it.toModel() }
         }
+
+        println("BANK/all is $httpResult")
 
         send(httpResult)
 
@@ -94,26 +94,32 @@ internal class PaymentMethodRepositoryImpl(
 
         send(ApiResult.Loading)
 
-        val queries = databaseProvider.get().paymentMethodQueries
+        val queries = databaseProvider.get().bankEntityQueries
         val uid = authUserManager.getCurrentUid()
 
         val databaseJob = launch(Dispatchers.InputOutput) {
             uid?.let { uid ->
                 queries.getCurrentPaymentMethod(uid).asFlow()
                     .mapToOneOrNull(Dispatchers.InputOutput)
-                    .collect {
-                        it?.let {
-                            send(ApiResult.Success(it.toModel()))
+                    .collect { entity ->
+                        if (entity != null) {
+                            send(ApiResult.Success(entity.toModel()))
+                        } else {
+                            queries.getPaymentMethods(uid)
+                                .executeAsList().lastOrNull()?.let {
+                                    send(ApiResult.Success(it.toModel()))
+                                }
                         }
                     }
             }
         }
 
-        val httpResult = saveNetworkCallWithEmptyContent<PaymentMethodDto> {
-            httpClient.get(HttpConstants.PAYMENT_URL + "/current")
+        val httpResult = saveNetworkCallWithEmptyContent<BankResponseDto> {
+            httpClient.get(HttpConstants.BANK_URL + "/selected")
         }.onSuccessNullable { dto ->
             dto?.let {
                 uid?.let {
+                    queries.disablePaymentMethods(uid)
                     queries.setCurrentPaymentMethodByGlobalId(
                         isSelected = dto.isSelected,
                         globalId = dto.id,
@@ -130,32 +136,25 @@ internal class PaymentMethodRepositoryImpl(
 
     override suspend fun addPaymentMethod(methodModel: AddPaymentMethodModel): ApiResult<Unit> {
 
-        val queries = databaseProvider.get().paymentMethodQueries
+        val queries = databaseProvider.get().bankEntityQueries
         val uid = authUserManager.getCurrentUid()
         val tempId = Uuid.random().toString()
 
-        uid?.let {
-            queries.addPaymentMethod(
-                globalId = null,
-                bank = methodModel.bank,
-                cardNumber = methodModel.cardNumber,
-                isSelected = methodModel.isSelected,
-                uid = uid,
-                tempId = tempId
-            )
-        }
-
-        return saveNetworkCall<PaymentMethodDto> {
-            httpClient.post(HttpConstants.PAYMENT_URL) {
-                setBody(methodModel.toDto())
+        return saveNetworkCall<BankResponseDto> {
+            httpClient.post(HttpConstants.BANK_URL + "/add") {
+                parameter("isSelected", methodModel.isSelected)
             }
         }.onSuccess { response ->
             uid?.let {
                 queries.transaction {
+
+                    if (methodModel.isSelected) {
+                        queries.disablePaymentMethods(uid)
+                    }
+
                     queries.updateLocalPaymentMethod(
                         globalId = response.id,
                         isSelected = response.isSelected,
-                        bank = response.bank,
                         cardNumber = response.cardNumber,
                         uid = uid,
                         tempId = tempId
@@ -164,19 +163,19 @@ internal class PaymentMethodRepositoryImpl(
             }
         }.onFailure {
             queries.deleteLocalPaymentMethod(tempId)
-        }.map {  }
+        }.map { }
     }
 
     override suspend fun removePaymentMethod(methodId: String): ApiResult<Unit> {
 
         authUserManager.getCurrentUid()?.let { uid ->
-            val queries = databaseProvider.get().paymentMethodQueries
+            val queries = databaseProvider.get().bankEntityQueries
             queries.removePaymentMethodByGlobalId(methodId, uid)
         }
 
         return saveNetworkCall<Unit> {
-            httpClient.delete(HttpConstants.PAYMENT_URL) {
-                parameter("methodId", methodId)
+            httpClient.delete(HttpConstants.BANK_URL + "/delete") {
+                parameter("cardId", methodId)
             }
         }.onFailure {
             println("removePaymentMethodException! $it")

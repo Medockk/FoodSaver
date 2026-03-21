@@ -17,7 +17,5 @@ data class UserDto(
     val roles: List<String>,
 
     val phone: String?,
-    val bio: String?,
-    val addresses: List<AddressDto> = emptyList(),
-    val paymentMethods: List<PaymentMethodDto> = emptyList()
+    val bio: String?
 )

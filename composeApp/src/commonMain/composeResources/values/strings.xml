@@ -6,7 +6,13 @@
     <string name="email">Email address</string>
     <string name="fio">Name and surname</string>
     <string name="password">Password</string>
-    <string name="forgot_password">Forgot password?</string>
+    <string name="confirm_password">Confirm password</string>
+
+    <string name="forgot_password_question">Forgot password?</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="send_reset_link">Send reset link</string>
+    <string name="reset_password">Reset password</string>
+
     <string name="sign_in">Sign In</string>
     <string name="create_account">Create Account</string>
     <string name="create">Create</string>
@@ -44,4 +50,16 @@
     <string name="add_new_card">Add new card</string>
 
     <string name="buy">Buy</string>
+    <string name="settings">Settings</string>
+    <string name="addProduct">Add Product</string>
+
+    <string name="addProductTitle">Name</string>
+    <string name="addProductDescription">Description</string>
+    <string name="addProductCount">Count</string>
+    <string name="addProductCost">Cost</string>
+    <string name="addProductCostUnit">Unit of cost</string>
+    <string name="addProductUnit">Unit of product</string>
+    <string name="addProductUnitName">Name of unit</string>
+    <string name="addProductExpiresAt">Expires at</string>
+    <string name="addProductCategories">Categories</string>
 </resources>

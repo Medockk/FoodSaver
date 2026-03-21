@@ -12,6 +12,9 @@ sealed class Route {
         data object AuthScreen: Route()
 
         @Serializable
+        data object ForgotPasswordScreen: Route()
+
+        @Serializable
         data class ResetPasswordScreen(val token: String): Route()
     }
 
@@ -30,6 +33,12 @@ sealed class Route {
 
         @Serializable
         data object CartScreen: Route()
+
+        @Serializable
+        data object AddProductScreen: Route()
+
+        @Serializable
+        data class MapScreen(val enterpriseId: String? = null): Route()
     }
 
     @Serializable

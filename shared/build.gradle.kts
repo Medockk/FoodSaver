@@ -64,12 +64,18 @@ kotlin {
             implementation(projects.core.coreProfile)
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
+            implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
 
-            implementation(projects.featureAuth.di)
-            implementation(projects.featureHome)
-            implementation(projects.featureProductDetail)
-            implementation(projects.featureCart)
-            implementation(projects.featureProfile)
+            implementation(projects.feature.featureAuth.di)
+            implementation(projects.feature.featureHome)
+            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureCart)
+            implementation(projects.feature.featureProfile)
+            implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
         }
         jvmMain.dependencies {
 

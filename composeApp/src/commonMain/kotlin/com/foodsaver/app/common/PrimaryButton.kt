@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,20 +18,23 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.primary,
-    shape: Shape = RoundedCornerShape(7.dp)
+    background: Color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
+    shape: Shape = RoundedCornerShape(7.dp),
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
         shape = shape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = background
-        )
+            containerColor = background,
+            disabledContentColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+        ),
+        enabled = enabled
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onPrimary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
@@ -44,8 +46,9 @@ fun PrimaryButton(
     content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.primary,
-    shape: Shape = RoundedCornerShape(7.dp)
+    background: Color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
+    shape: Shape = RoundedCornerShape(7.dp),
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -54,6 +57,7 @@ fun PrimaryButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = background
         ),
+        enabled = enabled,
         content = content
     )
 }

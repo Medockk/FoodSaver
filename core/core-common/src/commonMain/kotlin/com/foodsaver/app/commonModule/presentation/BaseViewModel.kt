@@ -11,11 +11,12 @@ abstract class BaseViewModel<A: AppAction>: ViewModel() {
 
     private var lastErrorMessage: String = ""
     private var lastErrorTimeMs: Long = 0L
-    private val errorBounceMs = 2500L
+    private val errorBounceMs = 5000L
 
     protected abstract val baseChannel: Channel<A>
+    abstract val channel: Flow<A>
 
-    abstract fun mapBaseError(message: String): A
+    protected abstract fun mapBaseError(message: String): A
 
     protected suspend fun <T> Flow<ApiResult<T>>.collectRequest(
         onSuccess: suspend (T) -> Unit,

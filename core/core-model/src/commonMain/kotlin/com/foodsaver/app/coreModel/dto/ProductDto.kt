@@ -22,11 +22,12 @@ data class ProductDto(
     val count: Int,
     val rating: Float?,
 
-    val organization: OrganizationDto,
     val categoryIds: List<String>,
 
     val unit: Long,
     val unitName: String,
+
+    val enterpriseId: String,
 
     val expiresAt: Instant
 )

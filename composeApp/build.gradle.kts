@@ -2,6 +2,7 @@
 
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -11,6 +12,22 @@ plugins {
     alias(libs.plugins.composeHotReload)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.github.gmazzo.buildconfig")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName.set("com.foodsaver.app.composeApp")
+    buildConfigField(
+        type = "String",
+        name = "YANDEX_MAPKIT",
+        value = "\"${localProperties.getProperty("YANDEX_MAPKIT")}\""
+    )
 }
 
 kotlin {
@@ -22,8 +39,12 @@ kotlin {
     androidLibrary {
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
-        namespace = "com.foodsaver.app.composeApp"
+        namespace = "com.foodsaver.app.composeApp.androidMain"
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+    }
+
+    sourceSets.getByName("androidMain") {
+        resources.srcDirs("src/androidMain/res")
     }
 
     jvm()
@@ -43,15 +64,18 @@ kotlin {
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.splash)
+            implementation(libs.compose.ui.tooling)
+            implementation(libs.yandex.mapkit)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.animation)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(project.dependencies.platform(libs.androidx.compose.bom))
+            implementation(libs.compose.runtime.runtime)
+            implementation(libs.compose.foundation.foundation)
+            implementation(libs.compose.ui.ui)
+            implementation(libs.compose.animation.animation)
+            implementation(libs.components.components.resources)
+            implementation(libs.compose.ui.tooling.preview)
+
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
@@ -80,14 +104,20 @@ kotlin {
             implementation(projects.core.coreNavigation)
             implementation(projects.core.corePaymentMethod)
             implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
+            implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
 
-            implementation(projects.featureAuth)
-            implementation(projects.featureAuth.di)
+            implementation(projects.feature.featureAuth)
+            implementation(projects.feature.featureAuth.di)
 
-            implementation(projects.featureHome)
-            implementation(projects.featureProductDetail)
-            implementation(projects.featureCart)
-            implementation(projects.featureProfile)
+            implementation(projects.feature.featureHome)
+            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureCart)
+            implementation(projects.feature.featureProfile)
+            implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
 
             implementation(libs.image.picker)
         }
@@ -97,6 +127,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.compose.ui.tooling)
         }
 
         webMain.dependencies {
@@ -104,33 +135,6 @@ kotlin {
         }
     }
 }
-
-//android {
-//    namespace = "com.foodsaver.app"
-//    compileSdk = libs.versions.android.compileSdk.get().toInt()
-//
-//    defaultConfig {
-//        applicationId = "com.foodsaver.app"
-//        minSdk = libs.versions.android.minSdk.get().toInt()
-//        targetSdk = libs.versions.android.targetSdk.get().toInt()
-//        versionCode = 1
-//        versionName = "1.0"
-//    }
-//    packaging {
-//        resources {
-//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-//        }
-//    }
-//    buildTypes {
-//        getByName("release") {
-//            isMinifyEnabled = false
-//        }
-//    }
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_11
-//        targetCompatibility = JavaVersion.VERSION_11
-//    }
-//}
 
 compose.desktop {
     application {
