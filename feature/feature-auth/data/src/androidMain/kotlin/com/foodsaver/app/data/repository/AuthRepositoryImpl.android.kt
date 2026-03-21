@@ -1,8 +1,6 @@
 package com.foodsaver.app.data.repository
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException

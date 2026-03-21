@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
-import org.gradle.kotlin.dsl.buildConfig
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.util.Properties
@@ -70,6 +68,7 @@ kotlin {
             implementation(libs.yandex.mapkit)
         }
         commonMain.dependencies {
+            implementation(project.dependencies.platform(libs.androidx.compose.bom))
             implementation(libs.compose.runtime.runtime)
             implementation(libs.compose.foundation.foundation)
             implementation(libs.compose.ui.ui)
@@ -108,6 +107,7 @@ kotlin {
             implementation(projects.core.coreSettings)
             implementation(projects.core.coreCategory)
             implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
 
             implementation(projects.feature.featureAuth)
             implementation(projects.feature.featureAuth.di)

@@ -5,7 +5,6 @@ import com.foodsaver.app.featureEnterprises.domain.model.EnterpriseImagesModel
 import com.foodsaver.app.featureEnterprises.domain.model.EnterprisesModel
 import com.foodsaver.app.featureEnterprises.domain.model.UploadEnterpriseImageModel
 import com.foodsaver.app.featureEnterprises.domain.model.UserLocationModel
-import kotlinx.coroutines.flow.Flow
 
 interface EditEnterpriseRepository: EnterprisesRepository {
     suspend fun uploadEnterpriseImage(uploadEnterpriseImageModel: UploadEnterpriseImageModel): ApiResult<String?>

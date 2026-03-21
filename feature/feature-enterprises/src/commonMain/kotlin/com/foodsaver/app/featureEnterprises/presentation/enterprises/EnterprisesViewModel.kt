@@ -5,7 +5,6 @@ package com.foodsaver.app.featureEnterprises.presentation.enterprises
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.ApiResult.onFailureNullable
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
@@ -16,12 +15,16 @@ import com.foodsaver.app.commonModule.utils.image.ImageCompressor
 import com.foodsaver.app.coreLocation.domain.model.LocationModel
 import com.foodsaver.app.coreLocation.domain.repository.LocationService
 import com.foodsaver.app.featureEnterprises.domain.model.EnterpriseImagesModel
-import com.foodsaver.app.featureEnterprises.domain.model.EnterprisesModel
 import com.foodsaver.app.featureEnterprises.domain.model.UploadEnterpriseImageModel
 import com.foodsaver.app.featureEnterprises.domain.model.UserLocationModel
 import com.foodsaver.app.featureEnterprises.domain.repository.EnterprisesRepository
 import com.foodsaver.app.featureEnterprises.domain.usecase.UploadEnterpriseImageUseCase
+import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesAction.OnError
+import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesAction.OnSetEnterpriseIcon
+import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesAction.OnUpdateUserLocation
+import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesAction.OnZoom
 import com.foodsaver.app.navigationModule.Route
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -51,7 +54,6 @@ class EnterprisesViewModel(
     private val enterprisesRepository: EnterprisesRepository,
     private val locationService: LocationService,
     private val uploadEnterpriseImageUseCase: UploadEnterpriseImageUseCase,
-
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<EnterprisesAction>() {
 
@@ -61,6 +63,7 @@ class EnterprisesViewModel(
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.MapScreen>()
 
     private var shouldZoomMap = true
+    private val mapKitControllerDeferred = CompletableDeferred<Unit>()
 
     private val _coords = MutableStateFlow<LocationModel?>(null)
 
@@ -71,34 +74,30 @@ class EnterprisesViewModel(
 
     init {
         val enterpriseId = navArgs.enterpriseId
-
         if (enterpriseId != null) {
             shouldZoomMap = false
-        }
-
-        getCurrentLocation()
-        getNearestEnterprises()
-
-        enterpriseId?.let {
             getEnterpriseById(enterpriseId)
         }
     }
 
     private fun getEnterpriseById(enterpriseId: String) {
         viewModelScope.launch(Dispatchers.InputOutput) {
+            mapKitControllerDeferred.await()
+
             enterprisesRepository.getEnterpriseById(enterpriseId)
-                .onSuccessNullable { result ->
-                    result?.let {
+                .onSuccessNullable { enterprise ->
+                    enterprise?.let { enterprise ->
                         _state.update {
                             it.copy(
-                                selectedEnterprise = result,
+                                selectedEnterprise = enterprise,
                             )
                         }
 
+                        shouldZoomMap = false
                         baseChannel.send(
-                            EnterprisesAction.OnZoom(
-                                latitude = result.latitude,
-                                longitude = result.longitude
+                            element = OnZoom(
+                                latitude = enterprise.latitude,
+                                longitude = enterprise.longitude
                             )
                         )
 
@@ -140,18 +139,6 @@ class EnterprisesViewModel(
                 }
                 enterpriseImageJob?.cancel()
                 enterpriseImageJob = getEnterpriseImageUrls(event.enterprise.id)
-            }
-
-            is EnterprisesEvent.OnUserPlacemarkChange -> {
-                _state.update { it.copy(userPlacemark = event.userPlacemark) }
-            }
-
-            is EnterprisesEvent.OnAddEnterprisePlacemark -> {
-                _state.update {
-                    it.copy(
-                        enterprisePlacemarks = it.enterprisePlacemarks + event.enterprisePlacemark
-                    )
-                }
             }
 
             is EnterprisesEvent.OnPhotoPickerLauncherChange -> {
@@ -214,7 +201,7 @@ class EnterprisesViewModel(
             EnterprisesEvent.OnFindUserClick -> {
                 _coords.value?.let {
                     baseChannel.trySend(
-                        EnterprisesAction.OnZoom(
+                        OnZoom(
                             it.latitude,
                             it.longitude,
                             _state.value.cameraPositionModel?.zoom ?: 17.5f
@@ -222,6 +209,12 @@ class EnterprisesViewModel(
                     )
 
                 }
+            }
+
+            EnterprisesEvent.OnMapKitControllerReady -> {
+                mapKitControllerDeferred.complete(Unit)
+                getCurrentLocation()
+                getNearestEnterprises()
             }
         }
     }
@@ -236,16 +229,12 @@ class EnterprisesViewModel(
                 }
                 .flatMapLatest { location ->
                     val userLocation = UserLocationModel(location.latitude, location.longitude)
-                    flow<ApiResult<List<EnterprisesModel>>> {
+                    flow {
                         emit(enterprisesRepository.getNearestEnterprises(userLocation))
                     }
                 }.collect { result ->
                     result.onSuccess { enterprises ->
-                        _state.update {
-                            it.copy(enterprises = enterprises)
-                        }
-                        println("Enterprises $enterprises")
-                        baseChannel.send(EnterprisesAction.OnSetEnterpriseIcon(enterprises))
+                        baseChannel.send(OnSetEnterpriseIcon(enterprises))
                     }.onFailure {
                         sendError(it.message)
                     }
@@ -258,9 +247,8 @@ class EnterprisesViewModel(
             locationService.getCurrentLocation()
                 .collect { currentLocation ->
                     _coords.update { currentLocation }
-                    println("Location change $currentLocation")
                     baseChannel.send(
-                        EnterprisesAction.OnUpdateUserLocation(
+                        OnUpdateUserLocation(
                             currentLocation.latitude,
                             currentLocation.longitude
                         )
@@ -268,9 +256,8 @@ class EnterprisesViewModel(
 
                     if (shouldZoomMap) {
                         shouldZoomMap = false
-                        println("Zoom !!")
                         baseChannel.send(
-                            EnterprisesAction.OnZoom(
+                            element = OnZoom(
                                 currentLocation.latitude,
                                 currentLocation.longitude
                             )
@@ -294,6 +281,6 @@ class EnterprisesViewModel(
     private fun Double.toRadians(): Double = this * PI / 180.0
 
     override fun mapBaseError(message: String): EnterprisesAction {
-        return EnterprisesAction.OnError(message)
+        return OnError(message)
     }
 }

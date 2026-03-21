@@ -2,12 +2,18 @@ package com.foodsaver.app.presentation.featureEnterprise
 
 import android.Manifest
 import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -34,8 +40,24 @@ actual object MapKit {
 
         val context = LocalContext.current
         val mapView = remember { MapView(context) }
+        var isAccessLocationGranted by retain { mutableStateOf(false) }
+        val permissionLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                isAccessLocationGranted = isGranted
 
-        LaunchedEffect(mapView) {
+                if (isGranted) {
+                    onStart()
+                } else {
+                    onEvent(MapKitEvent.OnLocationAccessDenied)
+                }
+            }
+
+        LaunchedEffect(Unit) {
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        LaunchedEffect(isAccessLocationGranted, mapView) {
+            println("Launch with 2 keys")
             onMapKitControllerReady(
                 AndroidMapKitController(
                     context = context, mapView = mapView
@@ -68,7 +90,6 @@ actual object MapKit {
                             longitude = cameraPosition.target.longitude,
                             zoom = cameraPosition.zoom
                         )
-                        println("Camera position $event")
 
                         onEvent(event)
                     }
@@ -96,6 +117,4 @@ actual object MapKit {
     fun onStop() {
         MapKitFactory.getInstance().onStop()
     }
-
-
 }

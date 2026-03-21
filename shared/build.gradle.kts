@@ -67,6 +67,7 @@ kotlin {
             implementation(projects.core.coreSettings)
             implementation(projects.core.coreCategory)
             implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
 
             implementation(projects.feature.featureAuth.di)
             implementation(projects.feature.featureHome)

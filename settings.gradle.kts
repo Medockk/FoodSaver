@@ -59,6 +59,7 @@ include(":core:core-address")
 include(":core:core-settings")
 include(":core:core-category")
 include(":core:core-location")
+include(":core:core-fcm")
 
 include(":feature")
 

@@ -36,11 +36,11 @@ import com.foodsaver.app.common.CircularAsyncImage
 import com.foodsaver.app.common.CircularPrimaryButton
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
-import com.foodsaver.app.presentation.featureProfile.components.ProfilePersonalInfoField
 import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoAction
 import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoEvent
 import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoState
 import com.foodsaver.app.presentation.ProfilePersonalInfo.ProfilePersonalInfoViewModel
+import com.foodsaver.app.presentation.featureProfile.components.ProfilePersonalInfoField
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_change_image_icon

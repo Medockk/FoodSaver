@@ -22,8 +22,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.foodsaver.app.navigationModule.Route
-import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.presentation.featureEnterprise.MapKit
+import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.ic_personal_info_icon
 import foodsaver.composeapp.generated.resources.profile

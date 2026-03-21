@@ -42,7 +42,6 @@ import com.foodsaver.app.featureEnterprises.presentation.enterprises.Enterprises
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesEvent
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesEvent.OnCameraPositionChange
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesEvent.OnEnterpriseMapIconClick
-import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesEvent.OnUserPlacemarkChange
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesState
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesViewModel
 import com.foodsaver.app.presentation.featureEnterprise.components.EnterpriseBottomSheet
@@ -74,11 +73,13 @@ fun EnterpriseScreenRoot(
             }
 
             is EnterprisesAction.OnSetEnterpriseIcon -> {
+                val mapKitObject = MapKitObjectFactory.createMapKitObject(MapKitObjectType.ENTERPRISE_ICON)
                 it.enterprises.forEach { enterprise ->
-                    val enterprisePlacemark = mapKitController?.setPoint(
-                        lat = enterprise.latitude,
-                        lon = enterprise.longitude,
-                        mapKitObject = MapKitObjectFactory.createMapKitObject(MapKitObjectType.ENTERPRISE_ICON),
+                    mapKitController?.setPoint(
+                        id = enterprise.id,
+                        latitude = enterprise.latitude,
+                        longitude = enterprise.longitude,
+                        mapKitObject = mapKitObject,
                         onClick = {
                             viewModel.onEvent(OnEnterpriseMapIconClick(enterprise))
                             true
@@ -88,26 +89,24 @@ fun EnterpriseScreenRoot(
             }
 
             is EnterprisesAction.OnUpdateUserLocation -> {
-                state.userPlacemark?.let { mapKitPlacemark ->
-                    mapKitController?.removePlacemark(mapKitPlacemark)
-                }
-
-                val userPlacemark = mapKitController?.setPoint(
-                    lat = it.latitude,
-                    lon = it.longitude,
-                    mapKitObject = MapKitObjectFactory.createMapKitObject(MapKitObjectType.USER_ICON)
+                mapKitController?.setPoint(
+                    id = "user_location",
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    mapKitObject = MapKitObjectFactory.createMapKitObject(MapKitObjectType.USER_ICON),
+                    onClick = null
                 )
-
-                viewModel.onEvent(OnUserPlacemarkChange(userPlacemark))
             }
         }
     }
 
     EnterprisesScreen(
         state = state,
-        navController = navController,
         snackbarHostState = snackbarHostState,
-        onMapKitControllerReady = { mapKitController = it },
+        onMapKitControllerReady = {
+            mapKitController = it
+            viewModel.onEvent(EnterprisesEvent.OnMapKitControllerReady)
+        },
         onMapKitEvent = { event ->
             when (event) {
                 is MapKitEvent.OnCameraChanged -> {
@@ -118,6 +117,10 @@ fun EnterpriseScreenRoot(
                     )
                     viewModel.onEvent(OnCameraPositionChange(cameraPosition))
                 }
+
+                MapKitEvent.OnLocationAccessDenied -> {
+
+                }
             }
         },
         onEvent = viewModel::onEvent
@@ -127,7 +130,6 @@ fun EnterpriseScreenRoot(
 @Composable
 private fun EnterprisesScreen(
     state: EnterprisesState,
-    navController: NavController,
     snackbarHostState: SnackbarHostState,
     onMapKitControllerReady: (MapKitController) -> Unit,
     onMapKitEvent: (MapKitEvent) -> Unit,
@@ -174,7 +176,7 @@ private fun EnterprisesScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
-    ) { paddingValues ->
+    ) { _ ->
 
         Box {
 

@@ -21,4 +21,5 @@ object HttpConstants {
     const val BANK_URL = "${BASE_URL}bank"
     const val ADDRESS_URL = "${BASE_URL}address"
     const val ENTERPRISE_URL = "${BASE_URL}enterprises"
+    const val FCM_URL = "${BASE_URL}fcm"
 }

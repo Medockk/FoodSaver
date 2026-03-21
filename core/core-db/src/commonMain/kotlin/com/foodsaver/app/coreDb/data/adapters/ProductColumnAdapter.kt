@@ -6,11 +6,15 @@ import kotlinx.serialization.json.Json
 
 internal val ProductColumnAdapter = object : ColumnAdapter<ProductDto, String> {
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
+
     override fun decode(databaseValue: String): ProductDto {
-        return Json.decodeFromString(databaseValue)
+        return json.decodeFromString(databaseValue)
     }
 
     override fun encode(value: ProductDto): String {
-        return Json.encodeToString(value)
+        return json.encodeToString(value)
     }
 }

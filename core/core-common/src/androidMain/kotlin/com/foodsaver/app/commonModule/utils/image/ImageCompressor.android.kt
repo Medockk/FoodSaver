@@ -3,8 +3,6 @@ package com.foodsaver.app.commonModule.utils.image
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import androidx.exifinterface.media.ExifInterface
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 actual object ImageCompressor : ImageCompressorUtils() {

@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.coreModel.model.CategoryModel
-import com.foodsaver.app.presentation.Home.HomeEvent
 
 @Composable
 fun CategoryHeader(

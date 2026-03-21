@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -26,15 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.foodsaver.app.common.AuthenticationTextField
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
-import com.foodsaver.app.presentation.featureProfile.components.AddProfileInfoAlert
-import com.foodsaver.app.presentation.featureProfile.components.ProfilePaymentCard
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodAction
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodEvent
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodState
 import com.foodsaver.app.presentation.ProfilePaymentMethod.ProfilePaymentMethodViewModel
+import com.foodsaver.app.presentation.featureProfile.components.ProfilePaymentCard
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_new_card

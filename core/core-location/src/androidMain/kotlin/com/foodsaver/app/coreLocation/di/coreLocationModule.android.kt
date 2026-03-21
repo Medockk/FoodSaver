@@ -15,7 +15,8 @@ internal actual val platformCoreLocationModule: Module = module {
 
     single<LocationService> {
         LocationServiceImpl(
-            fusedLocationClient = get()
+            fusedLocationClient = get(),
+            context = get()
         )
     }
 }

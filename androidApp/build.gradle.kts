@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -48,10 +49,13 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.jetbrains.compose.navigation)
 
     implementation(projects.composeApp)
     implementation(projects.shared)
+    implementation(projects.core.coreFcm)
     implementation(projects.core.coreDi)
+    implementation(projects.core.coreNavigation)
 
     implementation(libs.androidx.splash)
 }

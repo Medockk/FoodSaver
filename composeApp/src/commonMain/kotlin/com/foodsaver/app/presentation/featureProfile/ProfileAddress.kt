@@ -29,14 +29,14 @@ import androidx.navigation.NavController
 import com.foodsaver.app.common.AuthenticationTextField
 import com.foodsaver.app.common.PrimaryButton
 import com.foodsaver.app.common.PrimaryCenterAlignedTopAppBar
-import com.foodsaver.app.presentation.featureProfile.components.AddProfileInfoAlert
-import com.foodsaver.app.presentation.featureProfile.components.ProfileAddressCard
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressAction
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressEvent
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressState
 import com.foodsaver.app.presentation.ProfileAddress.ProfileAddressViewModel
-import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.presentation.featureEnterprise.MapKit
+import com.foodsaver.app.presentation.featureProfile.components.AddProfileInfoAlert
+import com.foodsaver.app.presentation.featureProfile.components.ProfileAddressCard
+import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_new_address
