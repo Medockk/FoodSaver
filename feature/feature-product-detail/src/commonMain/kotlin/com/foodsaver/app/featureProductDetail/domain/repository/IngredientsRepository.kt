@@ -1,0 +1,11 @@
+package com.foodsaver.app.featureProductDetail.domain.repository
+
+import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.featureProductDetail.domain.model.IngredientModel
+import kotlinx.coroutines.flow.Flow
+
+interface IngredientsRepository {
+
+    suspend fun getIngredients(productId: String): ApiResult<IngredientModel?>
+    suspend fun analyzeIngredientsByProductId(productId: String): Flow<ApiResult<String?>>
+}

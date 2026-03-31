@@ -67,3 +67,17 @@ inline fun<T> ApiResult<T>.getOrElse(onFailure: (GlobalErrorResponse?) -> T): T 
         is ApiResult.Success<T> -> this.data
     }
 }
+
+fun<T> ApiResult<T>.failure(e: Exception): ApiResult<T> {
+
+    if (this is ApiResult.Error) return this
+
+    return ApiResult.Error(
+        error = GlobalErrorResponse(
+            error = e::class.simpleName ?: "Unknown error",
+            message = e.message ?: "Unknown error",
+            httpCode = 0,
+            errorCode = 0
+        )
+    )
+}

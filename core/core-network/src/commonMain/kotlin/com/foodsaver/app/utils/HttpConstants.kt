@@ -4,7 +4,7 @@ object HttpConstants {
 
     private const val VERSION = "v1"
 
-    internal const val ROOT_URL = "http://10.222.73.227:8088"
+    internal const val ROOT_URL = "http://10.236.62.227:8088"
     const val BASE_URL = "$ROOT_URL/api/$VERSION/"
 
     internal const val REFRESH_URL = "${BASE_URL}auth/refresh"
@@ -22,4 +22,5 @@ object HttpConstants {
     const val ADDRESS_URL = "${BASE_URL}address"
     const val ENTERPRISE_URL = "${BASE_URL}enterprises"
     const val FCM_URL = "${BASE_URL}fcm"
+    const val INGREDIENTS_URL = "${BASE_URL}ingredients"
 }

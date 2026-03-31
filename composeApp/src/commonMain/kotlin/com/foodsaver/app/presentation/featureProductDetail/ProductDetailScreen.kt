@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -57,10 +58,13 @@ import com.foodsaver.app.featureProductDetail.presentation.productDetail.Product
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailState
 import com.foodsaver.app.featureProductDetail.presentation.productDetail.ProductDetailViewModel
 import com.foodsaver.app.navigationModule.Route
+import com.foodsaver.app.presentation.featureProductDetail.components.IngredientsBottomSheet
 import com.foodsaver.app.presentation.featureProductDetail.components.ProductCounter
+import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.utils.ObserveActions
 import com.foodsaver.app.utils.ScreenAnimation
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.about_ingredients
 import foodsaver.composeapp.generated.resources.add_product_to_cart
 import foodsaver.composeapp.generated.resources.days
 import foodsaver.composeapp.generated.resources.hours
@@ -348,6 +352,25 @@ private fun SharedTransitionScope.ProductScreen(
                     Spacer(Modifier.height(20.dp))
 
                     Spacer(Modifier.weight(1f))
+
+                    Row(Modifier.fillMaxWidth().padding(end = 20.dp)) {
+                        Spacer(Modifier.weight(1f))
+                        TextButton(
+                            onClick = {
+                                if (state.isIngredientMenuExpanded) {
+                                    onEvent(ProductDetailEvents.OnCloseIngredientMenu)
+                                } else {
+                                    onEvent(ProductDetailEvents.OnOpenIngredientMenu)
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.about_ingredients),
+                                color = FoodSaverTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -403,6 +426,32 @@ private fun SharedTransitionScope.ProductScreen(
                     Spacer(Modifier.height(10.dp))
                 }
             }
+        }
+    }
+
+    if (state.isIngredientMenuExpanded) {
+        state.ingredients?.let { ingredient ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+
+                IngredientsBottomSheet(
+                    ingredients = ingredient.ingredients,
+                    aiResponse = state.ingredientsAIDescription,
+                    onGenerateAiResponseClick = {
+                        onEvent(ProductDetailEvents.OnAnalyzeIngredients)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    isLoading = state.isAiResponseLoading,
+                    onDismissRequest = {
+                        onEvent(ProductDetailEvents.OnCloseIngredientMenu)
+                    }
+                )
+            }
+
         }
     }
 }

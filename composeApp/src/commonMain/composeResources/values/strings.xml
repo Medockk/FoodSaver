@@ -62,4 +62,8 @@
     <string name="addProductUnitName">Name of unit</string>
     <string name="addProductExpiresAt">Expires at</string>
     <string name="addProductCategories">Categories</string>
+
+    <string name="about_ingredients">About ingredients</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="classify_ingredients_by_categories">Classify ingredients to categories</string>
 </resources>

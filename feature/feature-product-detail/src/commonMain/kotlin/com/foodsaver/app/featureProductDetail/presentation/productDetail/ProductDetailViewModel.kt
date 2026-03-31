@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.ApiResult.onFailure
+import com.foodsaver.app.commonModule.ApiResult.onFailureNullable
 import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
@@ -16,6 +18,7 @@ import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.DecreaseProductCountUseCase
 import com.foodsaver.app.domain.usecase.IncreaseProductCountUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
+import com.foodsaver.app.featureProductDetail.domain.repository.IngredientsRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,6 +41,8 @@ class ProductDetailViewModel(
     private val increaseProductCountUseCase: IncreaseProductCountUseCase,
     private val decreaseProductCountUseCase: DecreaseProductCountUseCase,
     private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
+
+    private val ingredientsRepository: IngredientsRepository,
 ) : BaseViewModel<ProductDetailActions>() {
 
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.ProductDetailScreen>()
@@ -54,6 +59,18 @@ class ProductDetailViewModel(
 
     init {
         getProduct()
+        getIngredients()
+    }
+
+    private fun getIngredients() {
+        viewModelScope.launch {
+            val ingredients = ingredientsRepository.getIngredients(navArgs.productId)
+            ingredients.onSuccessNullable { model ->
+                model?.let { model ->
+                    _state.update { it.copy(ingredients = model) }
+                }
+            }
+        }
     }
 
     fun onRefresh() {
@@ -155,6 +172,42 @@ class ProductDetailViewModel(
                             sendError(it.message)
                         }
                 }
+            }
+
+            ProductDetailEvents.OnAnalyzeIngredients -> {
+                viewModelScope.launch {
+                    _state.update { it.copy(isAiResponseLoading = true) }
+                    ingredientsRepository.analyzeIngredientsByProductId(navArgs.productId)
+                        .collectRequest(
+                            onSuccess = { data ->
+                                println("SSE Ingredients viewModel analyze $data")
+                                _state.update {
+                                    it.copy(
+                                        ingredientsAIDescription = data
+                                            ?: "Хм... Ничего не могу сказать о данном составе",
+                                        isAiResponseLoading = false
+                                    )
+                                }
+                            },
+                            onError = { error ->
+                                _state.update { it.copy(
+                                    isAiResponseLoading = false
+                                ) }
+                                sendError(error.message)
+                            }
+                        )
+                }
+            }
+
+            ProductDetailEvents.OnCloseIngredientMenu -> {
+                _state.update { it.copy(
+                    isIngredientMenuExpanded = false
+                ) }
+            }
+            ProductDetailEvents.OnOpenIngredientMenu -> {
+                _state.update { it.copy(
+                    isIngredientMenuExpanded = true
+                ) }
             }
         }
     }

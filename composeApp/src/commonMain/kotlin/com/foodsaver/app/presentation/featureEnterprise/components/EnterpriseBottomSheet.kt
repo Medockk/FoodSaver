@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +46,8 @@ import org.jetbrains.compose.resources.painterResource
 
 @Preview(showBackground = true, device = Devices.PIXEL_6_PRO, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun EnterpriseBottomSheetPreview() {
+private fun EnterpriseBottomSheetPreview() {
+
     Box(Modifier.fillMaxSize()) {
 
         EnterpriseBottomSheet(

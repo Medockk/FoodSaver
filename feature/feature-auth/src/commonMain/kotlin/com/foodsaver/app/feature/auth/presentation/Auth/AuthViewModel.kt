@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreFcm.service.FcmService
 import com.foodsaver.app.domain.model.AuthResponseModel
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
@@ -14,15 +15,21 @@ import com.foodsaver.app.domain.usecase.SignInUseCase
 import com.foodsaver.app.domain.usecase.SignUpUseCase
 import com.foodsaver.app.domain.utils.EmailValidator
 import com.foodsaver.app.feature.auth.presentation.Auth.AuthAction.OnError
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthViewModel(
     private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase,
+
+    private val fcmService: FcmService,
 ) : BaseViewModel<AuthAction>() {
 
     private val _state = mutableStateOf(AuthState())
@@ -77,6 +84,7 @@ class AuthViewModel(
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
+                            getAndSaveFcmToken().await()
                             _state.value = state.value.copy(isLoading = false)
                             baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
@@ -104,7 +112,12 @@ class AuthViewModel(
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
-                            _state.value = state.value.copy(isLoading = false)
+
+                            getAndSaveFcmToken().await()
+                            withContext(Dispatchers.Main) {
+                                _state.value = state.value.copy(isLoading = false)
+                            }
+
                             baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
                     }
@@ -124,6 +137,11 @@ class AuthViewModel(
 
                         ApiResult.Loading -> Unit
                         is ApiResult.Success<AuthResponseModel> -> {
+
+                            println("FCM before sending token")
+                            getAndSaveFcmToken().await()
+                            println("FCM after after sending token")
+
                             _state.value = state.value.copy(isLoading = false)
                             baseChannel.send(AuthAction.OnSuccessAuthentication(result.data.uid))
                         }
@@ -160,6 +178,20 @@ class AuthViewModel(
         }
 
         return true
+    }
+
+    private fun getAndSaveFcmToken(): Deferred<Unit> {
+        return viewModelScope.async {
+            fcmService.getFcmToken { token ->
+                println("FCM token in viewModel $token")
+                token?.let { token ->
+                    launch {
+                        fcmService.saveFcmToken(token)
+                        println("FCM sending after token")
+                    }
+                }
+            }
+        }
     }
 
     override fun mapBaseError(message: String): AuthAction {

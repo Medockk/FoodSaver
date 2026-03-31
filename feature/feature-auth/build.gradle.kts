@@ -62,6 +62,7 @@ kotlin {
 
             implementation(libs.koin.compose.viewmodel)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreFcm)
         }
         jvmMain.dependencies {
 
