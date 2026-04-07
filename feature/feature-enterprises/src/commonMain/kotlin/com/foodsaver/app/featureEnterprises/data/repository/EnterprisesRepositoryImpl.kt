@@ -1,8 +1,7 @@
 package com.foodsaver.app.featureEnterprises.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.mapNullable
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.featureEnterprises.data.dto.EnterpriseImagesDto
 import com.foodsaver.app.featureEnterprises.data.dto.EnterprisesDto
 import com.foodsaver.app.featureEnterprises.data.mappers.mapToModel
@@ -14,7 +13,6 @@ import com.foodsaver.app.featureEnterprises.domain.repository.EditEnterpriseRepo
 import com.foodsaver.app.featureEnterprises.domain.repository.EnterprisesRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
-import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -41,9 +39,10 @@ internal class EnterprisesRepositoryImpl(
     }
 
     override suspend fun getEnterpriseById(enterpriseId: String): ApiResult<EnterprisesModel?> {
-        return saveNetworkCallWithEmptyContent<EnterprisesDto> {
+        val response: ApiResult<EnterprisesDto?> = saveNetworkCall {
             httpClient.get(HttpConstants.ENTERPRISE_URL + "/$enterpriseId")
-        }.mapNullable { it?.mapToModel() }
+        }
+        return response.map { it?.mapToModel() }
     }
 
     override suspend fun getEnterpriseImageUrls(enterpriseId: String): ApiResult<List<EnterpriseImagesModel>> {
@@ -59,14 +58,17 @@ internal class EnterprisesRepositoryImpl(
     }
 
     override suspend fun uploadEnterpriseImage(uploadEnterpriseImageModel: UploadEnterpriseImageModel): ApiResult<String?> {
-        return saveNetworkCallWithEmptyContent<String> {
+        return saveNetworkCall {
             httpClient.post(HttpConstants.ENTERPRISE_URL + "/uploadImage") {
                 setBody(
                     MultiPartFormDataContent(
                         parts = formData {
                             append("file", uploadEnterpriseImageModel.image, Headers.build {
                                 append(HttpHeaders.ContentType, uploadEnterpriseImageModel.mimeType)
-                                append(HttpHeaders.ContentDisposition, "filename=\"enterprise.jpg\"")
+                                append(
+                                    HttpHeaders.ContentDisposition,
+                                    "filename=\"enterprise.jpg\""
+                                )
                             })
                         }
                     ))

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="error_unknown">Произошла неизвестная ошибка</string>
+
+    <string name="error_auth_username_occupied">Имя пользователя уже занято</string>
+    <string name="error_auth_invalid_email">Некорректный формат почты</string>
+    <string name="error_auth_weak_password">Слишком слабый пароль</string>
+    <string name="error_auth_failed_register">Не удалось зарегистрировать пользователя</string>
+    <string name="error_auth_failed_authorize">Неверное имя пользователя или пароль</string>
+    <string name="error_auth_jwt_expired">Сессия истекла. Пожалуйста, войдите снова</string>
+    <string name="error_auth_refresh_expired">Сессия устарела. Требуется полный вход</string>
+    <string name="error_auth_password_mismatch">Пароли не совпадают</string>
+    <string name="error_auth_google_verify_failed">Ошибка проверки Google аккаунта</string>
+
+    <string name="error_user_not_found">Пользователь не найден</string>
+    <string name="error_user_empty_email">Email не может быть пустым</string>
+    <string name="error_user_file_too_large">Файл слишком большой</string>
+
+    <string name="error_product_not_found">Товар не найден</string>
+    <string name="error_cart_not_found">Корзина не найдена</string>
+
+    <string name="error_org_not_found">Организация не найдена</string>
+    <string name="error_category_not_found">Категория не найдена</string>
+
+    <string name="error_payment_method_not_found">Способ оплаты не найден</string>
+    <string name="error_address_not_found">Адрес не найден</string>
+
+    <string name="error_uuid_parse_failed">Ошибка формата данных (UUID)</string>
+</resources>

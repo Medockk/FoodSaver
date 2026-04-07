@@ -1,7 +1,7 @@
 package com.foodsaver.app.coreCategory.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreModel.dto.CategoryDto
 import com.foodsaver.app.coreModel.mappers.mapToCategoryModel

@@ -1,8 +1,8 @@
 package com.foodsaver.app.presentation.ProfileAddress
 
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
@@ -50,7 +50,7 @@ class ProfileAddressViewModel(
             },
             onError = { errorResponse ->
                 _state.update { it.copy(isLoading = false) }
-                sendError(errorResponse.message)
+                sendError(errorResponse)
             }
         )
     }
@@ -81,7 +81,7 @@ class ProfileAddressViewModel(
                         isCurrentAddress = _state.value.dialogIsCurrentAddress
                     )
                     addAddressUseCase.invoke(requestModel).onFailure {
-                        sendError(it.message)
+                        sendError(it)
                     }
                 }
 

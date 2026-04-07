@@ -5,13 +5,11 @@ package com.foodsaver.app.corePaymentMethod.data
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.mapNullable
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
-import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.BankResponseDto
@@ -22,7 +20,6 @@ import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRe
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
-import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -43,7 +40,7 @@ internal class PaymentMethodRepositoryImpl(
 ) : ReadPaymentMethodRepository, EditPaymentMethodRepository {
 
     override fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>?>> = channelFlow {
-        send(ApiResult.Loading)
+        send(ApiResult.loading())
 
         val database = databaseProvider.get()
         val paymentQueries = database.bankEntityQueries
@@ -55,14 +52,14 @@ internal class PaymentMethodRepositoryImpl(
                     .asFlow()
                     .mapToList(Dispatchers.InputOutput)
                     .collect { methods ->
-                        send(ApiResult.Success(methods.mapToModel()))
+                        send(ApiResult.success(methods.mapToModel()))
                     }
             }
         }
 
-        val httpResult = saveNetworkCallWithEmptyContent<List<BankResponseDto>> {
+        val httpResult = saveNetworkCall<List<BankResponseDto>?> {
             httpClient.get(HttpConstants.BANK_URL + "/all")
-        }.onSuccessNullable { dtos ->
+        }.onSuccess { dtos ->
             paymentQueries.transaction {
                 authUserManager.getCurrentUid()?.let { uid ->
                     paymentQueries.clear(uid)
@@ -77,7 +74,7 @@ internal class PaymentMethodRepositoryImpl(
                     }
                 }
             }
-        }.mapNullable { dto ->
+        }.map { dto ->
             dto?.map { it.toModel() }
         }
 
@@ -92,7 +89,7 @@ internal class PaymentMethodRepositoryImpl(
 
     override fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel?>> = channelFlow {
 
-        send(ApiResult.Loading)
+        send(ApiResult.loading())
 
         val queries = databaseProvider.get().bankEntityQueries
         val uid = authUserManager.getCurrentUid()
@@ -103,20 +100,20 @@ internal class PaymentMethodRepositoryImpl(
                     .mapToOneOrNull(Dispatchers.InputOutput)
                     .collect { entity ->
                         if (entity != null) {
-                            send(ApiResult.Success(entity.toModel()))
+                            send(ApiResult.success(entity.toModel()))
                         } else {
                             queries.getPaymentMethods(uid)
                                 .executeAsList().lastOrNull()?.let {
-                                    send(ApiResult.Success(it.toModel()))
+                                    send(ApiResult.success(it.toModel()))
                                 }
                         }
                     }
             }
         }
 
-        val httpResult = saveNetworkCallWithEmptyContent<BankResponseDto> {
+        val httpResult = saveNetworkCall<BankResponseDto?> {
             httpClient.get(HttpConstants.BANK_URL + "/selected")
-        }.onSuccessNullable { dto ->
+        }.onSuccess { dto ->
             dto?.let {
                 uid?.let {
                     queries.disablePaymentMethods(uid)
@@ -127,7 +124,7 @@ internal class PaymentMethodRepositoryImpl(
                     )
                 }
             }
-        }.mapNullable { it?.toModel() }
+        }.map { it?.toModel() }
 
         send(httpResult)
 

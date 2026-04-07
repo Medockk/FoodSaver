@@ -41,6 +41,7 @@ datastore = "1.2.1"
 
 #di
 koinCompose = "4.2.0"
+koinPlugin = "0.4.1"
 
 #network
 ktor = "3.4.1"
@@ -162,3 +163,6 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 
 #google
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+
+#koin
+koin-plugin = { id = "io.insert-koin.compiler.plugin", version.ref = "koinPlugin" }

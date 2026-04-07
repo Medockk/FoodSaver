@@ -1,6 +1,6 @@
 package com.foodsaver.app.featureEnterprises.domain.usecase
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import com.foodsaver.app.featureEnterprises.domain.model.UploadEnterpriseImageModel
 import com.foodsaver.app.featureEnterprises.domain.repository.EditEnterpriseRepository
@@ -11,7 +11,7 @@ class UploadEnterpriseImageUseCase(
 
     suspend operator fun invoke(uploadEnterpriseImageModel: UploadEnterpriseImageModel): ApiResult<String?> {
         return if (uploadEnterpriseImageModel.image.isEmpty()) {
-            ApiResult.Error(GlobalErrorResponse(
+            ApiResult.error(GlobalErrorResponse(
                 error = "Upload image is Empty!",
                 message = "Upload image is Empty!",
                 httpCode = 0

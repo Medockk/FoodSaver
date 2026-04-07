@@ -62,4 +62,8 @@
     <string name="addProductUnitName">Имя единицы измерения продукта</string>
     <string name="addProductExpiresAt">Когда срок годности истечёт</string>
     <string name="addProductCategories">Категории</string>
+
+    <string name="about_ingredients">О составе</string>
+    <string name="ingredients">Состав</string>
+    <string name="classify_ingredients_by_categories">Классифицировать состав по категориям</string>
 </resources>

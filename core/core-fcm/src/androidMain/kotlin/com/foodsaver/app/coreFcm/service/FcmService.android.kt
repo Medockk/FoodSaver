@@ -7,9 +7,12 @@ import android.content.Intent
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.core.module.core.fcm.R
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.ktor.client.HttpClient
@@ -20,10 +23,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-actual class FcmService : FirebaseMessagingService(), KoinComponent {
+actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmService {
 
     private val httpClient: HttpClient by inject()
     val serviceJob = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -49,11 +53,7 @@ actual class FcmService : FirebaseMessagingService(), KoinComponent {
         println("FCM New token is $token")
 
         serviceJob.launch {
-            saveNetworkCall<Unit> {
-                httpClient.post(HttpConstants.FCM_URL) {
-                    parameter("token", token)
-                }
-            }
+            saveFcmToken(token)
         }
     }
 
@@ -106,5 +106,29 @@ actual class FcmService : FirebaseMessagingService(), KoinComponent {
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
+    }
+
+    actual override suspend fun getFcmToken(onComplete: (String?) -> Unit): Unit = withContext(Dispatchers.IO) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                println("FCM getFcmToken() isSuccessful")
+                onComplete(it.result)
+            } else {
+                println("FCM getFcmToken() isFailure")
+                onComplete(null)
+            }
+        }
+    }
+
+    actual override suspend fun saveFcmToken(token: String): Unit = withContext(Dispatchers.IO) {
+        saveNetworkCall<Unit> {
+            httpClient.post(HttpConstants.FCM_URL) {
+                parameter("token", token)
+            }
+        }.onSuccess {
+            println("FCM saveFcmToken() onSuccess")
+        }.onFailure {
+            println("FCM saveFcmToken() onFailure")
+        }
     }
 }

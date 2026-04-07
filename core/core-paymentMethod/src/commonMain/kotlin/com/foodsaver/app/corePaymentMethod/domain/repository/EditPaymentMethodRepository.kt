@@ -1,6 +1,6 @@
 package com.foodsaver.app.corePaymentMethod.domain.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
 
 interface EditPaymentMethodRepository: ReadPaymentMethodRepository {

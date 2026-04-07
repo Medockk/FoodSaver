@@ -45,7 +45,8 @@ import org.jetbrains.compose.resources.painterResource
 
 @Preview(showBackground = true, device = Devices.PIXEL_6_PRO, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun EnterpriseBottomSheetPreview() {
+private fun EnterpriseBottomSheetPreview() {
+
     Box(Modifier.fillMaxSize()) {
 
         EnterpriseBottomSheet(

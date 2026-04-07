@@ -1,5 +1,11 @@
 package com.foodsaver.app.coreFcm.service
 
-import org.koin.core.component.KoinComponent
+actual class FcmServiceImpl : FcmService {
+    actual override suspend fun getFcmToken(onComplete: (String?) -> Unit) {
+        onComplete(null)
+    }
 
-actual class FcmService : KoinComponent
+    actual override suspend fun saveFcmToken(token: String) {
+
+    }
+}

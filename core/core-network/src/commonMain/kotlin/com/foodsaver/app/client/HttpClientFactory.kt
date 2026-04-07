@@ -13,10 +13,12 @@ import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.sse.SSE
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
 internal class HttpClientFactory(
     private val json: Json,
@@ -48,6 +50,13 @@ internal class HttpClientFactory(
                     retryOnExceptionIf(maxRetries = 3) { _, cause ->
                         cause !is ConnectTimeoutException
                     }
+                }
+
+                install(SSE) {
+                    this.maxReconnectionAttempts = 4
+                    this.reconnectionTime = 5.seconds
+                    this.showCommentEvents()
+                    this.showRetryEvents()
                 }
             }.intercept()
         }

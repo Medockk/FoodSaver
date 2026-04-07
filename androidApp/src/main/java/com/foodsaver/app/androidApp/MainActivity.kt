@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 return@setKeepOnScreenCondition isSplashScreenVisible is AuthenticationState.Loading
             }
         enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
         if (!isLocationAccessGranted()) {

@@ -8,6 +8,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias { libs.plugins.jetbrains.kotlin.serialization }
+
+    alias { libs.plugins.composeCompiler }
+    alias { libs.plugins.composeMultiplatform }
 }
 
 kotlin {
@@ -20,6 +23,7 @@ kotlin {
         namespace = "com.foodsaver.app.feature.auth"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -62,6 +66,10 @@ kotlin {
 
             implementation(libs.koin.compose.viewmodel)
             implementation(projects.core.coreCommon)
+            implementation(projects.core.coreFcm)
+
+            implementation(libs.components.components.resources)
+            implementation(libs.compose.runtime.runtime)
         }
         jvmMain.dependencies {
 

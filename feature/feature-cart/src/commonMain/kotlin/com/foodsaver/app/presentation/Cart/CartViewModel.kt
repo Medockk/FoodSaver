@@ -68,7 +68,7 @@ class CartViewModel(
                 },
                 onError = { error ->
                     _state.update { it.copy(isLoading = false) }
-                    sendError(error.message)
+                    sendError(error)
                 },
                 onLoading = {
                     _state.update { it.copy(isLoading = true) }

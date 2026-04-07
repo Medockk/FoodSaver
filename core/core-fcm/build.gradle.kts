@@ -55,6 +55,8 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+
+            implementation(libs.koin.core)
         }
         jvmMain.dependencies {
 

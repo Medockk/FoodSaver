@@ -54,6 +54,7 @@ kotlin {
             // стоит ли так делать? потом
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreDb)
+            implementation(projects.core.coreFcm)
 
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.koin.compose.viewmodel)
