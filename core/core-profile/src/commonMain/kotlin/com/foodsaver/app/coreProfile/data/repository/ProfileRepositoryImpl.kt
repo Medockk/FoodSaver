@@ -1,10 +1,10 @@
 package com.foodsaver.app.coreProfile.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.UserDto

@@ -5,11 +5,11 @@ package com.foodsaver.app.data.repository
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.databases.cache.CartEntity
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.CartItemDto
@@ -45,7 +45,7 @@ internal class CartRepositoryImpl(
 
     override fun getCart(): Flow<ApiResult<List<CartItemModel>>> = channelFlow {
 
-        send(ApiResult.Loading)
+        send(ApiResult.loading())
 
         val database = databaseProvider.get()
         val queries = database.cartQueries
@@ -58,7 +58,7 @@ internal class CartRepositoryImpl(
                 .collect {
                     val ids = it.map { id -> id.productId }
                     println("DB UPDATED: Current items in DB: $ids")
-                    send(ApiResult.Success(it.mapToModel()))
+                    send(ApiResult.success(it.mapToModel()))
                 }
 
         }
@@ -86,8 +86,6 @@ internal class CartRepositoryImpl(
                         }
                 }
             }
-        }.onFailure {
-            send(ApiResult.Error(it))
         }
 
         awaitClose {
@@ -100,7 +98,7 @@ internal class CartRepositoryImpl(
         val queries = database.cartQueries
         val tempId = Uuid.random().toString()
 
-        val originalProduct = queries.transactionWithResult {
+        queries.transactionWithResult {
             val cartItem = queries.getCartItemByProductId(
                 request.productId,
                 request.productId
@@ -130,8 +128,6 @@ internal class CartRepositoryImpl(
             httpClient.post(HttpConstants.CART_URL) {
                 setBody(request.toDto(request.quantity ?: 1))
             }
-        }.onSuccess {
-
         }.onFailure {
             queries.transaction {
                 queries.deleteCartItemByTempId(tempId)
@@ -153,7 +149,7 @@ internal class CartRepositoryImpl(
             val newCount = (request.quantity ?: cartItem.quantity) + 1L
             queries.updateCountByGlobalId(newCount, cartItem.productId)
             return@transactionWithResult cartItem
-        } ?: return ApiResult.Error(
+        } ?: return ApiResult.error(
             error = GlobalErrorResponse(
                 error = "Product not in cart",
                 message = "Oops... something went wrong",
@@ -183,7 +179,7 @@ internal class CartRepositoryImpl(
                 queries.updateCountByGlobalId(item.quantity - 1, item.productId)
             }
             return@transactionWithResult item
-        } ?: return ApiResult.Error(
+        } ?: return ApiResult.error(
             error = GlobalErrorResponse(
                 error = "Product not in cart",
                 message = "Oops... something went wrong",
@@ -191,7 +187,7 @@ internal class CartRepositoryImpl(
             )
         )
 
-        if (originalItem.quantity <= 1) return ApiResult.Success(Unit)
+        if (originalItem.quantity <= 1) return ApiResult.success(Unit)
 
         return saveNetworkCall<ProductDto> {
             httpClient.put(HttpConstants.CART_URL + "/decrease") {

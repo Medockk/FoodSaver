@@ -5,13 +5,11 @@ package com.foodsaver.app.coreAddress.data.repository
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.mapNullable
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
-import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreAddress.data.mappers.mapToDto
 import com.foodsaver.app.coreAddress.data.mappers.mapToModel
 import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
@@ -23,7 +21,6 @@ import com.foodsaver.app.coreModel.dto.AddressDto
 import com.foodsaver.app.coreModel.model.AddressModel
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
-import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -47,7 +44,7 @@ internal class AddressRepositoryImpl(
 
     override fun getAddresses(): Flow<ApiResult<List<AddressModel>?>> = channelFlow {
 
-        send(ApiResult.Loading)
+        send(ApiResult.loading())
         val addressEntityQueries = databaseProvider.get().addressEntityQueries
         val uid = authUserManager.getCurrentUid()
 
@@ -58,14 +55,14 @@ internal class AddressRepositoryImpl(
                     .asFlow()
                     .mapToList(Dispatchers.InputOutput)
                     .collect { addresses ->
-                        send(ApiResult.Success(addresses.map { it.mapToModel() }))
+                        send(ApiResult.success(addresses.map { it.mapToModel() }))
                     }
             }
         }
 
-        val httpResult = saveNetworkCallWithEmptyContent<List<AddressDto>> {
+        val httpResult = saveNetworkCall<List<AddressDto>?> {
             httpClient.get(HttpConstants.ADDRESS_URL + "/all")
-        }.onSuccessNullable { addressDtos ->
+        }.onSuccess { addressDtos ->
             uid?.let {
                 val localAddresses = addressEntityQueries.getAllAddresses(uid)
                     .executeAsList()
@@ -92,7 +89,7 @@ internal class AddressRepositoryImpl(
                     }
                 }
             }
-        }.mapNullable { addressDtos ->
+        }.map { addressDtos ->
             addressDtos?.map { it.mapToModel() }
         }
 
@@ -102,7 +99,7 @@ internal class AddressRepositoryImpl(
     }
     override fun getCurrentAddress(): Flow<ApiResult<AddressModel?>> = channelFlow {
 
-        send(ApiResult.Loading)
+        send(ApiResult.loading())
         val addressEntityQueries = databaseProvider.get().addressEntityQueries
         val uid = authUserManager.getCurrentUid()
 
@@ -114,20 +111,20 @@ internal class AddressRepositoryImpl(
                     .mapToOneOrNull(Dispatchers.InputOutput)
                     .collect { address ->
                         if (address != null) {
-                            send(ApiResult.Success(address.mapToModel()))
+                            send(ApiResult.success(address.mapToModel()))
                         }
                     }
             }
         }
 
-        val httpResult = saveNetworkCallWithEmptyContent<AddressDto> {
+        val httpResult = saveNetworkCall<AddressDto?> {
             httpClient.get(HttpConstants.ADDRESS_URL + "/current")
-        }.onSuccessNullable { addressDto ->
+        }.onSuccess { addressDto: AddressDto? ->
             uid?.let {
 
                 if (addressDto == null) {
                     addressEntityQueries.disableCurrentAddress(uid)
-                    return@onSuccessNullable
+                    return@onSuccess
                 }
 
                 val localCurrentAddress = addressEntityQueries.getCurrentAddress(uid)
@@ -144,7 +141,7 @@ internal class AddressRepositoryImpl(
                         tempId = tempId,
                         uid = uid
                     )
-                    return@onSuccessNullable
+                    return@onSuccess
                 }
 
                 // if exist
@@ -158,7 +155,7 @@ internal class AddressRepositoryImpl(
                     )
                 }
             }
-        }.mapNullable { addressDto ->
+        }.map { addressDto ->
             addressDto?.mapToModel()
         }
 

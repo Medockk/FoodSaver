@@ -3,12 +3,10 @@ package com.foodsaver.app.featureProductDetail.presentation.productDetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onFailureNullable
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
-import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
@@ -65,7 +63,7 @@ class ProductDetailViewModel(
     private fun getIngredients() {
         viewModelScope.launch {
             val ingredients = ingredientsRepository.getIngredients(navArgs.productId)
-            ingredients.onSuccessNullable { model ->
+            ingredients.onSuccess { model ->
                 model?.let { model ->
                     _state.update { it.copy(ingredients = model) }
                 }
@@ -114,7 +112,7 @@ class ProductDetailViewModel(
                     when (val result = addProductToCartUseCase(request)) {
                         is ApiResult.Error -> {
                             _state.value = state.value.copy(isLoading = false)
-                            sendError(result.error.message)
+                            sendError(result)
                         }
 
                         ApiResult.Loading -> {
@@ -126,6 +124,7 @@ class ProductDetailViewModel(
                                 state.value.copy(isLoading = false, isProductInCart = true)
                             baseChannel.send(ProductDetailActions.OnAddedToCart)
                         }
+                        else -> Unit
                     }
                 }
             }
@@ -144,7 +143,7 @@ class ProductDetailViewModel(
                         val request = CartRequestModel(productId = navArgs.productId)
                         decreaseProductCountUseCase(request)
                             .onFailure {
-                                sendError(it.message)
+                                sendError(it)
                             }
                     }
                 }
@@ -157,7 +156,7 @@ class ProductDetailViewModel(
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val request = CartRequestModel(productId = navArgs.productId)
                         increaseProductCountUseCase(request).onFailure {
-                            sendError(it.message)
+                            sendError(it)
                         }
                     }
                 }
@@ -169,7 +168,7 @@ class ProductDetailViewModel(
                         .onSuccess {
                             _state.update { it.copy(isProductInCart = false) }
                         }.onFailure {
-                            sendError(it.message)
+                            sendError(it)
                         }
                 }
             }
@@ -180,34 +179,50 @@ class ProductDetailViewModel(
                     ingredientsRepository.analyzeIngredientsByProductId(navArgs.productId)
                         .collectRequest(
                             onSuccess = { data ->
-                                println("SSE Ingredients viewModel analyze $data")
-                                _state.update {
-                                    it.copy(
-                                        ingredientsAIDescription = data
-                                            ?: "Хм... Ничего не могу сказать о данном составе",
-                                        isAiResponseLoading = false
-                                    )
+                                if (data == null) {
+                                    _state.update {
+                                        it.copy(
+                                            isAiResponseLoading = false,
+                                            ingredientsAIDescription = "I can't say anything about this ingredients"
+                                        )
+                                    }
+                                } else {
+                                    _state.update {
+                                        it.copy(
+                                            ingredientsAIDescription =
+                                                ((it.ingredientsAIDescription ?: "") + data)
+                                                    .replace("*", ""),
+                                            isAiResponseLoading = false
+                                        )
+                                    }
                                 }
                             },
                             onError = { error ->
-                                _state.update { it.copy(
-                                    isAiResponseLoading = false
-                                ) }
-                                sendError(error.message)
+                                _state.update {
+                                    it.copy(
+                                        isAiResponseLoading = false
+                                    )
+                                }
+                                sendError(error)
                             }
                         )
                 }
             }
 
             ProductDetailEvents.OnCloseIngredientMenu -> {
-                _state.update { it.copy(
-                    isIngredientMenuExpanded = false
-                ) }
+                _state.update {
+                    it.copy(
+                        isIngredientMenuExpanded = false
+                    )
+                }
             }
+
             ProductDetailEvents.OnOpenIngredientMenu -> {
-                _state.update { it.copy(
-                    isIngredientMenuExpanded = true
-                ) }
+                _state.update {
+                    it.copy(
+                        isIngredientMenuExpanded = true
+                    )
+                }
             }
         }
     }

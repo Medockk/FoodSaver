@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
 
     alias { libs.plugins.jetbrains.kotlin.serialization }
+    alias { libs.plugins.composeMultiplatform }
+    alias { libs.plugins.composeCompiler }
 }
 
 kotlin {
@@ -21,6 +23,7 @@ kotlin {
         namespace = "com.foodsaver.app.core.module.core.common"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -59,7 +62,11 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.androidx.viewModel)
 
+            //this dependency need to compose compiler is correctly working
+            implementation(libs.compose.runtime.runtime)
+
             implementation(libs.kotlinx.datetime)
+            implementation(libs.components.components.resources)
         }
         jvmMain.dependencies {
 
@@ -76,5 +83,15 @@ kotlin {
         jsMain.dependencies {
 
         }
+    }
+
+}
+
+compose {
+
+    resources {
+        this.publicResClass = true
+        this.generateResClass = always
+        this.packageOfResClass = "com.foodsaver.app.core.common.resources"
     }
 }

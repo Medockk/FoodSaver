@@ -1,16 +1,16 @@
 package com.foodsaver.app.featureProductDetail.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.mapNullable
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.saveApiCall
 import com.foodsaver.app.featureProductDetail.data.dto.IngredientDto
 import com.foodsaver.app.featureProductDetail.data.mappers.mapToModel
 import com.foodsaver.app.featureProductDetail.domain.model.IngredientModel
 import com.foodsaver.app.featureProductDetail.domain.repository.IngredientsRepository
 import com.foodsaver.app.utils.HttpConstants
-import com.foodsaver.app.utils.saveNetworkCallWithEmptyContent
+import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.sse.SSEClientException
 import io.ktor.client.plugins.sse.sse
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.get
@@ -23,20 +23,20 @@ import kotlinx.coroutines.withContext
 internal class IngredientRepositoryImpl(
     private val httpClient: HttpClient,
 ) : IngredientsRepository {
-
     override suspend fun getIngredients(productId: String): ApiResult<IngredientModel?> =
         withContext(Dispatchers.InputOutput) {
-            saveNetworkCallWithEmptyContent<IngredientDto> {
+            val response: ApiResult<IngredientDto?> = saveNetworkCall {
                 httpClient.get(HttpConstants.INGREDIENTS_URL) {
                     parameter("productId", productId)
                 }
-            }.mapNullable { it?.mapToModel() }
+            }
+            return@withContext response.map { it?.mapToModel() }
         }
 
     override suspend fun analyzeIngredientsByProductId(productId: String): Flow<ApiResult<String?>> =
         withContext(Dispatchers.InputOutput) {
             channelFlow {
-                try {
+                saveApiCall {
                     httpClient.sse(
                         urlString = HttpConstants.INGREDIENTS_URL + "/ai/stream",
                         request = {
@@ -59,12 +59,8 @@ internal class IngredientRepositoryImpl(
                             }
                         }
                     }
-                } catch (e: SSEClientException) {
-                    e.printStackTrace()
-                    send(ApiResult)
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
+
             }
         }
 }

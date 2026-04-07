@@ -1,8 +1,8 @@
 package com.foodsaver.app.presentation.ProfilePaymentMethod
 
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.onFailure
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
@@ -51,7 +51,7 @@ class ProfilePaymentMethodViewModel(
                 },
                 onError = { error ->
                     _state.update { it.copy(isLoading = true) }
-                    sendError(error.message)
+                    sendError(error)
                 }
             )
         }
@@ -64,7 +64,7 @@ class ProfilePaymentMethodViewModel(
                     addPaymentMethodUseCase.invoke(
                         addPaymentMethodModel = AddPaymentMethodModel()
                     ).onFailure {
-                        sendError(it.message)
+                        sendError(it)
                     }
                 }
             }

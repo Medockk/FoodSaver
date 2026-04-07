@@ -3,9 +3,9 @@ package com.foodsaver.app.feature.auth.presentation.ResetPassword
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.stateFlow
 import com.foodsaver.app.domain.model.ResetPasswordModel
@@ -77,7 +77,7 @@ class ResetPasswordViewModel(
                             .onSuccess {
                                 baseChannel.send(ResetPasswordAction.OnSuccess)
                             }.onFailure {
-                                sendError(it.message)
+                                sendError(it)
                             }
                     } catch (_: AuthExceptions.PasswordNotEquals) {
                         sendError("Password not equals!")

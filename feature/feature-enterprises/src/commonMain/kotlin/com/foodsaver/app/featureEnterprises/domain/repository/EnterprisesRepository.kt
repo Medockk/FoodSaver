@@ -1,6 +1,6 @@
 package com.foodsaver.app.featureEnterprises.domain.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.featureEnterprises.domain.model.EnterpriseImagesModel
 import com.foodsaver.app.featureEnterprises.domain.model.EnterprisesModel
 import com.foodsaver.app.featureEnterprises.domain.model.UploadEnterpriseImageModel

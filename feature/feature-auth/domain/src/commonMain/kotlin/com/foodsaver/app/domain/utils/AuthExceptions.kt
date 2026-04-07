@@ -1,6 +1,10 @@
 package com.foodsaver.app.domain.utils
 
-sealed class AuthExceptions(): Exception() {
+import com.foodsaver.app.commonModule.utils.uiText.LocalError
+
+sealed class AuthExceptions: Exception(), LocalError<Any> {
+
+    override val error: Any = this
 
     class NoGoogleAccount: AuthExceptions()
     class FailedToExactActivityFromContext: AuthExceptions()

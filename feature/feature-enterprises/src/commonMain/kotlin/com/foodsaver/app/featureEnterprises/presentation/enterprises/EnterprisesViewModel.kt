@@ -5,11 +5,9 @@ package com.foodsaver.app.featureEnterprises.presentation.enterprises
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onFailureNullable
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
-import com.foodsaver.app.commonModule.ApiResult.onSuccessNullable
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.image.ImageCompressor
 import com.foodsaver.app.coreLocation.domain.model.LocationModel
@@ -85,7 +83,7 @@ class EnterprisesViewModel(
             mapKitControllerDeferred.await()
 
             enterprisesRepository.getEnterpriseById(enterpriseId)
-                .onSuccessNullable { enterprise ->
+                .onSuccess { enterprise ->
                     enterprise?.let { enterprise ->
                         _state.update {
                             it.copy(
@@ -173,7 +171,7 @@ class EnterprisesViewModel(
                     )
 
                     uploadEnterpriseImageUseCase(uploadEnterpriseImageModel)
-                        .onSuccessNullable { url ->
+                        .onSuccess { url ->
                             url?.let {
                                 val selectedEnterpriseImageModel = EnterpriseImagesModel(url)
                                 _state.update {
@@ -183,8 +181,8 @@ class EnterprisesViewModel(
                                     )
                                 }
                             }
-                        }.onFailureNullable {
-                            sendError(it.message)
+                        }.onFailure {
+                            sendError(it)
                         }
                 }
             }
@@ -236,7 +234,7 @@ class EnterprisesViewModel(
                     result.onSuccess { enterprises ->
                         baseChannel.send(OnSetEnterpriseIcon(enterprises))
                     }.onFailure {
-                        sendError(it.message)
+                        sendError(it)
                     }
                 }
         }

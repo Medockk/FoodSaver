@@ -1,8 +1,9 @@
 package com.foodsaver.app.presentation.ProfilePersonalInfo
 
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.domain.model.ProfilePersonalInfoModel
@@ -50,9 +51,9 @@ class ProfilePersonalInfoViewModel(
                 onLoading = {
                     _state.update { it.copy(isLoading = true) }
                 },
-                onError = {
+                onError = { error ->
                     _state.update { it.copy(isLoading = false) }
-                    sendError(it.message)
+                    sendError(error)
                 }
             )
         }
@@ -113,18 +114,17 @@ class ProfilePersonalInfoViewModel(
                                 bio = bio.ifBlank { _state.value.profile?.bio ?: "" }
                             )
                         }
-                        when (val result = savePersonalInfoUseCase(request)) {
-                            is ApiResult.Error -> {
-                                _state.update { it.copy(isLoading = false) }
-                                sendError(result.error.message)
-                            }
+                        val result = savePersonalInfoUseCase(request)
+                        result.onFailure { error ->
 
-                            ApiResult.Loading -> Unit
-                            is ApiResult.Success<*> -> {
-                                _state.update { it.copy(isLoading = false) }
-                                baseChannel.send(ProfilePersonalInfoAction.OnSuccessSave)
-                            }
+                            _state.update { it.copy(isLoading = false) }
+                            sendError(error)
+                        }.onSuccess {
+
+                            _state.update { it.copy(isLoading = false) }
+                            baseChannel.send(ProfilePersonalInfoAction.OnSuccessSave)
                         }
+
                     }
                 }
             }
@@ -132,6 +132,7 @@ class ProfilePersonalInfoViewModel(
             ProfilePersonalInfoEvent.OnCloseGallery -> {
                 _state.update { it.copy(showGallery = false) }
             }
+
             ProfilePersonalInfoEvent.OnOpenGallery -> {
                 _state.update { it.copy(showGallery = true) }
             }

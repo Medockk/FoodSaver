@@ -1,8 +1,8 @@
 package com.foodsaver.app.coreProductModule.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.ProductModel

@@ -2,9 +2,9 @@ package com.foodsaver.app.addProductModule.presentation.addProduct
 
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.DateUtils
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
@@ -88,8 +88,8 @@ class AddProductViewModel(
                     )
                     addProductUseCase.invoke(addProductModel)
                         .onFailure {
-                            println(it.message)
-                            sendError(it.message)
+                            println(it.uiText.asString())
+                            sendError(it)
                         }.onSuccess {
                             sendError("Success!")
                         }

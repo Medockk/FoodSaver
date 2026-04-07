@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="local_error_invalid_email">Неверный адрес электронной почты</string>
+    <string name="local_error_no_google_account">Авторизуйтесь в аккаунт Гугл на устройстве, и повторите попытку</string>
+    <string name="local_error_passwords_not_equal">Пароли не идентичны</string>
+
+    <string name="local_error_empty_fio">ФИО не должно быть пустым</string>
+    <string name="local_error_empty_email">Электронная почта не должна быть пустой</string>
+    <string name="local_error_empty_password">Пароль не должен быть пустым</string>
+</resources>

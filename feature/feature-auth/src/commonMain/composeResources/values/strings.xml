@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="local_error_invalid_email">Invalid Email</string>
+    <string name="local_error_no_google_account">Authorize in Google account, and try again</string>
+    <string name="local_error_passwords_not_equal">Passwords not equal</string>
+
+    <string name="local_error_empty_fio">Fio must be not empty</string>
+    <string name="local_error_empty_email">Email must be not empty</string>
+    <string name="local_error_empty_password">Password must be not empty</string>
+</resources>

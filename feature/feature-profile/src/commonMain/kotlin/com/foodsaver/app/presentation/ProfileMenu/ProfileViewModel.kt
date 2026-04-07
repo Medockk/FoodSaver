@@ -3,8 +3,10 @@ package com.foodsaver.app.presentation.ProfileMenu
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onLoading
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.coreSettings.domain.repository.LocaleRepository
@@ -18,8 +20,8 @@ import kotlinx.coroutines.withContext
 class ProfileViewModel(
     private val getProfileUseCase: GetProfileUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val localeRepository: LocaleRepository
-): BaseViewModel<ProfileAction>() {
+    private val localeRepository: LocaleRepository,
+) : BaseViewModel<ProfileAction>() {
 
     private val _state = mutableStateOf(ProfileState())
     val state: State<ProfileState> = _state
@@ -47,7 +49,7 @@ class ProfileViewModel(
                 },
                 onError = {
                     _state.value = state.value.copy(isLoading = false)
-                    sendError(it.message)
+                    sendError(it)
                 }
             )
         }
@@ -57,18 +59,16 @@ class ProfileViewModel(
         when (event) {
             ProfileEvent.OnLogOutClick -> {
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    when (val result = logoutUseCase()) {
-                        is ApiResult.Error -> {
-                            _state.value = state.value.copy(isLoading = false)
-                            sendError(result.error.message)
-                        }
-                        ApiResult.Loading -> {
-                            _state.value = state.value.copy(isLoading = true)
-                        }
-                        is ApiResult.Success<*> -> {
-                            _state.value = state.value.copy(isLoading = false)
-                            baseChannel.send(ProfileAction.OnSuccessLogout)
-                        }
+                    val result = logoutUseCase()
+                    result.onFailure {
+                        _state.value = state.value.copy(isLoading = false)
+                        sendError(it)
+                    }.onLoading {
+                        _state.value = state.value.copy(isLoading = true)
+                    }.onSuccess {
+
+                        _state.value = state.value.copy(isLoading = false)
+                        baseChannel.send(ProfileAction.OnSuccessLogout)
                     }
                 }
             }

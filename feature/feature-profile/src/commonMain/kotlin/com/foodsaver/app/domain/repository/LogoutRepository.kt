@@ -1,6 +1,6 @@
 package com.foodsaver.app.domain.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 
 interface LogoutRepository {
 

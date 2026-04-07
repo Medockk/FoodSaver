@@ -1,9 +1,9 @@
 package com.foodsaver.app.feature.auth.presentation.ForgotPassword
 
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.onFailure
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.stateFlow
 import com.foodsaver.app.domain.model.ForgotPasswordModel
@@ -53,7 +53,7 @@ class ForgotPasswordViewModel(
                             .onSuccess {
                                 baseChannel.send(ForgotPasswordAction.OnSuccess)
                             }.onFailure {
-                                sendError(it.message)
+                                sendError(it)
                             }
                     } catch (_: AuthExceptions.InvalidEmail) {
                         sendError("Invalid email address!")

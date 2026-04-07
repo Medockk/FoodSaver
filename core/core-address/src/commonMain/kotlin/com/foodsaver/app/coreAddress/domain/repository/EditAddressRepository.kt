@@ -1,6 +1,6 @@
 package com.foodsaver.app.coreAddress.domain.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
 
 interface EditAddressRepository: ReadAddressRepository {

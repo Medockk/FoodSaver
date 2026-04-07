@@ -1,7 +1,7 @@
 package com.foodsaver.app.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.data.dto.OfferDto
 import com.foodsaver.app.data.mappers.toModel
 import com.foodsaver.app.domain.model.OfferModel

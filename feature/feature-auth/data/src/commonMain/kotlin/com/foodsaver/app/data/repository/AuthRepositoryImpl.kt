@@ -1,10 +1,10 @@
 package com.foodsaver.app.data.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.map
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
-import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
+import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.utils.PlatformContext
+import com.foodsaver.app.commonModule.utils.uiText.LocalError
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.dto.AuthResponseModelDto
 import com.foodsaver.app.data.dto.GoogleAuthRequestDto
@@ -21,6 +21,7 @@ import com.foodsaver.app.manager.AccessTokenManager
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.retry
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -31,15 +32,24 @@ class AuthRepositoryImpl(
     private val httpClient: HttpClient,
     private val accessTokenManager: AccessTokenManager,
     private val googleAuthenticator: GoogleAuthenticator,
-    private val authUserManager: AuthUserManager
-): AuthRepository {
+    private val authUserManager: AuthUserManager,
+) : AuthRepository {
 
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
         val body = signInModel.toDto()
 
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.AUTH_URL}/signIn"){
+            httpClient.post("${HttpConstants.AUTH_URL}/signIn") {
                 setBody(body)
+
+                retry {
+                    this.retryIf { _, response ->
+                        when (response.status) {
+                            HttpStatusCode.BadRequest -> false
+                            else -> true
+                        }
+                    }
+                }
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
@@ -54,6 +64,18 @@ class AuthRepositoryImpl(
         return saveNetworkCall<AuthResponseModelDto> {
             httpClient.post("${HttpConstants.AUTH_URL}/signUp") {
                 setBody(body)
+
+                retry {
+                    this.retryIf { _, response ->
+                        when (response.status) {
+                            HttpStatusCode.Conflict,
+                            HttpStatusCode.BadRequest,
+                                -> false
+
+                            else -> true
+                        }
+                    }
+                }
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
@@ -63,31 +85,17 @@ class AuthRepositoryImpl(
 
     override suspend fun authenticateWithGoogle(platformContext: PlatformContext): ApiResult<AuthResponseModel> {
         val googleIdToken = try {
-            googleAuthenticator.getGoogleIdToken(platformContext) ?: return ApiResult.Error(GlobalErrorResponse(
-                error = "Google id token is null",
-                message = "Failed to authenticate user. Try again",
-                httpCode = HttpStatusCode.BadRequest.value
-            ))
-        } catch (e: AuthExceptions) {
-            val message = when (e) {
-                is AuthExceptions.FailedToExactActivityFromContext -> "Failed to authenticate user"
-                is AuthExceptions.NoGoogleAccount -> "Authenticate in Google account, to login in app"
-                else -> "Unknown error"
-            }
-            return ApiResult.Error(
-                error = GlobalErrorResponse(
-                    error = e.message.toString(),
-                    message = message,
-                    httpCode = HttpStatusCode.BadRequest.value
-                )
+            googleAuthenticator.getGoogleIdToken(platformContext) ?: return ApiResult.localError(
+                AuthExceptions.NoGoogleAccount()
             )
+        } catch (e: AuthExceptions) {
+            return ApiResult.localError(e)
         } catch (e: Exception) {
-            return ApiResult.Error(
-                error = GlobalErrorResponse(
-                    error = e.message.toString(),
-                    message = "Failed to authenticate user",
-                    httpCode = HttpStatusCode.BadRequest.value
-                )
+            e.printStackTrace()
+            return ApiResult.localError(
+                object : LocalError<String> {
+                    override val error: String = "Unknown error"
+                }
             )
         }
 
@@ -95,6 +103,15 @@ class AuthRepositoryImpl(
         return saveNetworkCall<AuthResponseModelDto> {
             httpClient.post("${HttpConstants.AUTH_URL}/google") {
                 setBody(requestBody)
+
+                retry {
+                    this.retryIf { _, response ->
+                        when (response.status) {
+                            HttpStatusCode.BadRequest -> false
+                            else -> true
+                        }
+                    }
+                }
             }
         }.onSuccess {
             setAccessTokens(it.jwtToken, it.refreshToken)
@@ -103,18 +120,39 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun forgotPassword(forgotPasswordModel: ForgotPasswordModel): ApiResult<Unit> {
-        return saveNetworkCall<Unit> {
+        return saveNetworkCall {
             httpClient.put(HttpConstants.AUTH_URL + "/reset-password") {
                 setBody(forgotPasswordModel.toDto())
+
+                retry {
+                    retryIf { _, response ->
+                        when (response.status) {
+                            HttpStatusCode.NotFound -> false
+                            else -> true
+                        }
+                    }
+                }
             }
         }
     }
 
     override suspend fun resetPassword(resetPasswordModel: ResetPasswordModel): ApiResult<Unit> {
-        return saveNetworkCall<Unit> {
+        return saveNetworkCall {
             httpClient.put(HttpConstants.AUTH_URL + "/reset-password") {
                 setBody(resetPasswordModel.toDto())
                 parameter("id", resetPasswordModel.resetPasswordToken)
+
+                retry {
+                    retryIf { _, response ->
+                        when (response.status) {
+                            HttpStatusCode.BadRequest,
+                            HttpStatusCode.NotFound,
+                                -> false
+
+                            else -> true
+                        }
+                    }
+                }
             }
         }
     }

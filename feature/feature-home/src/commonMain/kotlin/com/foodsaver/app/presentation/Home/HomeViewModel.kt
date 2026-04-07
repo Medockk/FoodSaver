@@ -3,16 +3,15 @@
 package com.foodsaver.app.presentation.Home
 
 import androidx.lifecycle.viewModelScope
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
-import com.foodsaver.app.commonModule.ApiResult.onSuccess
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
-import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.CartRequestModel
 import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.domain.usecase.GetCartUseCase
@@ -67,7 +66,9 @@ class HomeViewModel(
         },
         onNextKey = { currentKey, _ -> currentKey + 1 },
         onError = { errorResponse ->
-            sendError(errorResponse?.message ?: "Unknown error")
+            errorResponse?.let { errorResponse ->
+                sendError(errorResponse)
+            }
         },
         onSuccess = { _, result ->
             _state.update { currentState ->
@@ -98,7 +99,9 @@ class HomeViewModel(
         },
         onNextKey = { currentKey, _ -> currentKey + 1 },
         onError = { errorResponse ->
-            sendError(errorResponse?.message ?: "Unknown error")
+            errorResponse?.let { errorResponse ->
+                sendError(errorResponse)
+            }
         },
         onSuccess = { key, result ->
             println("key is $key")
@@ -277,22 +280,17 @@ class HomeViewModel(
             is HomeEvent.OnAddProductToCart -> {
                 if (_state.value.cartProductIds.contains(event.productId)) {
                     viewModelScope.launch(Dispatchers.InputOutput) {
-                        val result = removeProductFromCartUseCase(event.productId)
-
-                        if (result is ApiResult.Error) {
-                            baseChannel.send(OnError(result.error.message))
-                        }
+                        removeProductFromCartUseCase(event.productId)
+                            .onFailure {
+                                sendError(it)
+                            }
                     }
                 } else {
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val request = CartRequestModel(event.productId)
-                        when (val result = addProductToCartUseCase.invoke(request)) {
-                            is ApiResult.Error -> {
-                                baseChannel.send(OnError(result.error.message))
-                            }
-
-                            ApiResult.Loading -> Unit
-                            is ApiResult.Success<CartItemModel> -> Unit
+                        val result = addProductToCartUseCase.invoke(request)
+                        result.onFailure {
+                            sendError(it)
                         }
                     }
                 }

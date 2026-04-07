@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalTime::class)
-
 package com.foodsaver.app.commonModule.dto
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 @Serializable
 data class GlobalErrorResponse(

@@ -1,6 +1,6 @@
 package com.foodsaver.app.coreProductModule.domain.repository
 
-import com.foodsaver.app.commonModule.ApiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.model.AddProductModel
 import kotlinx.coroutines.flow.Flow
