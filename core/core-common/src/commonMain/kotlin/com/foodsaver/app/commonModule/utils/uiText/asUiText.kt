@@ -17,6 +17,7 @@ import com.foodsaver.app.core.common.resources.error_category_not_found
 import com.foodsaver.app.core.common.resources.error_org_not_found
 import com.foodsaver.app.core.common.resources.error_payment_method_not_found
 import com.foodsaver.app.core.common.resources.error_product_not_found
+import com.foodsaver.app.core.common.resources.error_product_not_fresh
 import com.foodsaver.app.core.common.resources.error_unknown
 import com.foodsaver.app.core.common.resources.error_user_empty_email
 import com.foodsaver.app.core.common.resources.error_user_file_too_large
@@ -46,6 +47,7 @@ fun GlobalErrorResponse.asUiText(): UiText {
 
         // Product (3000-3999)
         3001 -> UiText.StringRes(Res.string.error_product_not_found)
+        3002 -> UiText.StringRes(Res.string.error_product_not_fresh)
 
         // Cart (4000-4999)
         4001 -> UiText.StringRes(Res.string.error_cart_not_found)

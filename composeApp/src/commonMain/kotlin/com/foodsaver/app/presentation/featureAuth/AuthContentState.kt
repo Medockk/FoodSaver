@@ -12,4 +12,5 @@ data class AuthContentState(
 
     val isPasswordVisible: Boolean = true,
     val onPasswordVisibilityChange: () -> Unit = {},
+    val testTag: String = "testTag",
 )

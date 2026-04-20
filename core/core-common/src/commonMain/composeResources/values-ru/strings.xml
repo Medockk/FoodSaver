@@ -17,6 +17,7 @@
     <string name="error_user_file_too_large">Файл слишком большой</string>
 
     <string name="error_product_not_found">Товар не найден</string>
+    <string name="error_product_not_fresh">Товар не свежий</string>
     <string name="error_cart_not_found">Корзина не найдена</string>
 
     <string name="error_org_not_found">Организация не найдена</string>

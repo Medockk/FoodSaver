@@ -1,8 +1,10 @@
 package com.foodsaver.app.coreProductModule.data.repository
 
+import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
+import com.foodsaver.app.commonModule.apiResult.saveApiCall
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.ProductModel
@@ -22,8 +24,10 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 internal class ProductRepositoryImpl(
@@ -37,16 +41,22 @@ internal class ProductRepositoryImpl(
         size: Int,
     ): ApiResult<List<ProductModel>> {
         return saveNetworkCall<List<ProductDto>> {
+            // поиск
             httpClient.get(HttpConstants.PRODUCTS_URL) {
                 parameter("page", page)
                 parameter("size", size)
+                parameter("searchType", "NEARBY") // тип поиска (ближайшее/рекомендованное)
             }
         }.onSuccess { productsDto ->
             val queries = databaseProvider.get().cachedProductQueries
 
             queries.transaction {
+                // транзакция для того, чтобы не делать N+1 запросы к БД
                 productsDto.forEach { dto ->
-                    queries.insertCachedProduct(dto)
+                    queries.insertCachedProduct(
+                        productId = dto.productId,
+                        product = dto
+                    )
                 }
             }
         }.map { it.toModel() }
@@ -55,8 +65,16 @@ internal class ProductRepositoryImpl(
     override suspend fun getCachedProduct(productId: String): Flow<ProductModel?> = channelFlow {
         val queries = databaseProvider.get().cachedProductQueries
 
-        val product = queries.getCachedProducts().executeAsList()
-            .find { it.product.productId == productId }
+        val product = try {
+            queries.getCachedProductByProductId(productId)
+                .executeAsList() // для безопасности, тк метод executeAsOne может выбросить IllegalStateException ->
+                // сработает catch блок ->
+                // вернёт null
+                .firstOrNull()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
         send(product?.product?.toModel())
     }
 
@@ -89,6 +107,8 @@ internal class ProductRepositoryImpl(
                 setBody(
                     MultiPartFormDataContent(
                     parts = formData {
+                        // через formData тк file - это отдельный request параметр
+                        // можно установить только 1 setBody
                         append("file", addProductModel.photo, Headers.build {
                             append(HttpHeaders.ContentType, "image/png")
                             append(HttpHeaders.ContentDisposition, "filename=\"photo.png\"")
@@ -102,12 +122,25 @@ internal class ProductRepositoryImpl(
                 )
             }
         }.onSuccess {
+            // при успехе кэшируем
             val queries = databaseProvider.get().cachedProductQueries
-            queries.insertCachedProduct(it)
+            queries.insertCachedProduct(it.productId, it)
         }.map { }
     }
 
+    override suspend fun getCachedProducts(): ApiResult<List<ProductModel>> =
+        withContext(Dispatchers.InputOutput) {
+            return@withContext saveApiCall {
+                val queries = databaseProvider.get().cachedProductQueries
+                val products = queries.getCachedProducts().executeAsList()
+                    .map { cachedProduct ->
+                        cachedProduct.product.toModel()
+                    }
+                products
+            }
+        }
+
     override suspend fun deleteProduct(productId: String): ApiResult<Unit> {
-        TODO("Not yet implemented")
+        TODO("хз пока стоит ли тут делать или вынести в editProductRepository")
     }
 }

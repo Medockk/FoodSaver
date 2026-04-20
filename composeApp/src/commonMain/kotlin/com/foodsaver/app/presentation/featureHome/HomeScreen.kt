@@ -6,9 +6,11 @@
 
 package com.foodsaver.app.presentation.featureHome
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,13 +47,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.PrimaryPullToRefreshBox
 import com.foodsaver.app.common.SearchTextField
 import com.foodsaver.app.navigationModule.Route
@@ -129,6 +136,23 @@ fun SharedTransitionScope.HomeScreenRoot(
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun HomeScreenPreview() {
+    SharedTransitionLayout {
+        AnimatedContent(true) {
+            HomeScreen(
+                state = HomeState(),
+                onEvent = { },
+                snackbarHostState = SnackbarHostState(),
+                animatedContentScope = this,
+                navController = rememberNavController(),
+                modifier = Modifier
+            )
+        }
+    }
+}
+
 @Composable
 private fun SharedTransitionScope.HomeScreen(
     state: HomeState,
@@ -143,7 +167,7 @@ private fun SharedTransitionScope.HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val modalDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    val shouldStartPaginate = remember {
+    val shouldStartPaginate = retain {
         derivedStateOf {
             val layoutInfo = lazyGridState.layoutInfo
             val totalItemsNumber = layoutInfo.totalItemsCount
@@ -161,6 +185,10 @@ private fun SharedTransitionScope.HomeScreen(
     val offerPagerState = rememberPagerState {
         if (state.offers.isEmpty() && state.isOffersLoading) 3
         else state.offers.size
+    }
+
+    var isSearchFieldTriggered by retain {
+        mutableStateOf(state.searchQuery.isNotBlank())
     }
 
     ModalNavigationDrawer(
@@ -250,7 +278,7 @@ private fun SharedTransitionScope.HomeScreen(
 
                 if (state.isProductsLoading && (state.products.isEmpty()/* || state.searchedProducts.isEmpty()*/)) {
                     items(6) {
-                        ShimmerProductCard(Modifier.fillMaxWidth(0.5f).animateItem())
+                        ShimmerProductCard(Modifier.fillMaxWidth(0.5f))
                     }
                 } else {
                     items(
@@ -274,7 +302,7 @@ private fun SharedTransitionScope.HomeScreen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth(0.5f)
-                                    .animateItem()
+//                                    .animateItem()
                             )
                         }
                     }

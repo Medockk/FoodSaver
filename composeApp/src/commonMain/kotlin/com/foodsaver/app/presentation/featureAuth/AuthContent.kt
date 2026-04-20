@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -35,7 +36,8 @@ fun AuthContent(
                 value = state.value,
                 onValueChange = { state.onValueChange.invoke(it) },
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag(state.testTag),
                 placeholder = state.placeholder,
                 visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
                 else PasswordVisualTransformation('*'),

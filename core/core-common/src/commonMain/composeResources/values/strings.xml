@@ -17,6 +17,7 @@
     <string name="error_user_file_too_large">File is too large</string>
 
     <string name="error_product_not_found">Product not found</string>
+    <string name="error_product_not_fresh">Product not fresh</string>
     <string name="error_cart_not_found">Cart not found</string>
 
     <string name="error_org_not_found">Organization not found</string>

@@ -27,6 +27,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
 
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
@@ -44,8 +45,9 @@ class AuthRepositoryImpl(
 
                 retry {
                     this.retryIf { _, response ->
-                        when (response.status) {
-                            HttpStatusCode.BadRequest -> false
+                        when {
+                            response.status == HttpStatusCode.BadRequest -> false
+                            response.status.isSuccess() -> false
                             else -> true
                         }
                     }
@@ -67,11 +69,12 @@ class AuthRepositoryImpl(
 
                 retry {
                     this.retryIf { _, response ->
-                        when (response.status) {
-                            HttpStatusCode.Conflict,
-                            HttpStatusCode.BadRequest,
+                        when {
+                            response.status == HttpStatusCode.Conflict ||
+                                    response.status == HttpStatusCode.BadRequest
                                 -> false
 
+                            response.status.isSuccess() -> false
                             else -> true
                         }
                     }
@@ -106,8 +109,9 @@ class AuthRepositoryImpl(
 
                 retry {
                     this.retryIf { _, response ->
-                        when (response.status) {
-                            HttpStatusCode.BadRequest -> false
+                        when {
+                            response.status == HttpStatusCode.BadRequest -> false
+                            response.status.isSuccess() -> false
                             else -> true
                         }
                     }
@@ -126,8 +130,9 @@ class AuthRepositoryImpl(
 
                 retry {
                     retryIf { _, response ->
-                        when (response.status) {
-                            HttpStatusCode.NotFound -> false
+                        when {
+                            response.status == HttpStatusCode.NotFound -> false
+                            response.status.isSuccess() -> false
                             else -> true
                         }
                     }
@@ -144,11 +149,12 @@ class AuthRepositoryImpl(
 
                 retry {
                     retryIf { _, response ->
-                        when (response.status) {
-                            HttpStatusCode.BadRequest,
-                            HttpStatusCode.NotFound,
+                        when {
+                            response.status == HttpStatusCode.BadRequest ||
+                                    response.status == HttpStatusCode.NotFound
                                 -> false
 
+                            response.status.isSuccess() -> false
                             else -> true
                         }
                     }

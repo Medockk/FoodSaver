@@ -3,7 +3,6 @@
 package com.foodsaver.app.presentation.featureHome.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -16,6 +15,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -24,9 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.coreModel.model.AddressModel
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
@@ -36,6 +36,23 @@ import foodsaver.composeapp.generated.resources.ic_location_icon
 import foodsaver.composeapp.generated.resources.poppins_black
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun HomeTopAppBarPreview() {
+    Scaffold(
+        topBar = {
+            HomeTopAppBar(
+                currentAddress = null,
+                cartProductQuantity = 2,
+                onBurgerClick = { },
+                onCartClick = { },
+                modifier = Modifier
+            )
+        }
+    ) {
+    }
+}
 
 @Composable
 fun HomeTopAppBar(
@@ -54,8 +71,6 @@ fun HomeTopAppBar(
                     color = FoodSaverTheme.colorScheme.secondaryFixedDim,
                     fontSize = 12.sp
                 )
-            } else {
-                Box(Modifier.size(100.dp, 15.dp).shimmerEffect())
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -77,16 +92,18 @@ fun HomeTopAppBar(
                     )
                 }
                 Spacer(Modifier.width(30.dp))
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_location_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(16.dp),
-                        tint = Color.Unspecified
-                    )
+                if (currentAddress != null) {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_location_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(16.dp),
+                            tint = Color.Unspecified
+                        )
+                    }
                 }
             }
         },

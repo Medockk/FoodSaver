@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -128,7 +129,7 @@ fun AuthScreenRoot(
 }
 
 @Composable
-private fun AuthScreen(
+fun AuthScreen(
     state: AuthState,
     onEvent: (AuthEvent) -> Unit,
     snackBarHostState: SnackbarHostState,
@@ -273,6 +274,8 @@ private fun AuthScreen(
                                         else FoodSaverTheme.colorScheme.outlineVariant
                                     )
                                 },
+                                modifier = Modifier
+                                    .testTag("tab_$index")
                             )
                         }
                     }
@@ -299,7 +302,8 @@ private fun AuthScreen(
                                             },
                                             keyboardType = KeyboardType.Text,
                                             placeholder = "Emmanuel kamcy",
-                                            title = Res.string.fio
+                                            title = Res.string.fio,
+                                            testTag = "fio_field"
                                         ),
                                         AuthContentState(
                                             value = state.email,
@@ -308,7 +312,8 @@ private fun AuthScreen(
                                             },
                                             keyboardType = KeyboardType.Email,
                                             placeholder = "ekamcy@gmail.com",
-                                            title = Res.string.email
+                                            title = Res.string.email,
+                                            testTag = "email_field"
                                         ),
                                         AuthContentState(
                                             value = state.password,
@@ -322,7 +327,8 @@ private fun AuthScreen(
                                             onPasswordVisibilityChange = {
                                                 onEvent(AuthEvent.OnPasswordVisibilityChange)
                                             },
-                                            title = Res.string.password
+                                            title = Res.string.password,
+                                            testTag = "password_field"
                                         )
                                     )
                                 )
@@ -344,7 +350,8 @@ private fun AuthScreen(
                                             },
                                             keyboardType = KeyboardType.Email,
                                             placeholder = "ekamcy@gmail.com",
-                                            title = Res.string.email
+                                            title = Res.string.email,
+                                            testTag = "email_field"
                                         ),
                                         AuthContentState(
                                             value = state.password,
@@ -358,7 +365,8 @@ private fun AuthScreen(
                                             onPasswordVisibilityChange = {
                                                 onEvent(AuthEvent.OnPasswordVisibilityChange)
                                             },
-                                            title = Res.string.password
+                                            title = Res.string.password,
+                                            testTag = "password_field"
                                         )
                                     )
                                 )
@@ -420,6 +428,7 @@ private fun AuthScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .heightIn(45.dp)
+                        .testTag("auth_button")
                 )
 
                 Spacer(Modifier.height(12.dp))

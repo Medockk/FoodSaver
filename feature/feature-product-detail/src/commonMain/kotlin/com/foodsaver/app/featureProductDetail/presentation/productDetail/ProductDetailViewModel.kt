@@ -89,14 +89,13 @@ class ProductDetailViewModel(
         return viewModelScope.launch(Dispatchers.InputOutput) {
             getCachedProductUseCase.invoke(navArgs.productId).collect { product ->
 
+                println("ProductDetails $product")
                 if (product != null) {
                     _state.update {
                         it.copy(
                             product = product
                         )
                     }
-                } else {
-                    getProductsUseCase
                 }
             }
         }

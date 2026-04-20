@@ -55,5 +55,6 @@ internal fun AddProductModel.toDto() = AddProductDto(
     count = count,
     unit = unit,
     unitName = unitName,
+    ingredients = ingredients,
     expiresAt = expiresAt.atStartOfDayIn(TimeZone.currentSystemDefault())
 )

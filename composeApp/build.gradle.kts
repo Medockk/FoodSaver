@@ -1,5 +1,6 @@
-@file:OptIn(ExperimentalWasmDsl::class)
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class)
 
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.util.Properties
@@ -66,6 +67,11 @@ kotlin {
             implementation(libs.androidx.splash)
             implementation(libs.compose.ui.tooling)
             implementation(libs.yandex.mapkit)
+
+            implementation(libs.kotlin.testJunit)
+            implementation(libs.androidx.testExt.junit)
+            implementation(libs.androidx.espresso.core)
+            implementation(libs.androidx.compose.ui.test.junit4)
         }
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
@@ -121,9 +127,12 @@ kotlin {
 
             implementation(libs.image.picker)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ui.test)
+            implementation(compose.uiTest)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)

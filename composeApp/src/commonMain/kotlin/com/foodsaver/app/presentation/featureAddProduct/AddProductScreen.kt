@@ -2,6 +2,7 @@ package com.foodsaver.app.presentation.featureAddProduct
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -49,11 +51,15 @@ import foodsaver.composeapp.generated.resources.addProductCostUnit
 import foodsaver.composeapp.generated.resources.addProductCount
 import foodsaver.composeapp.generated.resources.addProductDescription
 import foodsaver.composeapp.generated.resources.addProductExpiresAt
+import foodsaver.composeapp.generated.resources.addProductIngredients
 import foodsaver.composeapp.generated.resources.addProductTitle
 import foodsaver.composeapp.generated.resources.addProductUnit
 import foodsaver.composeapp.generated.resources.addProductUnitName
+import foodsaver.composeapp.generated.resources.ic_check_icon
 import foodsaver.composeapp.generated.resources.ic_plus_icon
 import foodsaver.composeapp.generated.resources.save
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
+import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -162,16 +168,29 @@ private fun AddProductScreen(
                         state.categories.forEach { category ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(
-                                        text = category.categoryName
-                                    )
+                                    Row {
+                                        Text(
+                                            text = category.categoryName
+                                        )
+
+                                        if (state.selectedCategories.contains(category)) {
+
+                                            Icon(
+                                                painterResource(Res.drawable.ic_check_icon),
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
                                 },
                                 onClick = {
+//                                    onEvent(
+//                                        AddProductEvent.OnDropDownMenuChange(
+//                                            item = AddProductEvent.DropDownMenuItems.CATEGORY,
+//                                            value = false
+//                                        )
+//                                    )
                                     onEvent(
-                                        AddProductEvent.OnDropDownMenuChange(
-                                            item = AddProductEvent.DropDownMenuItems.CATEGORY,
-                                            value = false
-                                        )
+                                        AddProductEvent.OnCategoryChange(category)
                                     )
                                 }
                             )
@@ -190,6 +209,11 @@ private fun AddProductScreen(
             placeHolder = stringResource(Res.string.addProductCategories)
         ),
         AddProductField(
+            value = state.ingredients,
+            onValueChange = { value -> onEvent(AddProductEvent.OnIngredientsChange(value)) },
+            placeHolder = stringResource(Res.string.addProductIngredients)
+        ),
+        AddProductField(
             value = state.expiresAt,
             onValueChange = { onEvent(AddProductEvent.OnExpiresAtChange(it)) },
             trailingIcon = {},
@@ -199,6 +223,26 @@ private fun AddProductScreen(
             isError = state.isExpiresAtError
         ),
     )
+
+    if (state.isGalleryPickerVisible) {
+        GalleryPickerLauncher(
+            onPhotosSelected = { photos ->
+                val photo = photos.firstOrNull()
+                photo?.let { photo ->
+                    val bytes = photo.loadBytes()
+                    onEvent(AddProductEvent.OnPickedImageChange(bytes))
+                    onEvent(AddProductEvent.OnGalleryPickerVisibilityChange(false))
+                }
+            },
+            onError = {
+                onEvent(AddProductEvent.OnGalleryPickerVisibilityChange(false))
+            },
+            onDismiss = {
+                onEvent(AddProductEvent.OnGalleryPickerVisibilityChange(false))
+            },
+            selectionLimit = 1L,
+        )
+    }
 
     Scaffold(
         snackbarHost = {
@@ -241,6 +285,15 @@ private fun AddProductScreen(
                     )
 
                     Spacer(Modifier.height(10.dp))
+                }
+
+                item {
+                    PrimaryButton(
+                        text = "Add Image",
+                        onClick = {
+                            onEvent(AddProductEvent.OnGalleryPickerVisibilityChange(true))
+                        }
+                    )
                 }
             }
 

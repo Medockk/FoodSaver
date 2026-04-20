@@ -17,10 +17,13 @@ sealed interface AddProductEvent {
 
     data class OnUnitChange(val value: TextFieldValue): AddProductEvent
     data class OnUnitNameChange(val value: TextFieldValue): AddProductEvent
+    data class OnIngredientsChange(val value: TextFieldValue): AddProductEvent
 
     data class OnExpiresAtChange(val value: TextFieldValue): AddProductEvent
 
     data class OnDropDownMenuChange(val item: DropDownMenuItems, val value: Boolean): AddProductEvent
+    data class OnGalleryPickerVisibilityChange(val value: Boolean): AddProductEvent
+    class OnPickedImageChange(val value: ByteArray): AddProductEvent
 
     data object OnAddClick: AddProductEvent
 
