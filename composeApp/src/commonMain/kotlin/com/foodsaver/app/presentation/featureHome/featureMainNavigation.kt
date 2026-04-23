@@ -54,7 +54,15 @@ fun NavGraphBuilder.featureHomeNavigation(
             EnterpriseScreenRoot(navController)
         }
 
-        composable<Route.MainGraph.CartScreen> {
+        composable<Route.MainGraph.CartScreen>(
+            deepLinks = listOf(
+                navDeepLink<Route.MainGraph.CartScreen>(
+                    basePath = "foodsaver://app/widget"
+                ) {
+                    uriPattern = "foodsaver://app/widget"
+                }
+            )
+        ) {
             scope.CartScreenRoot(
                 navController = navController,
                 animatedVisibilityScope = this,

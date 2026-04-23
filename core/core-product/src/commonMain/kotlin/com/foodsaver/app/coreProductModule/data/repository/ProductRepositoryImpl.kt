@@ -47,12 +47,12 @@ internal class ProductRepositoryImpl(
                 parameter("size", size)
                 parameter("searchType", "NEARBY") // тип поиска (ближайшее/рекомендованное)
             }
-        }.onSuccess { productsDto ->
+        }.onSuccess { productsDto: List<ProductDto>? ->
             val queries = databaseProvider.get().cachedProductQueries
 
             queries.transaction {
                 // транзакция для того, чтобы не делать N+1 запросы к БД
-                productsDto.forEach { dto ->
+                productsDto?.forEach { dto ->
                     queries.insertCachedProduct(
                         productId = dto.productId,
                         product = dto

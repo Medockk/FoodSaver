@@ -15,5 +15,6 @@ fun initKoinApp(
     startKoin {
         koinAppDeclaration?.invoke(this)
         modules(platformDiModule, *modules)
+        workManagerFactory()
     }
 }

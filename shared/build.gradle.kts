@@ -76,6 +76,7 @@ kotlin {
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
             implementation(projects.feature.featureEnterprises)
+            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {
 
