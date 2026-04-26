@@ -1,8 +1,6 @@
 package com.foodsaver.app.utils
 
 import android.content.Context
-import com.foodsaver.app.presentation.featureEnterprise.MapKitController
-import com.foodsaver.app.presentation.featureEnterprise.MapKitObject
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition

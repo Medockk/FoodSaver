@@ -43,7 +43,7 @@ class ProductDetailViewModel(
     private val ingredientsRepository: IngredientsRepository,
 ) : BaseViewModel<ProductDetailActions>() {
 
-    private val navArgs = savedStateHandle.toRoute<Route.MainGraph.ProductDetailScreen>()
+    private val navArgs = savedStateHandle.toRoute<Route.HomeGraph.FoodDetailsScreen>()
     private val _state = MutableStateFlow(
         ProductDetailState(
             isProductInCart = navArgs.isProductInCart,

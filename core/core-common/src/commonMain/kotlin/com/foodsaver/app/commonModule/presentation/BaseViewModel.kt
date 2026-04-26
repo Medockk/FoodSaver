@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.time.Clock
 
 abstract class BaseViewModel<A: AppAction>: ViewModel() {
@@ -12,8 +13,8 @@ abstract class BaseViewModel<A: AppAction>: ViewModel() {
     private var lastErrorTimeMs: Long = 0L
     private val errorBounceMs = 5000L
 
-    protected abstract val baseChannel: Channel<A>
-    abstract val channel: Flow<A>
+    protected open val baseChannel: Channel<A> = Channel()
+    open val channel: Flow<A> = baseChannel.receiveAsFlow()
 
     protected abstract fun mapBaseError(message: String): A
 

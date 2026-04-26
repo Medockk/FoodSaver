@@ -6,7 +6,7 @@ import androidx.work.Configuration
 import androidx.work.WorkerFactory
 import com.foodsaver.app.di.initSharedKoin
 import com.foodsaver.app.di.uiModule
-import com.foodsaver.app.presentation.featureEnterprise.MapKit
+import com.foodsaver.app.utils.MapKit
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 

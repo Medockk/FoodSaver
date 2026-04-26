@@ -1,98 +1,199 @@
 package com.foodsaver.app.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val lightColorScheme =  lightColorScheme(
-    primary = Color(0xFF472C9C),
-    primaryContainer = Color(0xFFBDA8FF),
-    onPrimary = Color(0xffffffff),
+data class ColorScheme(
+    val primary: Color = Color.Unspecified,
+    val primaryThin: Color = Color.Unspecified,
 
-    inversePrimary = Color(0xFF898EBC),
+    val background: Color = Color.Unspecified,
+    val onBackground: Color = Color.Unspecified,
+    val onBackgroundSubtitle: Color = Color.Unspecified,
+    val onBackgroundThin: Color = Color.Unspecified,
+    val backgroundContrast: Color = Color.Unspecified,
+    val onBackgroundContrast: Color = Color.Unspecified,
+    val onBackgroundSecondary: Color = Color.Unspecified,
+    val onBackgroundTertiary: Color = Color.Unspecified,
 
-    primaryFixed = Color(0xFF061737),
-    onPrimaryFixed = Color.White,
-    primaryFixedDim = Color(0xFFEDEFFF),
+    val onButtonContent: Color = Color.Unspecified,
+    val authenticationIconsTint: Color = Color.Unspecified,
 
-    outline = Color(0xFFF6F6F6),
-    outlineVariant = Color(0xFF3B3B3B),
+    val fabBackground: Color = Color.Unspecified,
+    val onFabBackground: Color = Color.Unspecified,
 
-    background = Color(0xffffffff),
-    onBackground = Color(0xFF000000),
+    val placeholderHint: Color = Color.Unspecified,
+    val placeholderBackground: Color = Color.Unspecified,
+    val onPlaceholderBackgroundInactive: Color = Color.Unspecified,
+    val onPlaceholderBackgroundActive: Color = Color.Unspecified,
 
-    surfaceDim = Color(0xFF9D9D9D),
-    secondaryFixedDim = Color(0xFF3B3B3B),
+    val checkboxBorder: Color = Color.Unspecified,
+    val checkboxTitle: Color = Color.Unspecified,
+    val checkboxFillColor: Color = Color.Unspecified,
+    val onCheckboxFillColor: Color = Color.Unspecified,
 
-    error = Color(0xFFFF0000),
-    errorContainer = Color(0xFFD61355),
+    val topBarSubtitleColor: Color = Color.Unspecified,
+    val searchFieldBackground: Color = Color.Unspecified,
 
-    secondaryContainer = Color(0xFFF0F5FA),
-    onSecondaryContainer = Color(0xFF6B6E82),
-    surfaceVariant = Color(0xFFD9D9D9),
-    onSurfaceVariant = Color(0xFF000000),
-
-    secondaryFixed = Color(0xFFD2D4D8),
-    secondary = Color(0xFFF4F4F4),
-    onSecondary = Color(0x80000000),
-
-    tertiary = Color(0xFFF6F8FA),
-    onTertiary = Color(0xFF32343E),
-
-    inverseSurface = Color(0xFFEDEEF5),
-    inverseOnSurface = Color(0xFF4B5563),
+    val categorySeeAllColor: Color = Color.Unspecified,
 )
-private val darkColorScheme = darkColorScheme(
-    // Основные цвета
-    // Primary (472C9C) становится ярче (Tone 80)
-    primary = Color(0xFFC9CFFF),
-    // Цвет текста на Primary (белый) становится темным (Tone 20)
-    onPrimary = Color(0xFF131343),
 
-    // Второстепенные цвета
-    secondary = Color(0xFFC7C7D0),
-    // Цвет текста на Secondary становится темным
-    onSecondary = Color(0xFF33333F),
+val lightColorScheme = ColorScheme(
+    primary = Color(0xFFFF7622),
+    primaryThin = Color(0xFFFFE1CE),
 
-    // Светлый контейнер (F0F5FA) становится темнее
-    secondaryContainer = Color(0xFF282B3E),
-    // Цвет текста на SecondaryContainer становится светлее
-    onSecondaryContainer = Color(0xFFE3E5FF),
+    background = Color.White,
+    onBackground = Color(0xFF181C2E),
+    onBackgroundSubtitle = Color(0xFF32343E),
+    onBackgroundThin = Color(0xFF646982),
+    onBackgroundSecondary = Color(0xFF1E1D1D),
+    onBackgroundTertiary = Color(0xFFA0A5BA),
 
-    // Цвета поверхностей
-    // Background инвертируется в очень темный (Tone 10)
-    background = Color(0xFF1D1D1D),
-    // OnBackground инвертируется в светлый (Tone 90)
-    onBackground = Color(0xFFE6E6E6),
+    backgroundContrast = Color(0xFF121223),
+    onBackgroundContrast = Color.White,
 
-    // Surface, SurfaceDim также темные
-    surface = Color(0xFF1F1F1F),
-    surfaceDim = Color(0xFF3B3B3B), // Ваш secondaryFixedDim хорошо подходит для Surface
-    onSurface = Color(0xFFE6E6E6),
+    onButtonContent = Color.White,
+    authenticationIconsTint = Color(0xFF1E1E2E),
 
-    // Разделители и обводки
-    // Outline (F6F6F6) инвертируется в более темный
-    outline = Color(0xFF4C4C4C),
-    // OutlineVariant (3B3B3B) инвертируется в светлый
-    outlineVariant = Color(0xFFBCBCBC),
+    fabBackground = Color(0xFFECF0F4),
+    onFabBackground = Color(0xFF5E616F),
 
-    // Ошибки
-    // Error (FF0000) становится ярче для темного фона
-    error = Color(0xFFFFB4AB),
-    // ErrorContainer (D61355) становится темнее
-    errorContainer = Color(0xFF8C0000),
+    placeholderHint = Color(0xFFA0A5BA),
+    placeholderBackground = Color(0xFFF0F5FA),
+    onPlaceholderBackgroundInactive = Color(0xFFB4B9CA),
+    onPlaceholderBackgroundActive = Color(0xFFA0A5BA),
 
-    // Дополнительные цвета
-    inversePrimary = Color(0xFF5B45A8), // Инвертируем на тон primary
+    checkboxBorder = Color(0xFFE3EBF2),
+    checkboxTitle = Color(0xFF7E8A97),
+    checkboxFillColor = Color(0xFFFF3422),
+    onCheckboxFillColor = Color.White,
 
-    // Fixed цвета, обычно не инвертируются, но меняют тон
-    primaryFixed = Color(0xFF2D1875),
-    secondaryFixed = Color(0xFF4C4C4C),
-    secondaryFixedDim = Color(0xFF8F8F8F),
+    topBarSubtitleColor = Color(0xFF676767),
+    searchFieldBackground = Color(0xFFF6F6F6),
+    categorySeeAllColor = Color(0xFF333333),
 )
+
+val darkColorScheme = ColorScheme(
+    primary = Color(0xFFFF7622),
+    primaryThin = Color(0xFFFFE1CE),
+
+    background = Color.White,
+    onBackground = Color(0xFF181C2E),
+    onBackgroundSubtitle = Color(0xFF32343E),
+    onBackgroundThin = Color(0xFF646982),
+    onBackgroundSecondary = Color(0xFF1E1D1D),
+    onBackgroundTertiary = Color(0xFFA0A5BA),
+
+    backgroundContrast = Color(0xFF121223),
+    onBackgroundContrast = Color.White,
+
+    onButtonContent = Color.White,
+    authenticationIconsTint = Color(0xFF1E1E2E),
+
+    fabBackground = Color(0xFFECF0F4),
+    onFabBackground = Color(0xFF5E616F),
+
+    placeholderHint = Color(0xFFA0A5BA),
+    placeholderBackground = Color(0xFFF0F5FA),
+    onPlaceholderBackgroundInactive = Color(0xFFB4B9CA),
+    onPlaceholderBackgroundActive = Color(0xFFA0A5BA),
+
+    checkboxBorder = Color(0xFFE3EBF2),
+    checkboxTitle = Color(0xFF7E8A97),
+    checkboxFillColor = Color(0xFFFF3422),
+    onCheckboxFillColor = Color.White,
+
+    topBarSubtitleColor = Color(0xFF676767),
+    searchFieldBackground = Color(0xFFF6F6F6)
+)
+
+//val lightColorScheme =  lightColorScheme(
+//    primary = Color(0xFF472C9C),
+//    primaryContainer = Color(0xFFBDA8FF),
+//    onPrimary = Color(0xffffffff),
+//
+//    inversePrimary = Color(0xFF898EBC),
+//
+//    primaryFixed = Color(0xFF061737),
+//    onPrimaryFixed = Color.White,
+//    primaryFixedDim = Color(0xFFEDEFFF),
+//
+//    outline = Color(0xFFF6F6F6),
+//    outlineVariant = Color(0xFF3B3B3B),
+//
+//    background = Color(0xffffffff),
+//    onBackground = Color(0xFF000000),
+//
+//    surfaceDim = Color(0xFF9D9D9D),
+//    secondaryFixedDim = Color(0xFF3B3B3B),
+//
+//    error = Color(0xFFFF0000),
+//    errorContainer = Color(0xFFD61355),
+//
+//    secondaryContainer = Color(0xFFF0F5FA),
+//    onSecondaryContainer = Color(0xFF6B6E82),
+//    surfaceVariant = Color(0xFFD9D9D9),
+//    onSurfaceVariant = Color(0xFF000000),
+//
+//    secondaryFixed = Color(0xFFD2D4D8),
+//    secondary = Color(0xFFF4F4F4),
+//    onSecondary = Color(0x80000000),
+//
+//    tertiary = Color(0xFFF6F8FA),
+//    onTertiary = Color(0xFF32343E),
+//
+//    inverseSurface = Color(0xFFEDEEF5),
+//    inverseOnSurface = Color(0xFF4B5563),
+//)
+//private val darkColorScheme = darkColorScheme(
+//    // Основные цвета
+//    // Primary (472C9C) становится ярче (Tone 80)
+//    primary = Color(0xFFC9CFFF),
+//    // Цвет текста на Primary (белый) становится темным (Tone 20)
+//    onPrimary = Color(0xFF131343),
+//
+//    // Второстепенные цвета
+//    secondary = Color(0xFFC7C7D0),
+//    // Цвет текста на Secondary становится темным
+//    onSecondary = Color(0xFF33333F),
+//
+//    // Светлый контейнер (F0F5FA) становится темнее
+//    secondaryContainer = Color(0xFF282B3E),
+//    // Цвет текста на SecondaryContainer становится светлее
+//    onSecondaryContainer = Color(0xFFE3E5FF),
+//
+//    // Цвета поверхностей
+//    // Background инвертируется в очень темный (Tone 10)
+//    background = Color(0xFF1D1D1D),
+//    // OnBackground инвертируется в светлый (Tone 90)
+//    onBackground = Color(0xFFE6E6E6),
+//
+//    // Surface, SurfaceDim также темные
+//    surface = Color(0xFF1F1F1F),
+//    surfaceDim = Color(0xFF3B3B3B), // Ваш secondaryFixedDim хорошо подходит для Surface
+//    onSurface = Color(0xFFE6E6E6),
+//
+//    // Разделители и обводки
+//    // Outline (F6F6F6) инвертируется в более темный
+//    outline = Color(0xFF4C4C4C),
+//    // OutlineVariant (3B3B3B) инвертируется в светлый
+//    outlineVariant = Color(0xFFBCBCBC),
+//
+//    // Ошибки
+//    // Error (FF0000) становится ярче для темного фона
+//    error = Color(0xFFFFB4AB),
+//    // ErrorContainer (D61355) становится темнее
+//    errorContainer = Color(0xFF8C0000),
+//
+//    // Дополнительные цвета
+//    inversePrimary = Color(0xFF5B45A8), // Инвертируем на тон primary
+//
+//    // Fixed цвета, обычно не инвертируются, но меняют тон
+//    primaryFixed = Color(0xFF2D1875),
+//    secondaryFixed = Color(0xFF4C4C4C),
+//    secondaryFixedDim = Color(0xFF8F8F8F),
+//)
 
 @Composable
 fun colorScheme(

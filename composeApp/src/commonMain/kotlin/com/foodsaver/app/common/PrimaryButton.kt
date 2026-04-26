@@ -1,63 +1,97 @@
 package com.foodsaver.app.common
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.foodsaver.app.ui.FoodSaverTheme
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PrimaryButton(
-    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
-    shape: Shape = RoundedCornerShape(7.dp),
-    enabled: Boolean = true
+    minHeight: Dp = 60.dp,
+    enabled: Boolean = true,
+    content: @Composable RowScope.() -> Unit
 ) {
+
     Button(
-        onClick = onClick,
-        modifier = modifier,
-        shape = shape,
+        enabled = enabled,
+        modifier = modifier
+            .heightIn(min = minHeight),
         colors = ButtonDefaults.buttonColors(
-            containerColor = background,
-            disabledContentColor = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary
+            containerColor = FoodSaverTheme.colorScheme.primary,
+            disabledContainerColor = FoodSaverTheme.colorScheme.primary
         ),
-        enabled = enabled
+        shape = RoundedCornerShape(12.dp),
+        onClick = onClick,
+        content = content
+    )
+}
+
+@Composable
+fun PrimaryButton(
+    onClick: () -> Unit,
+    text: String,
+    textStyle: TextStyle = FoodSaverTheme.typography.bodyRegularBold,
+    modifier: Modifier = Modifier,
+    minHeight: Dp = 60.dp,
+    enabled: Boolean = true,
+) {
+
+    Button(
+        enabled = enabled,
+        modifier = modifier
+            .heightIn(min = minHeight),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = FoodSaverTheme.colorScheme.primary,
+            disabledContainerColor = FoodSaverTheme.colorScheme.primary,
+        ),
+        shape = RoundedCornerShape(12.dp),
+        onClick = onClick
     ) {
         Text(
             text = text,
-            color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.onPrimary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold
+            style = textStyle,
+            color = FoodSaverTheme.colorScheme.onButtonContent
         )
     }
 }
 
 @Composable
 fun PrimaryButton(
-    content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
+    text: StringResource,
+    textStyle: TextStyle = FoodSaverTheme.typography.bodyRegularBold,
     modifier: Modifier = Modifier,
-    background: Color = com.foodsaver.app.ui.FoodSaverTheme.colorScheme.primary,
-    shape: Shape = RoundedCornerShape(7.dp),
-    enabled: Boolean = true
+    minHeight: Dp = 60.dp,
+    enabled: Boolean = true,
 ) {
+
     Button(
-        onClick = onClick,
-        modifier = modifier,
-        shape = shape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = background
-        ),
+        modifier = modifier
+            .heightIn(min = minHeight),
         enabled = enabled,
-        content = content
-    )
+        colors = ButtonDefaults.buttonColors(
+            containerColor = FoodSaverTheme.colorScheme.primary,
+            disabledContainerColor = FoodSaverTheme.colorScheme.primary
+        ),
+        shape = RoundedCornerShape(12.dp),
+        onClick = onClick
+    ) {
+        Text(
+            text = stringResource(text),
+            style = textStyle,
+            color = FoodSaverTheme.colorScheme.onButtonContent
+        )
+    }
 }

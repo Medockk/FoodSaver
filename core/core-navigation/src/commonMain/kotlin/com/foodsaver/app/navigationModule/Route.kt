@@ -6,57 +6,59 @@ import kotlinx.serialization.Serializable
 sealed class Route {
 
     @Serializable
-    data object AuthGraph: Route() {
+    data object OnBoarding: Route()
+
+    @Serializable
+    data object AuthGraph : Route() {
 
         @Serializable
-        data object AuthScreen: Route()
+        data object LoginScreen : Route()
 
         @Serializable
-        data object ForgotPasswordScreen: Route()
+        data object SignupScreen : Route()
 
         @Serializable
-        data class ResetPasswordScreen(val token: String): Route()
+        data object ForgotScreen : Route()
+
+        @Serializable
+        data object VerificationScreen : Route()
     }
 
     @Serializable
-    data object MainGraph: Route() {
+    data object HomeGraph : Route() {
 
         @Serializable
-        data object HomeScreen: Route()
+        data object HomeScreen : Route()
 
         @Serializable
-        data class ProductDetailScreen(
+        data class FoodDetailsScreen(
             val productId: String,
             val isProductInCart: Boolean,
-            val initialQuantity: Long = 1
-        ): Route()
+            val initialQuantity: Long = 1,
+        ) : Route()
 
         @Serializable
-        data object CartScreen: Route()
+        data class Restaurant(val restaurantId: String): Route()
 
-        @Serializable
-        data object AddProductScreen: Route()
 
-        @Serializable
-        data class MapScreen(val enterpriseId: String? = null): Route()
     }
 
     @Serializable
-    data object ProfileGraph: Route() {
+    data object ProfileGraph : Route() {
 
         @Serializable
-        data object ProfileMenuScreen: Route()
+        data object ProfileMenuScreen : Route()
 
         @Serializable
-        data object ProfilePersonalInfoScreen: Route()
+        data object ProfilePersonalInfoScreen : Route()
 
         @Serializable
-        data object ProfileAddressScreen: Route()
+        data object ProfileAddressScreen : Route()
 
         @Serializable
-        data object ProfilePaymentMethodScreen: Route()
+        data object ProfilePaymentMethodScreen : Route()
 
         @Serializable
-        data object ProfileSupportScreen: Route()
+        data object ProfileSupportScreen : Route()
     }
 }
