@@ -7,10 +7,17 @@ import com.databases.cache.MainAppDatabase
 
 internal actual class SqlDriverFactory {
 
-    actual suspend fun create(): SqlDriver {
-        return NativeSqliteDriver(
+    actual fun createSync(): SqlDriver {
+        println("Попытка создать драйвер")
+        val driver = NativeSqliteDriver(
             schema = MainAppDatabase.Schema.synchronous(),
             name = "MainAppDatabase.db"
         )
+        println("Driver created!!!!")
+        return driver
+    }
+
+    actual suspend fun create(): SqlDriver {
+        return createSync()
     }
 }

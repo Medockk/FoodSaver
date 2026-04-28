@@ -2,33 +2,32 @@ import SwiftUI
 import Shared
 
 struct ContentView: View {
-    @State private var showContent = false
-    private var text = "Click"
+    
+//    @StateObject private var router = NavigationRouter()
+    
     var body: some View {
         VStack {
-            Button(text) {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
-
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    Text("SwiftUI: \(Greeting().greet())")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
+            
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
+//        NavigationStack(path: $router.path) {
+//            LoginView()
+//                .navigationDestination(for: Route.self) { route in
+////                    buildView(for: route)
+//                }
+//        }.environmentObject(router)
     }
+    
+//    @ViewBuilder
+//    private func buildView(for route: Route) -> some View {
+//        switch route {
+//        case is Route.AuthGraph:
+//            LoginView()
+//        default:
+//            Button(action: {}, label: {})
+//        }
+//    }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    ContentView()
 }
