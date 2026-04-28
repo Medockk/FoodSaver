@@ -16,6 +16,7 @@ import com.foodsaver.app.featureProductDetail.di.featureProductDetailModule
 import com.foodsaver.app.featureWidget.di.featureWidgetModule
 import org.koin.core.module.Module
 
+expect fun test()
 fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
     arrayOf(
         *modules,
@@ -41,3 +42,4 @@ fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
         featureWidgetModule
     )
 )
+

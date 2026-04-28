@@ -5,4 +5,5 @@ import app.cash.sqldelight.db.SqlDriver
 internal expect class SqlDriverFactory() {
 
     suspend fun create(): SqlDriver
+    fun createSync(): SqlDriver
 }

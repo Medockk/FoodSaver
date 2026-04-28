@@ -31,6 +31,8 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+
+            export(projects.core.coreNavigation)
         }
     }
 
@@ -54,6 +56,9 @@ kotlin {
             // put your Multiplatform dependencies here
             api(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines)
+
+            // for iOS target api implementation!!
+            api(projects.core.coreNavigation)
 
             implementation(projects.core.coreDi)
             implementation(projects.core.coreAuth)

@@ -16,15 +16,51 @@ internal class DatabaseProviderImpl(
     private val sqlDriverFactory: SqlDriverFactory
 ): DatabaseProvider {
 
-    private var database: MainAppDatabase? = null
+    private var database: MainAppDatabase = lazy {
+        val driver = sqlDriverFactory.createSync()
+        MainAppDatabase.invoke(
+            driver = driver,
+            cartEntityAdapter = CartEntity.Adapter(
+                productAdapter = ProductColumnAdapter
+            ),
+            userEntityAdapter = UserEntity.Adapter(
+                createdAtAdapter = instantAdapter,
+                rolesAdapter = listAdapter
+            ),
+            cachedProductAdapter = CachedProduct.Adapter(
+                productAdapter = ProductColumnAdapter
+            )
+        )
+    }.value
     private val mutex = Mutex()
 
     override suspend fun get(): MainAppDatabase {
         return database ?: mutex.withLock {
-            database ?: createDatabase().also {
+            database ?: createDatabase()/*.also {
                 database = it
-            }
+            }*/
         }
+    }
+
+    override fun getSync(): MainAppDatabase {
+        /*if (database == null) {
+            val driver = sqlDriverFactory.createSync()
+            database = MainAppDatabase.invoke(
+                driver = driver,
+                cartEntityAdapter = CartEntity.Adapter(
+                    productAdapter = ProductColumnAdapter
+                ),
+                userEntityAdapter = UserEntity.Adapter(
+                    createdAtAdapter = instantAdapter,
+                    rolesAdapter = listAdapter
+                ),
+                cachedProductAdapter = CachedProduct.Adapter(
+                    productAdapter = ProductColumnAdapter
+                )
+            )
+        }*/
+
+        return database!!
     }
 
     private suspend fun createDatabase(): MainAppDatabase {
