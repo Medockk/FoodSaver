@@ -99,7 +99,7 @@ class HomeViewModel(
         },
         onRequest = { page ->
             searchProductUseCase.invoke(
-                productName = _state.value.searchQuery,
+                productName = _state.value.searchQuery.text,
                 categoryIds = _state.value.selectedCategoryIds.toList(),
                 page = page,
                 size = pageSize
@@ -244,7 +244,7 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.isBlank()) {
+                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.text.isBlank()) {
                     _state.update {
                         it.copy(productsDisplayMode = ProductsDisplayMode.All)
                     }
@@ -262,7 +262,7 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (_state.value.searchQuery.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
+                if (_state.value.searchQuery.text.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
                     _state.update { it.copy(productsDisplayMode = ProductsDisplayMode.All) }
                     return
                 }
@@ -271,11 +271,11 @@ class HomeViewModel(
                     it.copy(
                         productsDisplayMode = ProductsDisplayMode.Searched,
                         searchedProducts = it.searchedProducts.filter { filter ->
-                            filter.title.contains(it.searchQuery, true)
+                            filter.title.contains(it.searchQuery.text, true)
                         }
                     )
                 }
-                println(_state.value.searchedProducts)
+                println("Search Network result " + _state.value.searchedProducts)
                 searchJob = viewModelScope.launch(Dispatchers.InputOutput) {
                     searchPaginator.loadPage()
                 }

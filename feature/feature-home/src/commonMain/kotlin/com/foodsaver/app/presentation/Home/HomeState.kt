@@ -1,5 +1,6 @@
 package com.foodsaver.app.presentation.Home
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.foodsaver.app.coreModel.model.AddressModel
 import com.foodsaver.app.coreModel.model.CategoryModel
 import com.foodsaver.app.coreModel.model.ProductModel
@@ -8,7 +9,14 @@ import com.foodsaver.app.domain.model.CartItemModel
 import com.foodsaver.app.domain.model.OfferModel
 
 data class HomeState(
-    val searchQuery: String = "",
+    val deliverTo: String = "",
+    val searchQuery: TextFieldValue = TextFieldValue(),
+    val categories: List<CategoryModel> = listOf(
+        CategoryModel("All", "1"),
+        CategoryModel("Burgers", "2"),
+        CategoryModel("Pizza", "3"),
+    ),
+
 
     val profile: UserModel? = null,
     val currentAddress: AddressModel? = null,
@@ -16,7 +24,6 @@ data class HomeState(
     val isLoading: Boolean = false,
     val isRefresh: Boolean = false,
     val selectedCategoryIds: Set<String> = emptySet(),
-    val categories: List<CategoryModel> = emptyList(),
     val isCategoriesLoading: Boolean = true,
 
     val cartProducts: List<CartItemModel> = emptyList(),
@@ -33,6 +40,6 @@ data class HomeState(
 )
 
 sealed interface ProductsDisplayMode {
-    data object All: ProductsDisplayMode
-    data object Searched: ProductsDisplayMode
+    data object All : ProductsDisplayMode
+    data object Searched : ProductsDisplayMode
 }

@@ -1,4 +1,4 @@
-package com.foodsaver.app.presentation.featureEnterprise
+package com.foodsaver.app.utils
 
 
 actual class MapKitObject

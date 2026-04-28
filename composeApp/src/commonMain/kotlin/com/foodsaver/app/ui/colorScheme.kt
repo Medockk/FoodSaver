@@ -37,6 +37,8 @@ data class ColorScheme(
     val searchFieldBackground: Color = Color.Unspecified,
 
     val categorySeeAllColor: Color = Color.Unspecified,
+    val mainCategoryClipColor: Color = Color.Unspecified,
+    val categoryChipShadow: Color = Color.Unspecified,
 )
 
 val lightColorScheme = ColorScheme(
@@ -71,7 +73,10 @@ val lightColorScheme = ColorScheme(
 
     topBarSubtitleColor = Color(0xFF676767),
     searchFieldBackground = Color(0xFFF6F6F6),
+
     categorySeeAllColor = Color(0xFF333333),
+    mainCategoryClipColor = Color(0xFFFFD27C),
+    categoryChipShadow = Color(0xFF96969A),
 )
 
 val darkColorScheme = ColorScheme(
