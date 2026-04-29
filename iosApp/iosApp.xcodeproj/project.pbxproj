@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1ECBE32FA085000062474B /* Shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1ECBE22FA085000062474B /* Shared.framework */; };
-		3F1ECBE42FA085000062474B /* Shared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1ECBE22FA085000062474B /* Shared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3F1ECBE82FA08BD00062474B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1ECBE62FA08A420062474B /* libsqlite3.tbd */; };
+		3F6680DA2FA1CA640041BFF0 /* ComposeApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */; };
+		3F6680DB2FA1CA640041BFF0 /* ComposeApp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -19,7 +19,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3F1ECBE42FA085000062474B /* Shared.framework in Embed Frameworks */,
+				3F6680DB2FA1CA640041BFF0 /* ComposeApp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,6 +30,7 @@
 		10E19EA608651D4B14E1CAF3 /* FoodSaver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodSaver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F1ECBE22FA085000062474B /* Shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shared.framework; path = ../shared/build/bin/iosX64/debugFramework/Shared.framework; sourceTree = "<group>"; };
 		3F1ECBE62FA08A420062474B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ComposeApp.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,7 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F1ECBE82FA08BD00062474B /* libsqlite3.tbd in Frameworks */,
-				3F1ECBE32FA085000062474B /* Shared.framework in Frameworks */,
+				3F6680DA2FA1CA640041BFF0 /* ComposeApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,10 +75,20 @@
 		3F1ECBE12FA085000062474B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3F6680D92FA1CA530041BFF0 /* debugFramework */,
 				3F1ECBE62FA08A420062474B /* libsqlite3.tbd */,
 				3F1ECBE22FA085000062474B /* Shared.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3F6680D92FA1CA530041BFF0 /* debugFramework */ = {
+			isa = PBXGroup;
+			children = (
+				3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */,
+			);
+			name = debugFramework;
+			path = ../composeApp/build/bin/iosX64/debugFramework;
 			sourceTree = "<group>";
 		};
 		CE56D030EBCCF5E7C6207CE8 = {
@@ -105,6 +116,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B3CDDE7EF36F1A827C8DD41 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
+				3F6680FB2FA1D5D40041BFF0 /* ShellScript */,
 				114011F132EF6A2F870FD3BA /* Compile Kotlin Framework */,
 				FAFC63AFD9905A1374FCA0D8 /* Sources */,
 				7FEFF9D9AC3A8DE3AF18FA23 /* Frameworks */,
@@ -190,6 +202,23 @@
 			shellScript = "
 ";
 		};
+		3F6680FB2FA1D5D40041BFF0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nset -ev\nexport JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\"\n# Переходим в корень проекта\ncd \"$SRCROOT/..\"\n# Запускаем штатную задачу Compose для упаковки всего\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -270,9 +299,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = 7GBWB382HC;
+				DEVELOPMENT_TEAM = H3NTY3Z5GC;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/bin/iosX64/debugFramework";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../composeApp/build/bin/iosX64/debugFramework";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -284,10 +313,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"-lsqlite3",
-					"-no-pie",
-				);
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.foodsaver.app;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -368,9 +395,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = 7GBWB382HC;
+				DEVELOPMENT_TEAM = H3NTY3Z5GC;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/bin/iosX64/debugFramework";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../composeApp/build/bin/iosX64/debugFramework";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -382,10 +409,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"-lsqlite3",
-					"-no-pie",
-				);
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.foodsaver.app;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

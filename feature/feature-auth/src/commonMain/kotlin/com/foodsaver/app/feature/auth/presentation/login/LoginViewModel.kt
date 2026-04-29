@@ -6,7 +6,6 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onLocalFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
-import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreFcm.service.FcmService
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.usecase.AuthenticateWithGoogleUseCase
@@ -16,11 +15,8 @@ import com.foodsaver.app.feature.auth.common.AuthLocalError.Companion.fromExcept
 import com.foodsaver.app.feature.auth.presentation.login.LoginAction.*
 import com.foodsaver.app.feature.auth.presentation.utils.AuthenticationBaseViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 

@@ -48,6 +48,22 @@ kotlin {
         resources.srcDirs("src/androidMain/res")
     }
 
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+
+            freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+
+            export(projects.core.coreDi)
+            export(projects.shared)
+        }
+    }
+
     jvm()
 
     js {
@@ -98,9 +114,10 @@ kotlin {
             implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 
-            implementation(projects.shared)
+            // for iOS and XCode
+            api(projects.shared)
+            api(projects.core.coreDi)
 
-            implementation(projects.core.coreDi)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
@@ -145,6 +162,11 @@ kotlin {
             implementation(libs.kotlinx.browser)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = always
 }
 
 compose.desktop {

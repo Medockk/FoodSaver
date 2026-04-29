@@ -31,8 +31,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
-
-            export(projects.core.coreNavigation)
         }
     }
 
@@ -58,7 +56,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines)
 
             // for iOS target api implementation!!
-            api(projects.core.coreNavigation)
+            implementation(projects.core.coreNavigation)
+            implementation(projects.feature.featureAuth.di)
+            implementation(projects.feature.featureAuth)
 
             implementation(projects.core.coreDi)
             implementation(projects.core.coreAuth)
@@ -74,14 +74,13 @@ kotlin {
             implementation(projects.core.coreLocation)
             implementation(projects.core.coreFcm)
 
-            implementation(projects.feature.featureAuth.di)
             implementation(projects.feature.featureHome)
             implementation(projects.feature.featureProductDetail)
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
             implementation(projects.feature.featureEnterprises)
-            implementation(projects.feature.featureWidget)
+//            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {
 
