@@ -1,6 +1,12 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+buildscript {
+    dependencies {
+        classpath("app.cash.sqldelight:sqlite-3-38-dialect:2.3.2")
+    }
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias { libs.plugins.androidMultiplatformLibrary }
@@ -99,6 +105,8 @@ sqldelight {
             packageName.set("com.databases.cache")
             verifyMigrations.set(true)
             version = 5
+            dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.3.2")
+            module("app.cash.sqldelight:sqlite-json-module:2.3.2")
 
             generateAsync.set(true)
         }

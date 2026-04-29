@@ -1,5 +1,6 @@
-@file:OptIn(ExperimentalWasmDsl::class)
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class)
 
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import java.util.Properties
@@ -47,6 +48,22 @@ kotlin {
         resources.srcDirs("src/androidMain/res")
     }
 
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+
+            freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+
+            export(projects.core.coreDi)
+            export(projects.shared)
+        }
+    }
+
     jvm()
 
     js {
@@ -66,6 +83,13 @@ kotlin {
             implementation(libs.androidx.splash)
             implementation(libs.compose.ui.tooling)
             implementation(libs.yandex.mapkit)
+
+            implementation(libs.kotlin.testJunit)
+            implementation(libs.androidx.testExt.junit)
+            implementation(libs.androidx.espresso.core)
+            implementation(libs.androidx.compose.ui.test.junit4)
+
+            implementation(libs.compose.ui.ui)
         }
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
@@ -90,9 +114,10 @@ kotlin {
             implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 
-            implementation(projects.shared)
+            // for iOS and XCode
+            api(projects.shared)
+            api(projects.core.coreDi)
 
-            implementation(projects.core.coreDi)
             implementation(projects.core.coreDb)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
@@ -121,9 +146,12 @@ kotlin {
 
             implementation(libs.image.picker)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ui.test)
+            implementation(compose.uiTest)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -134,6 +162,11 @@ kotlin {
             implementation(libs.kotlinx.browser)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = always
 }
 
 compose.desktop {

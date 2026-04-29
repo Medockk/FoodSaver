@@ -12,12 +12,15 @@ androidx-core = "1.18.0"
 androidx-lifecycle = "2.9.6"
 androidSecurity = "1.1.0"
 splashScreen = "1.2.0"
+uiTest = "1.10.2"
 yandexMapKitAndroid = "4.33.0-lite"
 exifInterface = "1.4.2"
 playServicesLocation = "21.3.0"
 #Android Google OAuth2
 credentials = "1.5.0"
 googleid = "1.2.0"
+glanceWidget = "1.1.1"
+androidWork = "2.11.2"
 
 #kotlin
 kotlinxDateTime = "0.7.1"
@@ -51,7 +54,24 @@ viewModel = "2.10.0"
 firebaseBom = "34.10.0"
 googleServices = "4.4.4"
 
+#testing
+androidx-espresso = "3.7.0"
+androidx-testExt = "1.3.0"
+junit = "4.13.2"
+uiTestJunit4 = "1.10.6"
+
 [libraries]
+
+#testing
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "uiTestJunit4" }
+ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "uiTest" }
+
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -68,6 +88,15 @@ google-firebase-fcm = { module = "com.google.firebase:firebase-messaging" }
 android-security = { module = "androidx.security:security-crypto", version.ref = "androidSecurity"}
 androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 androidx-exifInterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifInterface" }
+
+#Android Widgets
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceWidget" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glanceWidget" }
+
+#Android Work
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime", version.ref = "androidWork" }
+androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidWork" }
+androidx-work-koin = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koinCompose" }
 
 #map kit
 yandex-mapkit = { module = "com.yandex.android:maps.mobile", version.ref = "yandexMapKitAndroid" }

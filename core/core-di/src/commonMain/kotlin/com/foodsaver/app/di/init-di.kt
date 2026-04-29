@@ -1,5 +1,6 @@
 package com.foodsaver.app.di
 
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
@@ -10,10 +11,11 @@ internal expect val platformDiModule: Module
 fun initKoinApp(
     modules: Array<Module>,
     koinAppDeclaration: KoinAppDeclaration? = null
-) {
+): KoinApplication {
     stopKoin()
-    startKoin {
+    return startKoin {
         koinAppDeclaration?.invoke(this)
         modules(platformDiModule, *modules)
+        workManagerFactory()
     }
 }

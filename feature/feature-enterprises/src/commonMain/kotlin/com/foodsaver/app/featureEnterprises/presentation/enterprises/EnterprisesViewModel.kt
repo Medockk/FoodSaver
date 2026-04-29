@@ -58,7 +58,7 @@ class EnterprisesViewModel(
     override val baseChannel: Channel<EnterprisesAction> = Channel()
     override val channel: Flow<EnterprisesAction> = baseChannel.receiveAsFlow()
 
-    private val navArgs = savedStateHandle.toRoute<Route.MainGraph.MapScreen>()
+//    private val navArgs = savedStateHandle.toRoute<Route.MainGraph.MapScreen>()
 
     private var shouldZoomMap = true
     private val mapKitControllerDeferred = CompletableDeferred<Unit>()
@@ -71,11 +71,11 @@ class EnterprisesViewModel(
     private var enterpriseImageJob: Job? = null
 
     init {
-        val enterpriseId = navArgs.enterpriseId
-        if (enterpriseId != null) {
-            shouldZoomMap = false
-            getEnterpriseById(enterpriseId)
-        }
+//        val enterpriseId = navArgs.enterpriseId
+//        if (enterpriseId != null) {
+//            shouldZoomMap = false
+//            getEnterpriseById(enterpriseId)
+//        }
     }
 
     private fun getEnterpriseById(enterpriseId: String) {

@@ -93,7 +93,8 @@ internal class CartRepositoryImpl(
         }
     }
 
-    override suspend fun addProductToCart(request: CartRequestModel): ApiResult<CartItemModel> {
+    override suspend fun addProductToCart(request: CartRequestModel): ApiResult<CartItemModel> = withContext(
+        Dispatchers.InputOutput) {
         val database = databaseProvider.get()
         val queries = database.cartQueries
         val tempId = Uuid.random().toString()
@@ -124,7 +125,7 @@ internal class CartRepositoryImpl(
             return@transactionWithResult cartItem?.product
         }
 
-        return saveNetworkCall<CartItemDto> {
+        return@withContext saveNetworkCall<CartItemDto> {
             httpClient.post(HttpConstants.CART_URL) {
                 setBody(request.toDto(request.quantity ?: 1))
             }

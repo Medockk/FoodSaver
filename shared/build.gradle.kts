@@ -55,6 +55,11 @@ kotlin {
             api(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines)
 
+            // for iOS target api implementation!!
+            implementation(projects.core.coreNavigation)
+            implementation(projects.feature.featureAuth.di)
+            implementation(projects.feature.featureAuth)
+
             implementation(projects.core.coreDi)
             implementation(projects.core.coreAuth)
             implementation(projects.core.coreDb)
@@ -69,13 +74,13 @@ kotlin {
             implementation(projects.core.coreLocation)
             implementation(projects.core.coreFcm)
 
-            implementation(projects.feature.featureAuth.di)
             implementation(projects.feature.featureHome)
             implementation(projects.feature.featureProductDetail)
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
             implementation(projects.feature.featureEnterprises)
+//            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {
 

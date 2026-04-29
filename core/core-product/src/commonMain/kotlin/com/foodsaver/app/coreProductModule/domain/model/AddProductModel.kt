@@ -14,6 +14,7 @@ data class AddProductModel(
     val count: Long = 1,
     val unit: Long,
     val unitName: String,
+    val ingredients: List<String>,
 
     val expiresAt: LocalDate
 ) {
@@ -33,6 +34,7 @@ data class AddProductModel(
         if (categoryIds != other.categoryIds) return false
         if (unitName != other.unitName) return false
         if (expiresAt != other.expiresAt) return false
+        if (ingredients != other.ingredients) return false
 
         return true
     }
@@ -47,6 +49,7 @@ data class AddProductModel(
         result = 31 * result + costUnit.hashCode()
         result = 31 * result + categoryIds.hashCode()
         result = 31 * result + unitName.hashCode()
+        result = 31 * result + ingredients.hashCode()
         result = 31 * result + expiresAt.hashCode()
         return result
     }

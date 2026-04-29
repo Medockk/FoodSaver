@@ -59,7 +59,9 @@ class AddProductViewModel(
                     currentState.count.text.isBlank() ||
                     currentState.unit.text.isBlank() ||
                     currentState.unitName.text.isBlank() ||
-                    currentState.expiresAt.text.isBlank()
+                    currentState.expiresAt.text.isBlank() ||
+                    currentState.ingredients.text.isEmpty() ||
+                    currentState.pickedImageBytes == null
                 ) {
                     trySendError("Something empty!")
                     return
@@ -72,18 +74,23 @@ class AddProductViewModel(
                     trySendError("Wrong date format!")
                     return
                 }
+                val ingredients = currentState.ingredients.text
+                    .split(",")
+                    .map { it.trim() /*Remove spacings*/ }
+                    .filter { it.isNotEmpty() /*Remove empty values*/ }
 
                 viewModelScope.launch(Dispatchers.InputOutput) {
                     val addProductModel = AddProductModel(
                         title = currentState.title.text,
                         description = currentState.description.text,
-                        photo = byteArrayOf(),
+                        photo = currentState.pickedImageBytes.bytes,
                         cost = currentState.cost.text.toFloat(),
                         costUnit = currentState.costUnit.text,
                         categoryIds = currentState.selectedCategories.map { it.categoryId },
                         count = currentState.count.text.toLong(),
                         unit = currentState.unit.text.toLong(),
                         unitName = currentState.unitName.text,
+                        ingredients = ingredients,
                         expiresAt = date
                     )
                     addProductUseCase.invoke(addProductModel)
@@ -216,6 +223,20 @@ class AddProductViewModel(
                         it.copy(selectedCategories = it.selectedCategories + event.category)
                     }
                 }
+            }
+
+            is AddProductEvent.OnIngredientsChange -> {
+                println("Ingredients event ${event.value}")
+                _state.update { it.copy(ingredients = event.value) }
+                println("Ingredients state ${_state.value.ingredients}")
+            }
+
+            is AddProductEvent.OnGalleryPickerVisibilityChange -> {
+                _state.update { it.copy(isGalleryPickerVisible = event.value) }
+            }
+
+            is AddProductEvent.OnPickedImageChange -> {
+                _state.update { it.copy(pickedImageBytes = PickedImageBytes(event.value)) }
             }
         }
     }

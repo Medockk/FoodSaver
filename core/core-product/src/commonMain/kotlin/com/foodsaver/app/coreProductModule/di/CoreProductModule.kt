@@ -6,6 +6,7 @@ import com.foodsaver.app.coreProductModule.domain.repository.ReadProductReposito
 import com.foodsaver.app.coreProductModule.domain.usecase.AddProductUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.DeleteProductUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
+import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import org.koin.core.module.dsl.factoryOf
@@ -28,6 +29,7 @@ val coreProductModule = module {
     }
 
     factoryOf(::GetCachedProductUseCase)
+    factoryOf(::GetCachedProductsUseCase)
     factoryOf(::GetProductsUseCase)
     factoryOf(::SearchProductUseCase)
     factoryOf(::AddProductUseCase)

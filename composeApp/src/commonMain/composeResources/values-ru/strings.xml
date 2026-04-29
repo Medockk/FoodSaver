@@ -1,69 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name">FoodSaver</string>
-    <string name="hello">Привет</string>
 
-    <string name="email">Эл. почта</string>
-    <string name="fio">Имя Фамилия</string>
-    <string name="password">Пароль</string>
-    <string name="confirm_password">Подтвердите пароль</string>
-
-    <string name="forgot_password_question">Забыли пароль?</string>
-    <string name="forgot_password">Забыли пароль</string>
-    <string name="send_reset_link">Отправить ссылку на почту</string>
-    <string name="reset_password">Сброс пароля</string>
-
-    <string name="sign_in">Войти</string>
-    <string name="create_account">Создать аккаунт</string>
-    <string name="create">Создать</string>
-    <string name="authenticate_with_google">Войти с помощью Google</string>
-
-    <string name="search">Поиск</string>
-
-    <string name="day">день</string>
-    <string name="days">дней</string>
-    <string name="hour">час</string>
-    <string name="hours">часов</string>
-
-    <string name="total_items">Всего</string>
-    <string name="add_product_to_cart">Добавить в корзину</string>
-    <string name="remove_product_from_cart">Убрать из корзины</string>
-
-    <string name="menu">Меню</string>
-    <string name="personal_info">Личные данные</string>
-    <string name="address">Адресса</string>
-    <string name="payment_method">Способ оплаты</string>
-    <string name="support_service">Сервис поддержки</string>
-    <string name="log_out">Выйти</string>
-
-    <string name="profile">Профиль</string>
-    <string name="save">Сохранить</string>
-    <string name="profile_full_name">ПОЛНОЕ ИМЯ</string>
-    <string name="profile_email">ЭЛЕКТРОННАЯ ПОЧТА</string>
-    <string name="profile_phone">НОМЕР ТЕЛЕФОНА</string>
-    <string name="profile_bio">О СЕБЕ</string>
-
-    <string name="cart">Корзина</string>
-    <string name="time_to_delivery">Срок поставки</string>
-    <string name="addresses">Адреса</string>
-    <string name="add_new_address">Добавить адрес</string>
-    <string name="add_new_card">Добавить карту</string>
-
-    <string name="buy">Купить</string>
-    <string name="settings">Настройки</string>
-    <string name="addProduct">Добавить продукт</string>
-
-    <string name="addProductTitle">Название</string>
-    <string name="addProductDescription">Описание</string>
-    <string name="addProductCount">Количество</string>
-    <string name="addProductCost">Стоимость</string>
-    <string name="addProductCostUnit">Единица стоимости</string>
-    <string name="addProductUnit">Единица измерения продукта</string>
-    <string name="addProductUnitName">Имя единицы измерения продукта</string>
-    <string name="addProductExpiresAt">Когда срок годности истечёт</string>
-    <string name="addProductCategories">Категории</string>
-
-    <string name="about_ingredients">О составе</string>
-    <string name="ingredients">Состав</string>
-    <string name="classify_ingredients_by_categories">Классифицировать состав по категориям</string>
+    <string name="onboarding_title_1">All your favorites</string>
+    <string name="onboarding_title_2">All your favorites</string>
+    <string name="onboarding_title_3">Order from choosen chef</string>
+    <string name="onboarding_title_4">Free delivery offers</string>
+    <string name="onboarding_subtitle_1">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_2">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_3">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_4">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_button_next">Next</string>
 </resources>

@@ -7,8 +7,11 @@ import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.commonModule.utils.pagination.DefaultPaginator
+import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
 import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
+import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
@@ -18,7 +21,6 @@ import com.foodsaver.app.domain.usecase.GetCartUseCase
 import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.domain.usecase.offer.GetOffersUseCase
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
-import com.foodsaver.app.utils.Paginator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -34,6 +36,7 @@ import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val categoryRepository: CategoryRepository,
+    private val getCachedProducts: GetCachedProductsUseCase,
     private val getProductsUseCase: GetProductsUseCase,
     private val getCartUseCase: GetCartUseCase,
 
@@ -56,13 +59,18 @@ class HomeViewModel(
 
     private val pageSize = 8
 
-    private val productsPaginator = Paginator(
-        initKey = 0,
+    private val productsPaginator = OfflineFirstPaginator(
+        initialKey = 0,
         onLoadUpdated = { isLoading ->
             _state.update { it.copy(isProductsLoading = isLoading) }
         },
-        onRequest = { currentKey ->
-            getProductsUseCase.invoke(currentKey, pageSize)
+        onNetworkRequest = { currentKey ->
+            getProductsUseCase.invoke(currentKey, pageSize).onSuccess {
+                println("Products from network with OfflineFirstPaginator ${it.map { p -> "id: ${p.productId}, name: ${p.title}" }}")
+            }
+        },
+        onCacheRequest = {
+            getCachedProducts.invoke()
         },
         onNextKey = { currentKey, _ -> currentKey + 1 },
         onError = { errorResponse ->
@@ -82,16 +90,16 @@ class HomeViewModel(
                 )
             }
         },
-        endReached = { _, result -> pageSize > result.size }
+        onEndReaching = { _, result -> pageSize > result.size },
     )
-    private val searchPaginator = Paginator(
-        initKey = 0,
+    private val searchPaginator = DefaultPaginator(
+        initialKey = 0,
         onLoadUpdated = { isLoading ->
             _state.update { it.copy(isProductsLoading = isLoading) }
         },
         onRequest = { page ->
             searchProductUseCase.invoke(
-                productName = _state.value.searchQuery,
+                productName = _state.value.searchQuery.text,
                 categoryIds = _state.value.selectedCategoryIds.toList(),
                 page = page,
                 size = pageSize
@@ -128,7 +136,7 @@ class HomeViewModel(
                 }
             }
         },
-        endReached = { currentKey, result -> (currentKey * pageSize) >= result.size }
+        onEndReaching = { currentKey, result -> (currentKey * pageSize) >= result.size }
     )
 
     init {
@@ -236,7 +244,7 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.isBlank()) {
+                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.text.isBlank()) {
                     _state.update {
                         it.copy(productsDisplayMode = ProductsDisplayMode.All)
                     }
@@ -254,7 +262,7 @@ class HomeViewModel(
                 searchJob?.cancel()
                 searchPaginator.reset()
 
-                if (_state.value.searchQuery.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
+                if (_state.value.searchQuery.text.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
                     _state.update { it.copy(productsDisplayMode = ProductsDisplayMode.All) }
                     return
                 }
@@ -263,11 +271,11 @@ class HomeViewModel(
                     it.copy(
                         productsDisplayMode = ProductsDisplayMode.Searched,
                         searchedProducts = it.searchedProducts.filter { filter ->
-                            filter.title.contains(it.searchQuery, true)
+                            filter.title.contains(it.searchQuery.text, true)
                         }
                     )
                 }
-                println(_state.value.searchedProducts)
+                println("Search Network result " + _state.value.searchedProducts)
                 searchJob = viewModelScope.launch(Dispatchers.InputOutput) {
                     searchPaginator.loadPage()
                 }

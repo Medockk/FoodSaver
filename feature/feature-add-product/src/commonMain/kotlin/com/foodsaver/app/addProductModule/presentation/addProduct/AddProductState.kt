@@ -21,7 +21,13 @@ data class AddProductState(
     val unitName: TextFieldValue = TextFieldValue(text = ""),
     val isUnitNameDropDownMenuVisible: Boolean = false,
 
+    val ingredients: TextFieldValue = TextFieldValue(),
+    val isGalleryPickerVisible: Boolean = false,
+    val pickedImageBytes: PickedImageBytes? = null,
+
     val expiresAt: TextFieldValue = TextFieldValue(text = ""),
     val isExpiresAtDropDownMenuVisible: Boolean = false,
     val isExpiresAtError: Boolean = false,
 )
+
+class PickedImageBytes(val bytes: ByteArray)

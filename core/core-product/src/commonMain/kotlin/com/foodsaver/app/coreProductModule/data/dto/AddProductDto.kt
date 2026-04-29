@@ -16,6 +16,7 @@ internal data class AddProductDto(
     val count: Long = 1,
     val unit: Long,
     val unitName: String,
+    val ingredients: List<String>,
 
     val expiresAt: Instant,
     val addedAt: Instant = Clock.System.now()

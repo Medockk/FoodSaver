@@ -29,7 +29,7 @@ class ResetPasswordViewModel(
     override val baseChannel: Channel<ResetPasswordAction> = Channel()
     override val channel = baseChannel.receiveAsFlow()
 
-    private val navArgs = savedStateHandle.toRoute<Route.AuthGraph.ResetPasswordScreen>()
+//    private val navArgs = savedStateHandle.toRoute<Route.AuthGraph.ResetPasswordScreen>()
 
     private val _state = MutableStateFlow(ResetPasswordState())
     val state = _state.stateFlow(ResetPasswordState())
@@ -62,30 +62,31 @@ class ResetPasswordViewModel(
                 _state.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
             }
 
-            ResetPasswordEvent.OnResetPasswordClick -> {
-                viewModelScope.launch(Dispatchers.InputOutput) {
-                    _state.update { it.copy(isLoading = true) }
-
-                    val resetPasswordModel = ResetPasswordModel(
-                        password = _password.value,
-                        confirmPassword = _confirmPassword.value,
-                        resetPasswordToken = navArgs.token
-                    )
-
-                    try {
-                        resetPasswordUseCase.invoke(resetPasswordModel)
-                            .onSuccess {
-                                baseChannel.send(ResetPasswordAction.OnSuccess)
-                            }.onFailure {
-                                sendError(it)
-                            }
-                    } catch (_: AuthExceptions.PasswordNotEquals) {
-                        sendError("Password not equals!")
-                    } finally {
-                        _state.update { it.copy(isLoading = false) }
-                    }
-                }
-            }
+//            ResetPasswordEvent.OnResetPasswordClick -> {
+//                viewModelScope.launch(Dispatchers.InputOutput) {
+//                    _state.update { it.copy(isLoading = true) }
+//
+//                    val resetPasswordModel = ResetPasswordModel(
+//                        password = _password.value,
+//                        confirmPassword = _confirmPassword.value,
+//                        resetPasswordToken = navArgs.token
+//                    )
+//
+//                    try {
+//                        resetPasswordUseCase.invoke(resetPasswordModel)
+//                            .onSuccess {
+//                                baseChannel.send(ResetPasswordAction.OnSuccess)
+//                            }.onFailure {
+//                                sendError(it)
+//                            }
+//                    } catch (_: AuthExceptions.PasswordNotEquals) {
+//                        sendError("Password not equals!")
+//                    } finally {
+//                        _state.update { it.copy(isLoading = false) }
+//                    }
+//                }
+//            }
+            else -> {}
         }
     }
 

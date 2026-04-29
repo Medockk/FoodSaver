@@ -16,11 +16,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
-import com.foodsaver.app.presentation.featureAuth.featureAuthNavigation
-import com.foodsaver.app.presentation.featureHome.featureHomeNavigation
-import com.foodsaver.app.presentation.featureProfile.featureProfileNavigation
+import com.foodsaver.app.presentation.featureAuth.forgotPassword.ForgotPasswordScreenRoot
+import com.foodsaver.app.presentation.featureAuth.login.LoginScreenRoot
+import com.foodsaver.app.presentation.featureAuth.route.featureAuth
+import com.foodsaver.app.presentation.featureAuth.signup.SignupScreenRoot
+import com.foodsaver.app.presentation.featureAuth.verification.VerificationScreenRoot
+import com.foodsaver.app.presentation.featureHome.route.featureHome
+import com.foodsaver.app.presentation.featureOnBoarding.OnBoardingScreenRoot
+import com.foodsaver.app.presentation.featureOnBoarding.route.featureOnboarding
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import com.foodsaver.app.ui.colorScheme
 import kotlinx.coroutines.delay
@@ -31,7 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App(
     navController: NavHostController = rememberNavController(),
     viewModel: AppViewModel = koinViewModel(),
-    initialAuthRoute: Route = Route.AuthGraph.AuthScreen,
+    initialAuthRoute: Route = Route.AuthGraph.LoginScreen,
     onHandleDeepLink: ((NavController) -> Unit)? = null,
     onDeepLinkHandled: (() -> Unit)? = null
 ) {
@@ -39,8 +45,9 @@ fun App(
     val authenticationState by viewModel.authenticationState.collectAsState()
 
     val startDestination = when {
-        authenticationState is AuthenticationState.Authenticated -> Route.MainGraph
-        initialAuthRoute is Route.AuthGraph.ResetPasswordScreen -> Route.AuthGraph
+        authenticationState is AuthenticationState.Authenticated -> Route.HomeGraph
+        authenticationState is AuthenticationState.OnBoarding -> Route.OnBoarding
+//        initialAuthRoute is Route.AuthGraph.ResetPasswordScreen -> Route.AuthGraph
         else -> Route.AuthGraph
     }
 
@@ -48,7 +55,7 @@ fun App(
     val coroutineScope = rememberCoroutineScope()
 
     if (authenticationState !is AuthenticationState.Loading) {
-        LocalFoodSaverThemeComposition(locale = locale, colorScheme = colorScheme(isSystemInDarkTheme = false)) {
+        LocalFoodSaverThemeComposition(locale = locale, colorScheme = colorScheme()) {
             SharedTransitionLayout {
                 Scaffold(
                     contentWindowInsets = WindowInsets.statusBars,
@@ -58,20 +65,16 @@ fun App(
                         navController = navController,
                         startDestination = startDestination
                     ) {
-                        featureAuthNavigation(
-                            navController = navController,
-                            startDestination = initialAuthRoute,
-                            onSuccessAuthentication = { uid ->
-                                navController.navigate(Route.MainGraph.HomeScreen) {
-                                    popUpTo<Route.AuthGraph> {
-                                        inclusive = true
-                                    }
-                                }
+                        featureOnboarding(navController, onOnboardingComplete = {
+                            navController.navigate(Route.AuthGraph)
+                        })
+                        featureAuth(navController, onLogged = { uid ->
+                            uid?.let { uid ->
                                 viewModel.onUserAuthenticate(uid)
-                            })
-
-                        featureHomeNavigation(navController)
-                        featureProfileNavigation(navController)
+                            }
+                            navController.navigate(Route.HomeGraph)
+                        })
+                        featureHome(navController)
                     }
                 }
             }

@@ -46,6 +46,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             api(libs.koin.android)
+            implementation(libs.androidx.work.koin)
         }
 
         commonMain.dependencies {

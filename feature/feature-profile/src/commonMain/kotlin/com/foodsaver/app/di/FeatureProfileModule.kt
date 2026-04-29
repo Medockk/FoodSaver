@@ -19,7 +19,6 @@ val featureProfileModule = module {
 
     single<LogoutRepository> {
         LogoutRepositoryImpl(
-            httpClient = get(),
             databaseProvider = get(),
             accessTokenManager = get(),
             authUserManager = get(),

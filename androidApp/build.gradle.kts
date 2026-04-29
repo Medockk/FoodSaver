@@ -56,9 +56,11 @@ dependencies {
     implementation(projects.core.coreFcm)
     implementation(projects.core.coreDi)
     implementation(projects.core.coreNavigation)
+    implementation(projects.feature.featureWidget)
     api(projects.core.coreCommon)
 
     implementation(libs.androidx.splash)
     implementation(libs.components.components.resources)
     implementation(libs.compose.runtime.runtime)
+    implementation(libs.androidx.work.koin)
 }

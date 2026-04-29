@@ -21,4 +21,15 @@ internal actual class SqlDriverFactory {
 
         return driver
     }
+
+    actual fun createSync(): SqlDriver {
+        val context = inject<Context>(Context::class.java).value
+        val driver = AndroidSqliteDriver(
+            schema = MainAppDatabase.Schema.synchronous(),
+            context= context,
+            name = "MainAppDatabase.db"
+        )
+
+        return driver
+    }
 }

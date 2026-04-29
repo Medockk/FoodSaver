@@ -8,9 +8,10 @@ import com.foodsaver.app.domain.usecase.ForgotPasswordUseCase
 import com.foodsaver.app.domain.usecase.ResetPasswordUseCase
 import com.foodsaver.app.domain.usecase.SignInUseCase
 import com.foodsaver.app.domain.usecase.SignUpUseCase
-import com.foodsaver.app.feature.auth.presentation.Auth.AuthViewModel
 import com.foodsaver.app.feature.auth.presentation.ForgotPassword.ForgotPasswordViewModel
 import com.foodsaver.app.feature.auth.presentation.ResetPassword.ResetPasswordViewModel
+import com.foodsaver.app.feature.auth.presentation.login.LoginViewModel
+import com.foodsaver.app.feature.auth.presentation.signup.SignupViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
@@ -36,8 +37,11 @@ private val module = module {
     factoryOf(::ForgotPasswordUseCase)
     factoryOf(::ResetPasswordUseCase)
 
-    viewModelOf(::AuthViewModel)
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::SignupViewModel)
     viewModelOf(::ForgotPasswordViewModel)
+
+    // TODO remove
     viewModelOf(::ResetPasswordViewModel)
 }
 val featureAuthModule = arrayOf(
