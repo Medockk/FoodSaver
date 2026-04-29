@@ -1,21 +1,55 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="app_name">FoodSaver</string>
-    <string name="hello">Hello</string>
 
-    <string name="email">Email address</string>
-    <string name="fio">Name and surname</string>
-    <string name="password">Password</string>
-    <string name="forgot_password">Forgot password?</string>
-    <string name="sign_in">Sign In</string>
-    <string name="create_account">Create Account</string>
-    <string name="create">Create</string>
-    <string name="authenticate_with_google">Authenticate with Google</string>
+    <string name="onboarding_title_1">All your favorites</string>
+    <string name="onboarding_title_2">All your favorites</string>
+    <string name="onboarding_title_3">Order from choosen chef</string>
+    <string name="onboarding_title_4">Free delivery offers</string>
+    <string name="onboarding_subtitle_1">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_2">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_3">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_subtitle_4">Get all your loved foods in one once place,
+you just place the orer we do the rest</string>
+    <string name="onboarding_button_next">Next</string>
+    <string name="onboarding_button_end">Get Started</string>
+    <string name="onboarding_button_skip">Skip</string>
 
-    <string name="search">Search</string>
+    <string name="auth_login_title">Log In</string>
+    <string name="auth_login_subtitle">Please sign in to your existing account</string>
+    <string name="auth_email">EMAIL</string>
+    <string name="auth_email_example">example@gmail.com</string>
+    <string name="auth_password_example">**********</string>
+    <string name="auth_password">PASSWORD</string>
+    <string name="auth_remember_me">Remember me </string>
+    <string name="auth_forgot_password">Forgot Password</string>
+    <string name="auth_forgot_password_send_code">SEND CODE</string>
+    <string name="auth_dont_have_account">Don’t have an account?</string>
+    <string name="auth_signup_title">Sign Up</string>
+    <string name="auth_or">Or</string>
+    <string name="auth_verification_title">Verification</string>
+    <string name="auth_verification-subtitle">We have sent a code to your email</string>
+    <string name="auth_verification_code">Code</string>
+    <string name="auth_verification_resend">Resend</string>
+    <string name="auth_verification_secound">sec</string>
+    <string name="auth_verification_in">in</string>
+    <string name="auth_verification_verify">Verify</string>
+    <string name="auth_signup_subtitle">Please sign up to get started</string>
+    <string name="auth_signup_name">NAME</string>
+    <string name="auth_signup_name_example">John doe</string>
+    <string name="auth_signup_retype_password">Re-Type Password</string>
 
-    <string name="day">day</string>
-    <string name="days">days</string>
-    <string name="hour">hour</string>
-    <string name="hours">hours</string>
+    <string name="home_topbar_deliver_to">Deliver to</string>
+    <string name="home_hello_user">Hey %1$s</string>
+    <string name="home_good_afternoon">Good Afternoon!</string>
+
+    <string name="search_field_placeholder">Search dishes, restaurants</string>
+
+    <string name="category_all_categories">All Categories</string>
+    <string name="category_see_all">See All</string>
+
+    <string name="open_restaurants">Open Restaurants</string>
 </resources>

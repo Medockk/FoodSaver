@@ -18,7 +18,7 @@ fun Modifier.shimmerEffect(durationMillis: Int = 3000): Modifier {
     val transition = rememberInfiniteTransition(label = "ShimmerEffect")
     val animation by transition.animateFloat(
         initialValue = 0f,
-        targetValue = 1000f,
+        targetValue = 2500f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = durationMillis,

@@ -1,15 +1,34 @@
-@file:OptIn(ExperimentalWasmDsl::class)
+@file:OptIn(ExperimentalWasmDsl::class, ExperimentalComposeLibrary::class)
 
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+
+    alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.github.gmazzo.buildconfig")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName.set("com.foodsaver.app.composeApp")
+    buildConfigField(
+        type = "String",
+        name = "YANDEX_MAPKIT",
+        value = "\"${localProperties.getProperty("YANDEX_MAPKIT")}\""
+    )
 }
 
 kotlin {
@@ -18,9 +37,30 @@ kotlin {
         freeCompilerArgs.set(listOf("-Xcontext-parameters"))
     }
 
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+    androidLibrary {
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        namespace = "com.foodsaver.app.composeApp.androidMain"
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
+    }
+
+    sourceSets.getByName("androidMain") {
+        resources.srcDirs("src/androidMain/res")
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+
+            freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+
+            export(projects.core.coreDi)
+            export(projects.shared)
         }
     }
 
@@ -38,39 +78,84 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.splash)
+            implementation(libs.compose.ui.tooling)
+            implementation(libs.yandex.mapkit)
+
+            implementation(libs.kotlin.testJunit)
+            implementation(libs.androidx.testExt.junit)
+            implementation(libs.androidx.espresso.core)
+            implementation(libs.androidx.compose.ui.test.junit4)
+
+            implementation(libs.compose.ui.ui)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.animation)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(project.dependencies.platform(libs.androidx.compose.bom))
+            implementation(libs.compose.runtime.runtime)
+            implementation(libs.compose.foundation.foundation)
+            implementation(libs.compose.ui.ui)
+            implementation(libs.compose.animation.animation)
+            implementation(libs.components.components.resources)
+            implementation(libs.compose.ui.tooling.preview)
+
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            implementation(libs.kotlinx.serialization.json)
+
             implementation(libs.jetbrains.compose.navigation)
             implementation(libs.material3)
+
             implementation(libs.koin.compose.navigation)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.koin.core)
+
+            implementation(libs.kotlinx.coroutines)
             implementation(libs.bundles.coil)
 
-            implementation(projects.shared)
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
-            implementation(projects.featureAuth)
-            implementation(projects.featureMain)
+            // for iOS and XCode
+            api(projects.shared)
+            api(projects.core.coreDi)
+
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreCommon)
+            implementation(projects.core.coreAuth)
+            implementation(projects.core.coreModel)
+            implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
+            implementation(projects.core.coreProfile)
+            implementation(projects.core.coreNavigation)
+            implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
+            implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
+
+            implementation(projects.feature.featureAuth)
+            implementation(projects.feature.featureAuth.di)
+
+            implementation(projects.feature.featureHome)
+            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureCart)
+            implementation(projects.feature.featureProfile)
+            implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
+
+            implementation(libs.image.picker)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ui.test)
+            implementation(compose.uiTest)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.compose.ui.tooling)
         }
 
         webMain.dependencies {
@@ -79,35 +164,9 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.foodsaver.app"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.foodsaver.app"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
+compose.resources {
+    publicResClass = true
+    generateResClass = always
 }
 
 compose.desktop {

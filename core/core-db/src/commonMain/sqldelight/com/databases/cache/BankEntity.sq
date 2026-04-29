@@ -1,0 +1,62 @@
+import kotlin.Boolean;
+
+CREATE TABLE IF NOT EXISTS bankEntity (
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    globalId TEXT UNIQUE,
+    cardNumber TEXT NOT NULL,
+    isSelected INTEGER AS Boolean NOT NULL,
+    uid TEXT NOT NULL,
+    tempId TEXT NOT NULL
+);
+
+getPaymentMethods:
+SELECT * FROM bankEntity
+WHERE uid = ?;
+
+getCurrentPaymentMethod:
+SELECT * FROM bankEntity
+WHERE uid = ?
+AND isSelected = 1
+LIMIT 1;
+
+addPaymentMethod:
+INSERT INTO bankEntity(globalId, cardNumber, isSelected, uid, tempId)
+VALUES (?,?, ?, ?, ?);
+
+setCurrentPaymentMethodByLocalId:
+UPDATE bankEntity
+SET isSelected = ?
+WHERE localId = ? AND uid = ?;
+
+disablePaymentMethods:
+UPDATE bankEntity
+SET isSelected = 0
+WHERE uid = ?;
+
+setCurrentPaymentMethodByGlobalId:
+UPDATE bankEntity
+SET isSelected = ?
+WHERE globalId = ? AND uid = ?;
+
+removePaymentMethod:
+DELETE FROM bankEntity
+WHERE localId = ? AND uid = ?;
+
+removePaymentMethodByGlobalId:
+DELETE FROM bankEntity
+WHERE globalId = ? AND uid = ?;
+
+clear:
+DELETE FROM bankEntity
+WHERE uid = ?;
+
+updateLocalPaymentMethod:
+UPDATE bankEntity
+SET globalId = ?,
+isSelected = ?,
+cardNumber = ?
+WHERE uid = ? AND tempId = ?;
+
+deleteLocalPaymentMethod:
+DELETE FROM bankEntity
+WHERE tempId = ?;

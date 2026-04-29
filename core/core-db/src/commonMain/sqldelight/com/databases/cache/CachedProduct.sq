@@ -1,0 +1,21 @@
+import com.foodsaver.app.coreModel.dto.ProductDto;
+
+CREATE TABLE IF NOT EXISTS cachedProduct (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    productId TEXT NOT NULL UNIQUE,
+    product TEXT AS ProductDto NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS cached_product_id_idx ON cachedProduct(productId);
+
+getCachedProducts:
+SELECT *
+FROM cachedProduct;
+
+getCachedProductByProductId:
+SELECT * FROM cachedProduct
+WHERE productId = ?;
+
+insertCachedProduct:
+INSERT OR REPLACE INTO cachedProduct (productId, product)
+VALUES (?, ?);

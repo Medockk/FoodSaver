@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string name="error_unknown">Unknown error occurred</string>
+
+    <string name="error_auth_username_occupied">Username is already taken</string>
+    <string name="error_auth_invalid_email">Invalid email format</string>
+    <string name="error_auth_weak_password">Password is too weak</string>
+    <string name="error_auth_failed_register">Failed to register user</string>
+    <string name="error_auth_failed_authorize">Invalid username or password</string>
+    <string name="error_auth_jwt_expired">Session expired. Please log in again</string>
+    <string name="error_auth_refresh_expired">Session deeply expired. Full re-login required</string>
+    <string name="error_auth_password_mismatch">Passwords do not match</string>
+    <string name="error_auth_google_verify_failed">Google authentication failed</string>
+
+    <string name="error_user_not_found">User not found</string>
+    <string name="error_user_empty_email">Email cannot be empty</string>
+    <string name="error_user_file_too_large">File is too large</string>
+
+    <string name="error_product_not_found">Product not found</string>
+    <string name="error_product_not_fresh">Product not fresh</string>
+    <string name="error_cart_not_found">Cart not found</string>
+
+    <string name="error_org_not_found">Organization not found</string>
+    <string name="error_category_not_found">Category not found</string>
+
+    <string name="error_payment_method_not_found">Payment method not found</string>
+    <string name="error_address_not_found">Address not found</string>
+
+    <string name="error_uuid_parse_failed">Invalid data format (UUID error)</string>
+</resources>

@@ -1,16 +1,16 @@
 import SwiftUI
-import Shared
+import ComposeApp
 
 @main
 struct iOSApp: App {
-
     init() {
-        PlatformKt.initKoin()
+        InitComposeAppKoinKt.doInitComposeAppKoin()
     }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ComposeView()
+                .ignoresSafeArea(.all)
         }
     }
 }

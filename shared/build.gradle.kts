@@ -6,13 +6,18 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
 
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 kotlin {
-    androidTarget() {
+
+    androidLibrary {
+        namespace = "com.foodsaver.app.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -48,13 +53,34 @@ kotlin {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
             api(libs.kotlinx.serialization.json)
-            api(libs.kotlinx.coroutinesSwing)
+            implementation(libs.kotlinx.coroutines)
 
-            implementation(projects.coreDi)
-            implementation(projects.coreDb)
-            implementation(projects.coreNetwork)
-            implementation(projects.featureAuth)
-            implementation(projects.featureMain)
+            // for iOS target api implementation!!
+            implementation(projects.core.coreNavigation)
+            implementation(projects.feature.featureAuth.di)
+            implementation(projects.feature.featureAuth)
+
+            implementation(projects.core.coreDi)
+            implementation(projects.core.coreAuth)
+            implementation(projects.core.coreDb)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
+            implementation(projects.core.coreProfile)
+            implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAddress)
+            implementation(projects.core.coreSettings)
+            implementation(projects.core.coreCategory)
+            implementation(projects.core.coreLocation)
+            implementation(projects.core.coreFcm)
+
+            implementation(projects.feature.featureHome)
+            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureCart)
+            implementation(projects.feature.featureProfile)
+            implementation(projects.feature.featureAddProduct)
+            implementation(projects.feature.featureEnterprises)
+//            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {
 
@@ -71,17 +97,5 @@ kotlin {
         jsMain.dependencies {
 
         }
-    }
-}
-
-android {
-    namespace = "com.foodsaver.app.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }

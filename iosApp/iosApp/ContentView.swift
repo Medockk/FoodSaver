@@ -1,34 +1,11 @@
 import SwiftUI
-import Shared
+import ComposeApp
 
-struct ContentView: View {
-    @State private var showContent = false
-    private var text = "Click"
-    var body: some View {
-        VStack {
-            Button(text) {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
 
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    Text("SwiftUI: \(Greeting().greet())")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
+struct ComposeView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        return MainAppControllerKt.MainAppController()
     }
-}
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }

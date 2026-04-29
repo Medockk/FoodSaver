@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS Users (
-    uid TEXT NOT NULL PRIMARY KEY,
-    name TEXT
-);
