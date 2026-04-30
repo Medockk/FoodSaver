@@ -1,19 +1,20 @@
 package com.foodsaver.app.di
 
+//import com.foodsaver.app.featureWidget.di.featureWidgetModule
 import com.foodsaver.app.addProductModule.di.featureAddProductModule
 import com.foodsaver.app.coreAddress.di.coreAddressModule
 import com.foodsaver.app.coreAuth.coreAuthModule
 import com.foodsaver.app.coreCategory.di.coreCategoryModule
 import com.foodsaver.app.coreDb.di.databaseModule
+import com.foodsaver.app.coreEnterprises.di.coreRestaurantModule
 import com.foodsaver.app.coreFcm.di.coreFcmModule
 import com.foodsaver.app.coreLocation.di.coreLocationModule
 import com.foodsaver.app.corePaymentMethod.di.corePaymentMethod
 import com.foodsaver.app.coreProductModule.di.coreProductModule
 import com.foodsaver.app.coreProfile.di.coreProfileModule
 import com.foodsaver.app.coreSettings.di.coreSettingsModule
-import com.foodsaver.app.featureEnterprises.di.featureEnterprisesModule
-import com.foodsaver.app.featureProductDetail.di.featureProductDetailModule
-//import com.foodsaver.app.featureWidget.di.featureWidgetModule
+import com.foodsaver.app.featureEnterprises.di.featureRestaurantModule
+import com.foodsaver.app.featureFoodDetail.di.featureFoodDetailModule
 import org.koin.core.module.Module
 
 expect fun test()
@@ -26,7 +27,7 @@ fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
         *featureAuthModule,
         featureMainModule,
         coreProductModule,
-        featureProductDetailModule,
+        featureFoodDetailModule,
         coreCartModule,
         featureCartModule,
         coreProfileModule,
@@ -36,9 +37,10 @@ fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
         coreSettingsModule,
         featureAddProductModule,
         coreCategoryModule,
-        featureEnterprisesModule,
+        featureRestaurantModule,
         coreLocationModule,
         coreFcmModule,
+        coreRestaurantModule
 //        featureWidgetModule
     )
 )

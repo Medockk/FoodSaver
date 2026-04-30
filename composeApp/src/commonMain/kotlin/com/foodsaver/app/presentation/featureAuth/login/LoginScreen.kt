@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.foodsaver.app.common.PrimaryButton
+import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.feature.auth.presentation.login.LoginAction
 import com.foodsaver.app.feature.auth.presentation.login.LoginEvent
 import com.foodsaver.app.feature.auth.presentation.login.LoginState

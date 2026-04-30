@@ -37,7 +37,7 @@ fun CategoryChip(
         FoodSaverTheme.colorScheme.background
     }
 
-    val shadowColor = FoodSaverTheme.colorScheme.categoryChipShadow
+    val shadowColor = FoodSaverTheme.colorScheme.primaryShadowColor
     val shape = RoundedCornerShape(40.dp)
 
     Box(
@@ -67,10 +67,11 @@ fun CategoryChip(
                 model = state.imageUri,
                 modifier = Modifier
                     .size(45.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                shimmerDurationMillis = 7000
             )
 
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(6.dp))
 
             Text(
                 text = state.name,

@@ -1,7 +1,7 @@
 package com.foodsaver.app.utils
 
 import androidx.compose.runtime.Composable
-import com.foodsaver.app.featureEnterprises.domain.model.CameraPositionModel
+import com.foodsaver.app.coreEnterprises.domain.model.CameraPositionModel
 
 interface MapKitController {
     fun zoomTo(latitude: Double, longitude: Double, zoom: Float = 17.5f)

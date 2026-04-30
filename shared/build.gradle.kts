@@ -73,13 +73,14 @@ kotlin {
             implementation(projects.core.coreCategory)
             implementation(projects.core.coreLocation)
             implementation(projects.core.coreFcm)
+            implementation(projects.core.coreRestaurant)
 
             implementation(projects.feature.featureHome)
-            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureFoodDetail)
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
-            implementation(projects.feature.featureEnterprises)
+            implementation(projects.feature.featureRestaurant)
 //            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {

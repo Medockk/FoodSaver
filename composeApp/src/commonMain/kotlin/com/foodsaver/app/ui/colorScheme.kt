@@ -38,7 +38,16 @@ data class ColorScheme(
 
     val categorySeeAllColor: Color = Color.Unspecified,
     val mainCategoryClipColor: Color = Color.Unspecified,
-    val categoryChipShadow: Color = Color.Unspecified,
+    val primaryShadowColor: Color = Color.Unspecified,
+
+    val shimmerColor: Color = Color.Unspecified,
+    val imagePageUnselectedIndicatorColor: Color = Color.Unspecified,
+    val imagePageSelectedIndicatorColor: Color = Color.Unspecified,
+
+    val unselectedChipBorderColor: Color = Color.Unspecified,
+    val counterColor: Color = Color.Unspecified,
+    val counterButtonColor: Color = Color.Unspecified,
+    val ingredientBackgroundColor: Color = Color.Unspecified,
 )
 
 val lightColorScheme = ColorScheme(
@@ -76,7 +85,15 @@ val lightColorScheme = ColorScheme(
 
     categorySeeAllColor = Color(0xFF333333),
     mainCategoryClipColor = Color(0xFFFFD27C),
-    categoryChipShadow = Color(0xFF96969A),
+    primaryShadowColor = Color(0xFF96969A),
+
+    shimmerColor = Color(0xFF98A8B8),
+    imagePageUnselectedIndicatorColor = Color(0x69FFFFFF),
+    imagePageSelectedIndicatorColor = Color(0xFFFFFFFF),
+    unselectedChipBorderColor = Color(0xFFEDEDED),
+    counterColor = Color(0xFF121223),
+    counterButtonColor = Color(0x33FFFFFF),
+    ingredientBackgroundColor = Color(0xFFFFEBE4),
 )
 
 val darkColorScheme = ColorScheme(
@@ -110,7 +127,16 @@ val darkColorScheme = ColorScheme(
     onCheckboxFillColor = Color.White,
 
     topBarSubtitleColor = Color(0xFF676767),
-    searchFieldBackground = Color(0xFFF6F6F6)
+    searchFieldBackground = Color(0xFFF6F6F6),
+
+    categorySeeAllColor = Color(0xFF333333),
+    mainCategoryClipColor = Color(0xFFFFD27C),
+    primaryShadowColor = Color(0xFF96969A),
+
+    shimmerColor = Color(0xFF98A8B8),
+    imagePageUnselectedIndicatorColor = Color(0x69FFFFFF),
+    imagePageSelectedIndicatorColor = Color(0xFFFFFFFF),
+    unselectedChipBorderColor = Color(0xFFEDEDED),
 )
 
 //val lightColorScheme =  lightColorScheme(

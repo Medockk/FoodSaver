@@ -65,6 +65,7 @@ kotlin {
             implementation(projects.core.coreModel)
             implementation(projects.core.coreAddress)
             implementation(projects.core.coreCategory)
+            implementation(projects.core.coreRestaurant)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.datetime)

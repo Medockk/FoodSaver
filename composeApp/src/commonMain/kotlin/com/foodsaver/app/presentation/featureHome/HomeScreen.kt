@@ -25,19 +25,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.searchField.SearchTextField
 import com.foodsaver.app.common.searchField.SearchTextFieldState
-import com.foodsaver.app.coreModel.model.CategoryModel
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.presentation.Home.HomeState
 import com.foodsaver.app.presentation.Home.HomeViewModel
 import com.foodsaver.app.presentation.featureHome.components.HomeTopBar
+import com.foodsaver.app.presentation.featureHome.components.RestaurantCard
 import com.foodsaver.app.presentation.featureHome.components.TableOfContent
 import com.foodsaver.app.presentation.featureHome.components.category.CategoryChip
 import com.foodsaver.app.presentation.featureHome.components.category.CategoryChipState
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.all
 import foodsaver.composeapp.generated.resources.category_see_all
 import foodsaver.composeapp.generated.resources.home_good_afternoon
 import foodsaver.composeapp.generated.resources.home_hello_user
@@ -55,7 +58,8 @@ fun HomeScreenRoot(
 
     HomeScreen(
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        navController = navController
     )
 }
 
@@ -63,30 +67,11 @@ fun HomeScreenRoot(
 @Composable
 fun HomeScreenPreview() {
     LocalFoodSaverThemeComposition {
-        HomeScreen(HomeState(
-            categories = listOf(
-                CategoryModel(
-                    "All",
-                    "1"
-                ),
-                CategoryModel(
-                    "Burgers",
-                    "2"
-                ),
-                CategoryModel(
-                    "Pizza",
-                    "3"
-                ),
-                CategoryModel(
-                    "Hot dogs",
-                    "4"
-                ),
-                CategoryModel(
-                    "All",
-                    "5"
-                ),
-            )
-        ), {})
+        HomeScreen(
+            HomeState(
+
+            ), {}, rememberNavController()
+        )
     }
 }
 
@@ -94,6 +79,7 @@ fun HomeScreenPreview() {
 private fun HomeScreen(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
+    navController: NavController,
 ) {
 
     Scaffold(
@@ -184,12 +170,26 @@ private fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
+                    item {
+                        if (state.selectedCategoryIds.isEmpty()) {
+                            CategoryChip(
+                                state = CategoryChipState(
+                                    name = stringResource(Res.string.all),
+                                    imageUri = "",
+                                    isMainChip = true,
+                                    onCategoryClick = {
+                                        TODO()
+                                    }
+                                )
+                            )
+                        }
+                    }
                     items(state.categories) { category ->
                         CategoryChip(
                             state = CategoryChipState(
                                 name = category.categoryName,
                                 imageUri = "",
-                                isMainChip = category.categoryId == state.categories.firstOrNull()?.categoryId,
+                                isMainChip = state.selectedCategoryIds.contains(category.categoryId),
                                 onCategoryClick = {
                                     TODO("Navigate to Food - Burgers screen")
                                 }
@@ -201,7 +201,7 @@ private fun HomeScreen(
                 }
             }
 
-            // restaurants
+            // restaurants title
             item {
                 Spacer(Modifier.height(30.dp))
                 TableOfContent(
@@ -213,6 +213,20 @@ private fun HomeScreen(
                     text = Res.string.open_restaurants
                 )
                 Spacer(Modifier.height(20.dp))
+            }
+
+            // TODO add transition animation
+            items(state.restaurants) { restaurant ->
+                RestaurantCard(
+                    restaurant = restaurant,
+                    onRestaurantClick = {
+                        navController.navigate(Route.HomeGraph.Restaurant(restaurant.id))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                )
+                Spacer(Modifier.height(25.dp))
             }
         }
     }

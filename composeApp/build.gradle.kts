@@ -16,6 +16,8 @@ plugins {
     id("com.github.gmazzo.buildconfig")
 }
 
+val isMac = System.getProperty("os.name").contains("Mac", ignoreCase = true)
+
 val localProperties = Properties()
 val localPropertiesFile = project.rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
@@ -48,19 +50,22 @@ kotlin {
         resources.srcDirs("src/androidMain/res")
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
+    if (isMac) {
 
-            freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64()
+        ).forEach { iosTarget ->
+            iosTarget.binaries.framework {
+                baseName = "ComposeApp"
+                isStatic = true
 
-            export(projects.core.coreDi)
-            export(projects.shared)
+                freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+
+                export(projects.core.coreDi)
+                export(projects.shared)
+            }
         }
     }
 
@@ -133,16 +138,17 @@ kotlin {
             implementation(projects.core.coreCategory)
             implementation(projects.core.coreLocation)
             implementation(projects.core.coreFcm)
+            implementation(projects.core.coreRestaurant)
 
             implementation(projects.feature.featureAuth)
             implementation(projects.feature.featureAuth.di)
 
             implementation(projects.feature.featureHome)
-            implementation(projects.feature.featureProductDetail)
+            implementation(projects.feature.featureFoodDetail)
             implementation(projects.feature.featureCart)
             implementation(projects.feature.featureProfile)
             implementation(projects.feature.featureAddProduct)
-            implementation(projects.feature.featureEnterprises)
+            implementation(projects.feature.featureRestaurant)
 
             implementation(libs.image.picker)
         }

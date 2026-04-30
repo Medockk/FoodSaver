@@ -7,6 +7,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.poppins_medium
+import foodsaver.composeapp.generated.resources.poppins_regular
 import foodsaver.composeapp.generated.resources.sen_bold
 import foodsaver.composeapp.generated.resources.sen_extra_bold
 import foodsaver.composeapp.generated.resources.sen_medium
@@ -25,9 +27,14 @@ data class ThemeTypography(
     val bodyRegularBold: TextStyle = TextStyle(),
     val bodySmall: TextStyle = TextStyle(),
     val bodyMedium: TextStyle = TextStyle(),
+    val bodyBold: TextStyle = TextStyle(),
 
     val inputPlaceholderRegular: TextStyle = TextStyle(),
     val inputPasswordPlaceholderRegular: TextStyle = TextStyle(),
+
+    val bottomBarPrice: TextStyle = TextStyle(),
+    val ingredientName: TextStyle = TextStyle(),
+    val ingredientsSubtext: TextStyle = TextStyle()
 )
 
 
@@ -39,6 +46,13 @@ private val fonts
         Font(Res.font.sen_regular, FontWeight.Normal), // W400
         Font(Res.font.sen_medium, FontWeight.Medium), // W500
         Font(Res.font.sen_semi_bold, FontWeight.SemiBold), // W600
+    )
+
+private val poppinsFonts
+    @Composable
+    get() = FontFamily(
+        Font(Res.font.poppins_medium, FontWeight.Medium),
+        Font(Res.font.poppins_regular, FontWeight.Normal),
     )
 
 val Typography
@@ -89,6 +103,11 @@ val Typography
             fontSize = 20.sp,
             fontWeight = FontWeight.Normal
         ),
+        bodyBold = TextStyle(
+            fontFamily = fonts,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        ),
         inputPlaceholderRegular = TextStyle(
             fontFamily = fonts,
             fontSize = 14.sp,
@@ -99,5 +118,20 @@ val Typography
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             letterSpacing = 16.sp
+        ),
+        bottomBarPrice = TextStyle(
+            fontFamily = fonts,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Normal,
+        ),
+        ingredientName = TextStyle(
+            fontFamily = poppinsFonts,
+            fontWeight = FontWeight.Medium,
+            fontSize = 12.sp
+        ),
+        ingredientsSubtext = TextStyle(
+            fontFamily = poppinsFonts,
+            fontWeight = FontWeight.Normal,
+            fontSize = 8.sp
         ),
     )

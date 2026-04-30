@@ -1,8 +1,10 @@
 package com.foodsaver.app.presentation.Home
 
 import androidx.compose.ui.text.input.TextFieldValue
+import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
 import com.foodsaver.app.coreModel.model.AddressModel
 import com.foodsaver.app.coreModel.model.CategoryModel
+import com.foodsaver.app.coreModel.model.OrganizationModel
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProfile.domain.model.UserModel
 import com.foodsaver.app.domain.model.CartItemModel
@@ -12,9 +14,58 @@ data class HomeState(
     val deliverTo: String = "",
     val searchQuery: TextFieldValue = TextFieldValue(),
     val categories: List<CategoryModel> = listOf(
-        CategoryModel("All", "1"),
         CategoryModel("Burgers", "2"),
         CategoryModel("Pizza", "3"),
+    ),
+    val restaurants: List<RestaurantModel> = listOf(
+        RestaurantModel(
+            id = "",
+            latitude = 2.2,
+            longitude = 2.3,
+            addressName = "Some address name to bla bla bla",
+            description = "This is super description 1",
+            organization = OrganizationModel(
+                id = "",
+                organizationName = "OKEI"
+            ),
+            name = "wdwddw"
+        ),
+        RestaurantModel(
+            id = "",
+            latitude = 2.2,
+            longitude = 2.3,
+            addressName = "Some address name to bla bla bla",
+            description = "This is super description 1",
+            organization = OrganizationModel(
+                id = "",
+                organizationName = "OKEI"
+            ),
+            name = "wdwddw"
+        ),
+        RestaurantModel(
+            id = "",
+            latitude = 2.2,
+            longitude = 2.3,
+            addressName = "Some address name to bla bla bla",
+            description = "This is super description 1",
+            organization = OrganizationModel(
+                id = "",
+                organizationName = "pyatiorochka"
+            ),
+            name = "wdwddw"
+        ),
+        RestaurantModel(
+            id = "",
+            latitude = 2.2,
+            longitude = 2.3,
+            addressName = "Some address name to bla bla bla",
+            description = "This is super description 1",
+            organization = OrganizationModel(
+                id = "",
+                organizationName = "magnit"
+            ),
+            name = "wdwddw"
+        ),
     ),
 
 

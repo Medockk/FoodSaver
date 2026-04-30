@@ -60,6 +60,7 @@ include(":core:core-settings")
 include(":core:core-category")
 include(":core:core-location")
 include(":core:core-fcm")
+include(":core:core-restaurant")
 
 include(":feature")
 
@@ -70,8 +71,8 @@ include(":feature:feature-auth:domain")
 
 include(":feature:feature-home")
 include(":feature:feature-profile")
-include(":feature:feature-product-detail")
+include(":feature:feature-food-detail")
 include(":feature:feature-cart")
 include(":feature:feature-add-product")
-include(":feature:feature-enterprises")
+include(":feature:feature-restaurant")
 include(":feature:feature-widget")

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.PrimaryButton
+import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.ui.FoodSaverTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

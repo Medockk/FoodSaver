@@ -26,8 +26,10 @@ internal actual class SqlDriverFactory {
             if (!parentFolder.exists()) {
                 parentFolder.mkdirs()
                 try {
-                    val dosView = Files.getFileAttributeView(parentFolder.toPath(), DosFileAttributeView::class.java,
-                        LinkOption.NOFOLLOW_LINKS)
+                    val dosView = Files.getFileAttributeView(
+                        parentFolder.toPath(), DosFileAttributeView::class.java,
+                        LinkOption.NOFOLLOW_LINKS
+                    )
                     dosView?.setHidden(true)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -54,5 +56,45 @@ internal actual class SqlDriverFactory {
 
             return driver!!
         }
+    }
+
+    actual fun createSync(): SqlDriver {
+        if (driver != null) return driver!!
+
+        val parentFolder = File(File(System.getProperty("user.home") + ".foodsaver"), "db")
+
+        if (!parentFolder.exists()) {
+            parentFolder.mkdirs()
+            try {
+                val dosView = Files.getFileAttributeView(
+                    parentFolder.toPath(), DosFileAttributeView::class.java,
+                    LinkOption.NOFOLLOW_LINKS
+                )
+                dosView?.setHidden(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        val dbPath = File(parentFolder, "MainAppDatabase.db")
+
+        driver = JdbcSqliteDriver(
+            url = "jdbc:sqlite:${dbPath.absolutePath}"
+        ).also {
+            it.execute(null, "PRAGMA journal_mode=WAL;", 0)
+            it.execute(null, "PRAGMA busy_timeout=10000;", 0)
+        }
+
+
+        try {
+            MainAppDatabase.Schema.synchronous().create(driver!!)
+        } catch (e: Exception) {
+            if (e.message?.contains("already exists") == false) {
+                throw e
+            }
+        }
+
+        return driver!!
+
     }
 }

@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.foodsaver.app.common.PrimaryButton
+import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.feature.auth.presentation.signup.SignupAction
 import com.foodsaver.app.feature.auth.presentation.signup.SignupEvent
 import com.foodsaver.app.feature.auth.presentation.signup.SignupState

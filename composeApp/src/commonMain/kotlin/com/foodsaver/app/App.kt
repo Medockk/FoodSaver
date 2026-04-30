@@ -63,7 +63,7 @@ fun App(
                 ) { _ ->
                     NavHost(
                         navController = navController,
-                        startDestination = startDestination
+                        startDestination = Route.HomeGraph
                     ) {
                         featureOnboarding(navController, onOnboardingComplete = {
                             navController.navigate(Route.AuthGraph)

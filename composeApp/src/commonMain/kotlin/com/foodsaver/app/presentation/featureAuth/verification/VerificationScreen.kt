@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.foodsaver.app.common.PrimaryButton
+import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.feature.auth.presentation.verification.VerificationEvent
 import com.foodsaver.app.feature.auth.presentation.verification.VerificationState
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
