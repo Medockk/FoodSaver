@@ -2,6 +2,7 @@ package com.foodsaver.app.coreCategory.data.repository
 
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.dto.Page
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreModel.dto.CategoryDto
 import com.foodsaver.app.coreModel.mappers.mapToCategoryModel
@@ -16,8 +17,10 @@ internal class CategoryRepositoryImpl(
 ): CategoryRepository {
 
     override suspend fun getAllCategories(): ApiResult<List<CategoryModel>> {
-        return saveNetworkCall<List<CategoryDto>> {
-            httpClient.get(HttpConstants.CATEGORY_URL)
-        }.map { it.mapToCategoryModel() }
+        return saveNetworkCall<Page<CategoryDto>> {
+            httpClient.get(HttpConstants.CATEGORY_URL + "/all")
+        }.map { page ->
+            page.content.mapToCategoryModel()
+        }
     }
 }

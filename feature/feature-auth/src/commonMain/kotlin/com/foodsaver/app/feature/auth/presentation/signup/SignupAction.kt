@@ -5,5 +5,5 @@ import com.foodsaver.app.commonModule.presentation.AppAction
 sealed interface SignupAction: AppAction {
 
     data class OnError(val message: String): SignupAction
-    data class OnRegistered(val uid: String): SignupAction
+    data object OnRegistered: SignupAction
 }

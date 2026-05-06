@@ -8,21 +8,18 @@ import kotlin.time.Instant
 fun ProductModel.toDto() =
     ProductDto(
         productId = productId,
-        title = title,
+        name = name,
         description = description,
-        photoUrl = photoUrl,
-        cost = cost,
-        costUnit = costUnit,
-        oldCost = oldCost,
+        imageUris = imageUris,
+        expiresAt = expiresAt,
+        price = price,
+        discount = discount,
         count = count,
-        rating = rating,
-        categoryIds = categoryIds,
         unit = unit,
-        unitName = unitType.value,
-        enterpriseId = enterpriseId,
-        expiresAt = try {
-            Instant.parse(expiresAt)
-        } catch (_: Exception) {
-            Clock.System.now()
-        }
+        currency = currency,
+        restaurantId = restaurantId,
+        categoryIds = categoryIds,
+        ingredientIds = ingredientIds,
+        isDeleted = isDeleted,
+        isAvailable = isAvailable
     )

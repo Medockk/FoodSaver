@@ -20,5 +20,5 @@ data class RestaurantModel(
     val deliveryCost: Double? = null,
     val averageDeliveryTime: Double? = null,
 
-    val organization: OrganizationModel
+    val companyId: String
 )

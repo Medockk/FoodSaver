@@ -4,49 +4,26 @@ package com.foodsaver.app.presentation.Home
 
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.InputOutput
-import com.foodsaver.app.commonModule.apiResult.onFailure
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
-import com.foodsaver.app.commonModule.utils.pagination.DefaultPaginator
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
-import com.foodsaver.app.coreAddress.domain.repository.ReadAddressRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
-import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductsUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
-import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
-import com.foodsaver.app.domain.model.CartRequestModel
-import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
-import com.foodsaver.app.domain.usecase.GetCartUseCase
-import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
-import com.foodsaver.app.domain.usecase.offer.GetOffersUseCase
+import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val categoryRepository: CategoryRepository,
-    private val getCachedProducts: GetCachedProductsUseCase,
-    private val getProductsUseCase: GetProductsUseCase,
-    private val getCartUseCase: GetCartUseCase,
-
-    private val addProductToCartUseCase: AddProductToCartUseCase,
-    private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
-    private val searchProductUseCase: SearchProductUseCase,
-
-    private val getProfileUseCase: GetProfileUseCase,
-    private val getOffersUseCase: GetOffersUseCase,
-    private val readAddressRepository: ReadAddressRepository,
+    private val restaurantRepository: RestaurantRepository,
 ) : BaseViewModel<HomeAction>() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -55,145 +32,74 @@ class HomeViewModel(
     override val baseChannel: Channel<HomeAction> = Channel()
     override val channel = baseChannel.receiveAsFlow()
 
-    private var searchJob: Job? = null
-
-    private val pageSize = 8
-
-    private val productsPaginator = OfflineFirstPaginator(
+    private val restaurantPaginator = OfflineFirstPaginator(
         initialKey = 0,
-        onLoadUpdated = { isLoading ->
-            _state.update { it.copy(isProductsLoading = isLoading) }
-        },
-        onNetworkRequest = { currentKey ->
-            getProductsUseCase.invoke(currentKey, pageSize).onSuccess {
-                println("Products from network with OfflineFirstPaginator ${it.map { p -> "id: ${p.productId}, name: ${p.title}" }}")
-            }
-        },
         onCacheRequest = {
-            getCachedProducts.invoke()
+            // TODO
+            ApiResult.loading()
         },
-        onNextKey = { currentKey, _ -> currentKey + 1 },
-        onError = { errorResponse ->
-            errorResponse?.let { errorResponse ->
-                sendError(errorResponse)
-            }
+        onNetworkRequest = { page ->
+            restaurantRepository.getAllRestaurants(page, 10)
         },
         onSuccess = { _, result ->
-            _state.update { currentState ->
-
-                val uniqueItems = (currentState.products + result)
-                    .toSet()
-
-                currentState.copy(
-                    products = uniqueItems.toList(),
-                    isProductsLoading = false
+            _state.update {
+                it.copy(
+                    restaurants = result
                 )
             }
         },
-        onEndReaching = { _, result -> pageSize > result.size },
-    )
-    private val searchPaginator = DefaultPaginator(
-        initialKey = 0,
+        onError = { error ->
+            sendError(error)
+        },
+        onNextKey = { currentKey, _ ->
+            currentKey + 1
+        },
         onLoadUpdated = { isLoading ->
-            _state.update { it.copy(isProductsLoading = isLoading) }
-        },
-        onRequest = { page ->
-            searchProductUseCase.invoke(
-                productName = _state.value.searchQuery.text,
-                categoryIds = _state.value.selectedCategoryIds.toList(),
-                page = page,
-                size = pageSize
-            )
-        },
-        onNextKey = { currentKey, _ -> currentKey + 1 },
-        onError = { errorResponse ->
-            errorResponse?.let { errorResponse ->
-                sendError(errorResponse)
+            _state.update {
+                it.copy(
+                    isRestaurantsLoading = isLoading
+                )
             }
         },
-        onSuccess = { key, result ->
-            println("key is $key")
-            if (key == 0) {
-                _state.update {
-                    it.copy(
-                        searchedProducts = result,
-                        productsDisplayMode = ProductsDisplayMode.Searched,
-                        isProductsLoading = false
-                    )
-                }
-            } else {
-                val existingIds = _state.value.searchedProducts.map { it.productId }.toSet()
-                val uniqueNewProducts = result.filter {
-                    it.productId !in existingIds
-                }
-
-                _state.update {
-                    it.copy(
-                        searchedProducts = it.searchedProducts + uniqueNewProducts,
-                        productsDisplayMode = ProductsDisplayMode.Searched,
-                        isProductsLoading = false
-                    )
-                }
-            }
-        },
-        onEndReaching = { currentKey, result -> (currentKey * pageSize) >= result.size }
+        onEndReaching = { _, result ->
+            result.size < 10
+        }
     )
 
     init {
-        getOffers()
-        loadProducts()
+        t()
+        loadRestaurants()
         loadCart()
         getAllCategories()
-        getProfile()
         getCurrentAddress()
     }
 
-    private fun getCurrentAddress() = viewModelScope.launch(Dispatchers.InputOutput) {
-        readAddressRepository.getCurrentAddress().collectRequest(
-            onSuccess = { address ->
-                _state.update { it.copy(currentAddress = address) }
-                println("Current address ${_state.value.currentAddress}")
-            }
-        )
-    }
-
-    private fun getOffers() = viewModelScope.launch(Dispatchers.InputOutput) {
-        _state.update { it.copy(isOffersLoading = true) }
-        getOffersUseCase.invoke()
-            .onSuccess { response ->
-                _state.update { it.copy(offers = response, isOffersLoading = false) }
-            }
-    }
-
-    fun onRefresh() {
-        _state.update { it.copy(isRefresh = true, isProductsLoading = true, products = emptyList()) }
-        viewModelScope.launch(Dispatchers.InputOutput) {
-            productsPaginator.reset()
-            searchPaginator.reset()
-            arrayOf(
-                getOffers(),
-                loadProducts(),
-                loadCart(),
-                getAllCategories(),
-                getProfile(),
-                getCurrentAddress()
-            )
-
-            delay(1000)
-            withContext(Dispatchers.Main) {
-                _state.update { it.copy(isRefresh = false) }
-            }
-        }
-    }
-
-    private fun getProfile(): Job {
-        return viewModelScope.launch(Dispatchers.InputOutput) {
-            getProfileUseCase().collectRequest(
-                onSuccess = { result ->
-                    _state.update { it.copy(profile = result) }
+    private fun t() {
+        viewModelScope.launch {
+            restaurantRepository.getCachedRestaurants().collectRequest(
+                onSuccess = {
+                    println("Successfully exact local repositories")
+                    println("Local repositories ${it.map { m -> m.name + "\n" }}")
+                },
+                onError = {
+                    println("Local database error ${it.uiText.asString()}")
                 }
             )
         }
+    }
+
+    private fun loadRestaurants() {
+        viewModelScope.launch(Dispatchers.InputOutput) {
+            restaurantPaginator.loadPage()
+        }
+    }
+
+    private fun getCurrentAddress() = viewModelScope.launch(Dispatchers.InputOutput) {
+        // TODO
+    }
+
+    fun onRefresh() {
+        // TODO
     }
 
     private fun getAllCategories(): Job {
@@ -205,129 +111,23 @@ class HomeViewModel(
         }
     }
 
-    private fun loadProducts(): Job {
-        return viewModelScope.launch(Dispatchers.InputOutput) {
-            productsPaginator.loadPage()
-        }
-    }
-
-    private fun loadCart(): Job {
-        return viewModelScope.launch(Dispatchers.InputOutput) {
-            getCartUseCase().collectRequest(
-                onSuccess = { result ->
-                    val cartIds = result.map { item -> item.product.productId }.toSet()
-                    _state.update {
-                        it.copy(
-                            cartProducts = result,
-                            cartProductIds = cartIds,
-                        )
-                    }
-                }
-            )
-        }
+    private fun loadCart(): Job = viewModelScope.launch(Dispatchers.InputOutput) {
+        // TODO
     }
 
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnCategoryIndexChange -> {
-                val currentCategories = _state.value.selectedCategoryIds.toSet()
-
-                _state.update { currentState ->
-                    val newCategories = if (currentCategories.contains(event.value)) {
-                        currentCategories - event.value
-                    } else {
-                        currentCategories + event.value
-                    }
-                    currentState.copy(selectedCategoryIds = newCategories)
-                }
-
-                searchJob?.cancel()
-                searchPaginator.reset()
-
-                if (_state.value.selectedCategoryIds.isEmpty() && _state.value.searchQuery.text.isBlank()) {
-                    _state.update {
-                        it.copy(productsDisplayMode = ProductsDisplayMode.All)
-                    }
-                    return
-                }
-
-                searchJob = viewModelScope.launch(Dispatchers.InputOutput) {
-                    searchPaginator.loadPage()
-                }
+                TODO("navigate to search screen!")
             }
 
             is HomeEvent.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = event.value) }
-
-                searchJob?.cancel()
-                searchPaginator.reset()
-
-                if (_state.value.searchQuery.text.isBlank() && _state.value.selectedCategoryIds.isEmpty()) {
-                    _state.update { it.copy(productsDisplayMode = ProductsDisplayMode.All) }
-                    return
-                }
-
-                _state.update {
-                    it.copy(
-                        productsDisplayMode = ProductsDisplayMode.Searched,
-                        searchedProducts = it.searchedProducts.filter { filter ->
-                            filter.title.contains(it.searchQuery.text, true)
-                        }
-                    )
-                }
-                println("Search Network result " + _state.value.searchedProducts)
-                searchJob = viewModelScope.launch(Dispatchers.InputOutput) {
-                    searchPaginator.loadPage()
-                }
+                // TODO navigate to search screen!
             }
 
-            HomeEvent.LoadNextProducts -> {
-                loadProducts()
-            }
-
-            is HomeEvent.OnAddProductToCart -> {
-                if (_state.value.cartProductIds.contains(event.productId)) {
-                    viewModelScope.launch(Dispatchers.InputOutput) {
-                        removeProductFromCartUseCase(event.productId)
-                            .onFailure {
-                                sendError(it)
-                            }
-                    }
-                } else {
-                    viewModelScope.launch(Dispatchers.InputOutput) {
-                        val request = CartRequestModel(event.productId)
-                        val result = addProductToCartUseCase.invoke(request)
-                        result.onFailure {
-                            sendError(it)
-                        }
-                    }
-                }
-            }
-
-            is HomeEvent.OnOfferClick -> {
-                val cart = _state.value.cartProducts
-                    .find { it.product.productId == event.productId }
-                val isProductInCart = cart != null
-
-                val actionElement =
-                    HomeAction.OnProductNavigation(event.productId, isProductInCart, cart?.quantity)
-                baseChannel.trySend(actionElement)
-                    .onFailure {
-                        viewModelScope.launch { baseChannel.send(actionElement) }
-                    }
-            }
-
-            is HomeEvent.OnProductClick -> {
-                val cartItem = _state.value.cartProducts
-                    .find { it.product.productId == event.productId }
-
-                baseChannel.trySend(
-                    HomeAction.OnProductNavigation(
-                        productId = event.productId,
-                        isProductInCart = cartItem != null,
-                        cartProductCount = cartItem?.quantity
-                    )
-                )
+            HomeEvent.LoadNextRestaurants -> {
+                loadRestaurants()
             }
         }
     }

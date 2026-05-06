@@ -35,7 +35,7 @@ import com.foodsaver.app.common.chip.PrimaryChip
 import com.foodsaver.app.common.product.AddProductCard
 import com.foodsaver.app.common.scaffold.ActionButtonItem
 import com.foodsaver.app.common.scaffold.PrimaryScaffold
-import com.foodsaver.app.featureEnterprises.presentation.enterprises.EnterprisesState
+import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantState
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantEvent
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantViewModel
 import com.foodsaver.app.presentation.featureRestaurant.components.ImagePageIndicator
@@ -68,7 +68,7 @@ fun RestaurantScreenRoot(
 private fun RestaurantScreenPreview() {
     LocalFoodSaverThemeComposition {
         RestaurantScreen(
-            state = EnterprisesState(
+            state = RestaurantState(
                 selectedImageIndex = 3,
                 selectedCategoryId = "1",
             ),
@@ -81,7 +81,7 @@ private fun RestaurantScreenPreview() {
 
 @Composable
 private fun RestaurantScreen(
-    state: EnterprisesState,
+    state: RestaurantState,
     onEvent: (RestaurantEvent) -> Unit,
     navController: NavController,
 ) {

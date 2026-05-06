@@ -1,0 +1,18 @@
+package com.foodsaver.app.featureEnterprises.presentation.enterprises
+
+import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
+import com.foodsaver.app.coreModel.model.ProductModel
+import com.foodsaver.app.featureEnterprises.domain.model.RestaurantCategoryModel
+
+data class RestaurantState(
+    val isFavoriteRestaurant: Boolean = false,
+    val restaurant: RestaurantModel? = null,
+    val selectedImageIndex: Int = 0,
+    val restaurantCategories: List<RestaurantCategoryModel> = emptyList(),
+    val selectedCategoryId: String? = null,
+    val selectedCategoryName: String? = null,
+
+    val restaurantProducts: List<ProductModel> = emptyList(),
+    val isProductsLoading: Boolean = true,
+)
+

@@ -47,15 +47,12 @@ class AppViewModel(
             val hasUid = async { authUserManager.isUserAuthenticated() }
 
             if (hasRefreshToken.await() && hasUid.await()) {
+                println("Remember user remind uid: ${authUserManager.getCurrentUid()}")
                 _authenticationState.update { AuthenticationState.Authenticated }
                 return@launch
             }
 
             _authenticationState.update { AuthenticationState.Unauthenticated }
         }
-    }
-
-    fun onUserAuthenticate(uid: String) {
-        authUserManager.setCurrentUid(uid)
     }
 }

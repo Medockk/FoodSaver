@@ -2,12 +2,15 @@ package com.foodsaver.app.feature.auth.presentation.signup
 
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreFcm.service.FcmService
 import com.foodsaver.app.domain.model.SignUpModel
 import com.foodsaver.app.domain.usecase.SignUpUseCase
 import com.foodsaver.app.domain.utils.EmailValidator
+import com.foodsaver.app.feature.auth.common.AuthLocalError
 import com.foodsaver.app.feature.auth.presentation.utils.AuthenticationBaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +20,9 @@ import kotlinx.coroutines.launch
 
 class SignupViewModel(
     fcmService: FcmService,
+    authManager: AuthUserManager,
     private val signUpUseCase: SignUpUseCase
-): AuthenticationBaseViewModel<SignupAction>(fcmService) {
+): AuthenticationBaseViewModel<SignupAction>(fcmService, authManager) {
 
     private val _state = MutableStateFlow(SignupState())
     val state = _state.asStateFlow()
@@ -44,6 +48,35 @@ class SignupViewModel(
                 _state.update { it.copy(retypePassword = event.value) }
             }
             SignupEvent.Signup -> {
+
+                val currentState = _state.value
+
+                if (currentState.email.isBlank()) {
+                    val error = AuthLocalError.EmptyEmail
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+                if (EmailValidator.validate(currentState.email)) {
+                    val error = AuthLocalError.InvalidEmail
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+                if (currentState.name.isBlank()) {
+                    val error = AuthLocalError.EmptyFio
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+                if (currentState.password.isBlank()) {
+                    val error = AuthLocalError.EmptyPassword
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+                if (currentState.password != currentState.retypePassword) {
+                    val error = AuthLocalError.PasswordNotEqual
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+
                 val isFieldsNotEmpty = checkFields(
                     fields = listOf(
                         _state.value.email,
@@ -57,15 +90,17 @@ class SignupViewModel(
                     _state.update { it.copy(isLoading = true) }
                     viewModelScope.launch(Dispatchers.InputOutput) {
                         val requestModel = SignUpModel(
-                            username = _state.value.email,
-                            password = _state.value.password
+                            email = _state.value.email,
+                            password = _state.value.password,
+                            fullName = _state.value.name
                         )
 
                         signUpUseCase(requestModel)
                             .onSuccess { responseModel ->
                                 onSaveFcmToken()
+                                saveAuthenticationSession(responseModel.uid)
                                 _state.update { it.copy(isLoading = false) }
-                                baseChannel.send(SignupAction.OnRegistered(responseModel.uid))
+                                baseChannel.send(SignupAction.OnRegistered)
                             }.onFailure { error ->
                                 _state.update { it.copy(isLoading = false) }
                                 sendError(error)

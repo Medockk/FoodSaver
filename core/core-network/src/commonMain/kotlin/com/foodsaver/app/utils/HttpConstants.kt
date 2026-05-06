@@ -4,10 +4,10 @@ object HttpConstants {
 
     private const val VERSION = "v1"
 
-    internal const val ROOT_URL = "http://10.143.136.227:8088"
+    internal const val ROOT_URL = "http://10.195.66.227:8088"
     const val BASE_URL = "$ROOT_URL/api/$VERSION/"
 
-    internal const val REFRESH_URL = "${BASE_URL}auth/refresh"
+    internal const val REFRESH_URL = "${BASE_URL}refreshToken"
 
     internal const val CSRF_COOKIE_NAME = "XSRF-TOKEN"
     internal const val CSRF_HEADER_NAME = "X-XSRF-TOKEN"
@@ -20,7 +20,7 @@ object HttpConstants {
     const val OFFER_URL = "${BASE_URL}offers"
     const val BANK_URL = "${BASE_URL}bank"
     const val ADDRESS_URL = "${BASE_URL}address"
-    const val ENTERPRISE_URL = "${BASE_URL}enterprises"
+    const val ENTERPRISE_URL = "${BASE_URL}restaurant"
     const val FCM_URL = "${BASE_URL}fcm"
     const val INGREDIENTS_URL = "${BASE_URL}ingredients"
 }

@@ -12,19 +12,19 @@ import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.model.SignUpModel
 
 internal fun SignInModel.toDto() =
-    SignInModelDto(username, password)
+    SignInModelDto(email, password)
 
 internal fun SignInModelDto.toModel() =
-    SignInModel(username, password)
+    SignInModel(email, password)
 
 internal fun SignUpModel.toDto() =
-    SignUpModelDto(username, password)
+    SignUpModelDto(fullName, email, password)
 
 internal fun SignUpModelDto.toModel() =
-    SignUpModel(username, password)
+    SignUpModel(email, password, fullName)
 
 internal fun AuthResponseModelDto.toModel() =
-    AuthResponseModel(uid, username, roles)
+    AuthResponseModel(uid, permissions)
 
 internal fun ForgotPasswordModel.toDto() =
     ForgotPasswordDto(

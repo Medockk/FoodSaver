@@ -39,143 +39,19 @@ internal class PaymentMethodRepositoryImpl(
     private val authUserManager: AuthUserManager,
 ) : ReadPaymentMethodRepository, EditPaymentMethodRepository {
 
-    override fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>?>> = channelFlow {
-        send(ApiResult.loading())
-
-        val database = databaseProvider.get()
-        val paymentQueries = database.bankEntityQueries
-
-        val databaseJob = launch(Dispatchers.InputOutput) {
-            authUserManager.getCurrentUid()?.let { uid ->
-                paymentQueries
-                    .getPaymentMethods(uid)
-                    .asFlow()
-                    .mapToList(Dispatchers.InputOutput)
-                    .collect { methods ->
-                        send(ApiResult.success(methods.mapToModel()))
-                    }
-            }
-        }
-
-        val httpResult = saveNetworkCall<List<BankResponseDto>?> {
-            httpClient.get(HttpConstants.BANK_URL + "/all")
-        }.onSuccess { dtos ->
-            paymentQueries.transaction {
-                authUserManager.getCurrentUid()?.let { uid ->
-                    paymentQueries.clear(uid)
-                    dtos?.forEach { dto ->
-                        paymentQueries.addPaymentMethod(
-                            globalId = dto.id,
-                            cardNumber = dto.cardNumber,
-                            isSelected = dto.isSelected,
-                            uid = uid,
-                            tempId = Uuid.random().toString()
-                        )
-                    }
-                }
-            }
-        }.map { dto ->
-            dto?.map { it.toModel() }
-        }
-
-        println("BANK/all is $httpResult")
-
-        send(httpResult)
-
-        awaitClose {
-            databaseJob.cancel()
-        }
+    override fun getPaymentMethod(): Flow<ApiResult<List<PaymentMethodModel>?>> {
+        TODO()
     }
 
-    override fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel?>> = channelFlow {
-
-        send(ApiResult.loading())
-
-        val queries = databaseProvider.get().bankEntityQueries
-        val uid = authUserManager.getCurrentUid()
-
-        val databaseJob = launch(Dispatchers.InputOutput) {
-            uid?.let { uid ->
-                queries.getCurrentPaymentMethod(uid).asFlow()
-                    .mapToOneOrNull(Dispatchers.InputOutput)
-                    .collect { entity ->
-                        if (entity != null) {
-                            send(ApiResult.success(entity.toModel()))
-                        } else {
-                            queries.getPaymentMethods(uid)
-                                .executeAsList().lastOrNull()?.let {
-                                    send(ApiResult.success(it.toModel()))
-                                }
-                        }
-                    }
-            }
-        }
-
-        val httpResult = saveNetworkCall<BankResponseDto?> {
-            httpClient.get(HttpConstants.BANK_URL + "/selected")
-        }.onSuccess { dto ->
-            dto?.let {
-                uid?.let {
-                    queries.disablePaymentMethods(uid)
-                    queries.setCurrentPaymentMethodByGlobalId(
-                        isSelected = dto.isSelected,
-                        globalId = dto.id,
-                        uid = uid
-                    )
-                }
-            }
-        }.map { it?.toModel() }
-
-        send(httpResult)
-
-        awaitClose { databaseJob.cancel() }
+    override fun getCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodModel?>> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun addPaymentMethod(methodModel: AddPaymentMethodModel): ApiResult<Unit> {
-
-        val queries = databaseProvider.get().bankEntityQueries
-        val uid = authUserManager.getCurrentUid()
-        val tempId = Uuid.random().toString()
-
-        return saveNetworkCall<BankResponseDto> {
-            httpClient.post(HttpConstants.BANK_URL + "/add") {
-                parameter("isSelected", methodModel.isSelected)
-            }
-        }.onSuccess { response ->
-            uid?.let {
-                queries.transaction {
-
-                    if (methodModel.isSelected) {
-                        queries.disablePaymentMethods(uid)
-                    }
-
-                    queries.updateLocalPaymentMethod(
-                        globalId = response.id,
-                        isSelected = response.isSelected,
-                        cardNumber = response.cardNumber,
-                        uid = uid,
-                        tempId = tempId
-                    )
-                }
-            }
-        }.onFailure {
-            queries.deleteLocalPaymentMethod(tempId)
-        }.map { }
+        TODO()
     }
 
     override suspend fun removePaymentMethod(methodId: String): ApiResult<Unit> {
-
-        authUserManager.getCurrentUid()?.let { uid ->
-            val queries = databaseProvider.get().bankEntityQueries
-            queries.removePaymentMethodByGlobalId(methodId, uid)
-        }
-
-        return saveNetworkCall<Unit> {
-            httpClient.delete(HttpConstants.BANK_URL + "/delete") {
-                parameter("cardId", methodId)
-            }
-        }.onFailure {
-            println("removePaymentMethodException! $it")
-        }
+        TODO()
     }
 }

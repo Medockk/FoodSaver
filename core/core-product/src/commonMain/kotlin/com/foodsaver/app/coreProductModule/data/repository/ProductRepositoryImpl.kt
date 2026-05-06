@@ -5,6 +5,7 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.apiResult.saveApiCall
+import com.foodsaver.app.commonModule.dto.Page
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.ProductModel
@@ -40,42 +41,11 @@ internal class ProductRepositoryImpl(
         page: Int,
         size: Int,
     ): ApiResult<List<ProductModel>> {
-        return saveNetworkCall<List<ProductDto>> {
-            // поиск
-            httpClient.get(HttpConstants.PRODUCTS_URL) {
-                parameter("page", page)
-                parameter("size", size)
-                parameter("searchType", "NEARBY") // тип поиска (ближайшее/рекомендованное)
-            }
-        }.onSuccess { productsDto: List<ProductDto>? ->
-            val queries = databaseProvider.get().cachedProductQueries
-
-            queries.transaction {
-                // транзакция для того, чтобы не делать N+1 запросы к БД
-                productsDto?.forEach { dto ->
-                    queries.insertCachedProduct(
-                        productId = dto.productId,
-                        product = dto
-                    )
-                }
-            }
-        }.map { it.toModel() }
+        TODO()
     }
 
-    override suspend fun getCachedProduct(productId: String): Flow<ProductModel?> = channelFlow {
-        val queries = databaseProvider.get().cachedProductQueries
-
-        val product = try {
-            queries.getCachedProductByProductId(productId)
-                .executeAsList() // для безопасности, тк метод executeAsOne может выбросить IllegalStateException ->
-                // сработает catch блок ->
-                // вернёт null
-                .firstOrNull()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-        send(product?.product?.toModel())
+    override suspend fun getCachedProduct(productId: String): Flow<ProductModel?> {
+        TODO()
     }
 
     override suspend fun searchProduct(
@@ -98,47 +68,38 @@ internal class ProductRepositoryImpl(
         }
     }
 
-    override suspend fun addProduct(addProductModel: AddProductModel): ApiResult<Unit> {
-
-        val dto = json.encodeToString(addProductModel.toDto())
-
-        return saveNetworkCall<ProductDto> {
-            httpClient.post(HttpConstants.PRODUCTS_URL) {
-                setBody(
-                    MultiPartFormDataContent(
-                    parts = formData {
-                        // через formData тк file - это отдельный request параметр
-                        // можно установить только 1 setBody
-                        append("file", addProductModel.photo, Headers.build {
-                            append(HttpHeaders.ContentType, "image/png")
-                            append(HttpHeaders.ContentDisposition, "filename=\"photo.png\"")
-                        })
-
-                        append("product", dto, Headers.build {
-                            append(HttpHeaders.ContentType, "application/json")
-                        })
-                    }
-                )
-                )
-            }
-        }.onSuccess {
-            // при успехе кэшируем
-            val queries = databaseProvider.get().cachedProductQueries
-            queries.insertCachedProduct(it.productId, it)
-        }.map { }
-    }
-
-    override suspend fun getCachedProducts(): ApiResult<List<ProductModel>> =
-        withContext(Dispatchers.InputOutput) {
-            return@withContext saveApiCall {
-                val queries = databaseProvider.get().cachedProductQueries
-                val products = queries.getCachedProducts().executeAsList()
-                    .map { cachedProduct ->
-                        cachedProduct.product.toModel()
-                    }
-                products
+    override suspend fun getProductsByRestaurantId(restaurantId: String, page: Int, size: Int): ApiResult<List<ProductModel>> {
+        return withContext(Dispatchers.InputOutput) {
+            return@withContext saveNetworkCall<Page<ProductDto>> {
+                httpClient.get(HttpConstants.PRODUCTS_URL + "/restaurant") {
+                    parameter("page", page)
+                    parameter("size", size)
+                    parameter("restaurantId", restaurantId)
+                }
+            }.map { page ->
+                println("page $page")
+                page.content.toModel()
             }
         }
+    }
+
+    override suspend fun getProductById(productId: String): ApiResult<ProductModel> {
+        return withContext(Dispatchers.InputOutput) {
+            return@withContext saveNetworkCall<ProductDto> {
+                httpClient.get(HttpConstants.PRODUCTS_URL + "/id") {
+                    parameter("productId", productId)
+                }
+            }.map { it.toModel() }
+        }
+    }
+
+    override suspend fun addProduct(addProductModel: AddProductModel): ApiResult<Unit> {
+        TODO()
+    }
+
+    override suspend fun getCachedProducts(): ApiResult<List<ProductModel>> {
+        TODO()
+    }
 
     override suspend fun deleteProduct(productId: String): ApiResult<Unit> {
         TODO("хз пока стоит ли тут делать или вынести в editProductRepository")

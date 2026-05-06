@@ -48,6 +48,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.coreDi)
+            implementation(projects.core.coreDb)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreNetwork)

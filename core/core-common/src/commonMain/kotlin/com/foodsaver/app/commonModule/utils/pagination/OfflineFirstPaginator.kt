@@ -9,7 +9,7 @@ class OfflineFirstPaginator<Key, Item>(
     private val onCacheRequest: suspend () -> ApiResult<Item>,
     onNetworkRequest: suspend (nextKey: Key) -> ApiResult<Item>,
     onSuccess: suspend (nextKey: Key, result: Item) -> Unit,
-    onError: suspend (error: ApiResult.Error?) -> Unit,
+    onError: suspend (error: ApiResult.Error) -> Unit,
     onNextKey: (currentKey: Key, result: Item) -> Key,
     onLoadUpdated: (Boolean) -> Unit,
     onEndReaching: (currentKey: Key, result: Item) -> Boolean,
@@ -32,7 +32,7 @@ class OfflineFirstPaginator<Key, Item>(
             // load cache in first
             val cache = onCacheRequest()
             cache.onSuccess { result ->
-                println("Cache pagination $result")
+                println("Successful loading caching result")
                 onSuccess(currentKey, result)
             }
             isCacheLoaded = true

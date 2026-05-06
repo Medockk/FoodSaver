@@ -1,11 +1,10 @@
 package com.foodsaver.app.coreEnterprises.data.dto
 
 import com.foodsaver.app.coreModel.dto.OrganizationDto
-import com.foodsaver.app.coreModel.model.OrganizationModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class EnterprisesDto(
+internal data class RestaurantDto(
     val id: String,
 
     val name: String,
@@ -20,5 +19,5 @@ internal data class EnterprisesDto(
     val deliveryCost: Double? = null,
     val averageDeliveryTime: Double? = null,
 
-    val organization: OrganizationDto,
+    val companyId: String,
 )

@@ -45,43 +45,6 @@ import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.remove_icon
 import org.jetbrains.compose.resources.vectorResource
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun AddProductCardPreview() {
-
-    var isProductInCart by retain { mutableStateOf(false) }
-    LocalFoodSaverThemeComposition {
-        AddProductCard(
-            product = ProductModel(
-                productId = "1",
-                title = "Product 1",
-                description = "Some description this is super surger idk ",
-                photoUrl = "",
-                cost = 127.23f,
-                costUnit = "Rub",
-                count = 123,
-                rating = 3.6f,
-                categoryIds = listOf(),
-                unit = 60,
-                unitType = ProductUnitType.GRAM,
-                enterpriseId = "",
-                expiresAt = "",
-                expiresDateType = ExpiresDateType.DAYS
-            ),
-            onAddClick = {
-                isProductInCart = true
-            },
-            onRemoveClick = {
-                isProductInCart = false
-            },
-            onProductClick = {},
-            modifier = Modifier
-                .padding(20.dp),
-            isProductInCart = isProductInCart
-        )
-    }
-}
-
 @Composable
 fun AddProductCard(
     product: ProductModel,
@@ -127,7 +90,7 @@ fun AddProductCard(
         ) {
 
             AsyncImageWithShimmerLoading(
-                model = product.photoUrl,
+                model = product.imageUris,
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .heightIn(min = 75.dp)
@@ -137,7 +100,7 @@ fun AddProductCard(
 
             Spacer(Modifier.height(5.dp))
             Text(
-                text = product.title,
+                text = product.name,
                 style = FoodSaverTheme.typography.bodyRegularBold,
                 color = FoodSaverTheme.colorScheme.onBackgroundSubtitle
             )
@@ -154,12 +117,12 @@ fun AddProductCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = product.costUnit + " ",
+                    text = product.currency + " ",
                     style = priceTextStyle,
                     color = priceTextColor
                 )
                 Text(
-                    text = product.cost.toString(),
+                    text = product.price.toString(),
                     color = priceTextColor,
                     style = priceTextStyle
                 )

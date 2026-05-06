@@ -1,26 +1,29 @@
 package com.foodsaver.app.coreModel.model
 
+import kotlin.time.Instant
+
+/**
+ * @param unit - например kg, g, ml, l, pcs (штуки)
+ */
 data class ProductModel(
     val productId: String,
 
-    val title: String,
+    val name: String,
     val description: String,
-    val photoUrl: String?,
+    val imageUris: List<String>,
+    val expiresAt: Instant,
 
-    val cost: Float,
-    val costUnit: String,
-    val oldCost: Float? = cost,
+    val price: Double,
+    val discount: Double,
+    val count: Long,
 
-    val count: Int,
-    val rating: Float?,
+    val unit: String,
+    val currency: String,
 
+    val restaurantId: String,
     val categoryIds: List<String>,
+    val ingredientIds: List<String>,
 
-    val unit: Long,
-    val unitType: ProductUnitType,
-
-    val enterpriseId: String,
-
-    val expiresAt: String,
-    val expiresDateType: ExpiresDateType,
+    val isDeleted: Boolean,
+    val isAvailable: Boolean,
 )

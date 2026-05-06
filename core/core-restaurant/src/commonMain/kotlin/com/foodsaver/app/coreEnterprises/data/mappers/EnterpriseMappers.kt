@@ -1,15 +1,15 @@
 package com.foodsaver.app.coreEnterprises.data.mappers
 
 import com.foodsaver.app.coreModel.mappers.toModel
-import com.foodsaver.app.coreEnterprises.data.dto.EnterprisesDto
+import com.foodsaver.app.coreEnterprises.data.dto.RestaurantDto
 import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
 
-internal fun EnterprisesDto.mapToModel() = RestaurantModel(
+internal fun RestaurantDto.mapToModel() = RestaurantModel(
     id = id,
     latitude = latitude,
     longitude = longitude,
     addressName = addressName,
-    organization = organization.toModel(),
+    companyId = companyId,
     photoUris = photoUris,
 
     description = description,

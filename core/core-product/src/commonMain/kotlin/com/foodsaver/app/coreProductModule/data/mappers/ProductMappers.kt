@@ -14,26 +14,20 @@ internal fun ProductDto.toModel(): ProductModel {
 
     return ProductModel(
         productId = productId,
-
-        title = title,
+        name = name,
         description = description,
-        photoUrl = photoUrl,
-
-        cost = cost,
-        costUnit = ProductUtils.getCostSymbol(costUnit),
-        oldCost = oldCost,
-
-        rating = rating,
+        imageUris = imageUris,
+        expiresAt = expiresAt,
+        price = price,
+        discount = discount,
         count = count,
-
         unit = unit,
-        unitType = ProductUtils.getUnitType(unitName),
-
-        enterpriseId = enterpriseId,
-
+        currency = currency,
+        restaurantId = restaurantId,
         categoryIds = categoryIds,
-        expiresAt = ProductUtils.castExpiresDate(expiresAt).toString(),
-        expiresDateType = ProductUtils.getExpiresType(expiresAt),
+        ingredientIds = ingredientIds,
+        isDeleted = isDeleted,
+        isAvailable = isAvailable
     )
 }
 

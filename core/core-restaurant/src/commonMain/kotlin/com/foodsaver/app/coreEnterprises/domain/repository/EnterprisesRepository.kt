@@ -1,18 +1,21 @@
 package com.foodsaver.app.coreEnterprises.domain.repository
 
 import com.foodsaver.app.commonModule.apiResult.ApiResult
-import com.foodsaver.app.coreEnterprises.domain.model.EnterpriseImagesModel
 import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
-import com.foodsaver.app.coreEnterprises.domain.model.UploadEnterpriseImageModel
+import com.foodsaver.app.coreEnterprises.domain.model.UploadRestaurantImageModel
 import com.foodsaver.app.coreEnterprises.domain.model.UserLocationModel
+import kotlinx.coroutines.flow.Flow
 
-interface EditEnterpriseRepository : EnterprisesRepository {
-    suspend fun uploadEnterpriseImage(uploadEnterpriseImageModel: UploadEnterpriseImageModel): ApiResult<String?>
+interface EditRestaurantRepository : RestaurantRepository {
+    suspend fun uploadRestaurantImage(uploadRestaurantImageModel: UploadRestaurantImageModel): ApiResult<String?>
 }
 
-interface EnterprisesRepository {
+interface RestaurantRepository {
 
-    suspend fun getNearestEnterprises(userLocationModel: UserLocationModel): ApiResult<List<RestaurantModel>>
-    suspend fun getEnterpriseById(enterpriseId: String): ApiResult<RestaurantModel?>
-    suspend fun getEnterpriseImageUrls(enterpriseId: String): ApiResult<List<EnterpriseImagesModel>>
+    suspend fun getCachedRestaurants(): Flow<ApiResult<List<RestaurantModel>>>
+
+    suspend fun getNearestRestaurants(userLocationModel: UserLocationModel): ApiResult<List<RestaurantModel>>
+    suspend fun getRestaurantById(restaurantId: String): ApiResult<RestaurantModel>
+
+    suspend fun getAllRestaurants(page: Int, size: Int): ApiResult<List<RestaurantModel>>
 }

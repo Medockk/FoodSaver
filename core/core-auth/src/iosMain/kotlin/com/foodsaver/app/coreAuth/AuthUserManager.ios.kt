@@ -11,7 +11,7 @@ actual class AuthUserManager {
     }
 
     actual fun setCurrentUid(uid: String) {
-        storage.setObject("uid", uid)
+        storage.setObject(uid, forKey = "uid")
     }
 
     actual fun isUserAuthenticated(): Boolean {
@@ -20,5 +20,6 @@ actual class AuthUserManager {
 
     actual fun logout() {
         storage.removeObjectForKey("uid")
+        storage.synchronize()
     }
 }

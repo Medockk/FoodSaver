@@ -34,12 +34,12 @@ abstract class BasePaginator<Key, Item>(
         isMakingRequest = false
 
         result.onSuccess { result ->
-            println("BasePaginator onSuccess $result")
+            println("BasePaginator onSuccess")
             onSuccess(currentKey, result)
             currentKey = onNextKey(currentKey, result)
             isEndReaching = onEndReaching(currentKey, result)
         }.onFailure { error ->
-            println("BasePaginator onFailure $error")
+            println("BasePaginator onFailure \n${error.uiText.asString()}")
             onError(error)
         }
         onLoadUpdated(false)

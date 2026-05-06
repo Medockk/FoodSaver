@@ -29,6 +29,7 @@ import com.foodsaver.app.feature.auth.presentation.signup.SignupAction
 import com.foodsaver.app.feature.auth.presentation.signup.SignupEvent
 import com.foodsaver.app.feature.auth.presentation.signup.SignupState
 import com.foodsaver.app.feature.auth.presentation.signup.SignupViewModel
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
@@ -53,7 +54,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SignupScreenRoot(
     navController: NavController,
-    onLogged: (String) -> Unit,
     viewModel: SignupViewModel = koinViewModel(),
 ) {
 
@@ -72,8 +72,12 @@ fun SignupScreenRoot(
             is SignupAction.OnError -> {
                 snackbarHostState.showSnackbar(it.message, withDismissAction = true)
             }
-            is SignupAction.OnRegistered -> {
-                onLogged(it.uid)
+            SignupAction.OnRegistered -> {
+                navController.navigate(Route.HomeGraph) {
+                    popUpTo<Route.AuthGraph> {
+                        inclusive = true
+                    }
+                }
             }
         }
     }

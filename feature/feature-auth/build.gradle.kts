@@ -70,6 +70,8 @@ kotlin {
 
             implementation(libs.components.components.resources)
             implementation(libs.compose.runtime.runtime)
+
+            implementation(projects.core.coreAuth)
         }
         jvmMain.dependencies {
 

@@ -20,13 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
-import com.foodsaver.app.coreModel.model.OrganizationModel
 import com.foodsaver.app.ui.FoodSaverTheme
-import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.clock_icon
 import foodsaver.composeapp.generated.resources.delivery_free
@@ -34,29 +31,6 @@ import foodsaver.composeapp.generated.resources.delivery_icon
 import foodsaver.composeapp.generated.resources.star_icon
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun RestaurantCardPreview() {
-    LocalFoodSaverThemeComposition {
-        RestaurantCard(
-            RestaurantModel(
-                id = "",
-                latitude = 2.3,
-                longitude = 2.5,
-                addressName = "Address name...",
-                organization = OrganizationModel("", "Magnit"),
-                description = "Some description...",
-                rating = null,
-                deliveryCost = null,
-                averageDeliveryTime = null,
-                name = "Some burgers",
-                photoUris = listOf(),
-            ),
-            onRestaurantClick = { }
-        )
-    }
-}
 
 @Composable
 fun RestaurantCard(
@@ -84,7 +58,7 @@ fun RestaurantCard(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = restaurant.organization.organizationName,
+            text = restaurant.name,
             color = FoodSaverTheme.colorScheme.onBackground,
             style = FoodSaverTheme.typography.bodyMedium
         )

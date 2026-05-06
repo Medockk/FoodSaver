@@ -5,7 +5,6 @@ import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.utils.PlatformContext
 import com.foodsaver.app.commonModule.utils.uiText.LocalError
-import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.data.dto.AuthResponseModelDto
 import com.foodsaver.app.data.dto.GoogleAuthRequestDto
 import com.foodsaver.app.data.mappers.toDto
@@ -32,15 +31,14 @@ import io.ktor.http.isSuccess
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
     private val accessTokenManager: AccessTokenManager,
-    private val googleAuthenticator: GoogleAuthenticator,
-    private val authUserManager: AuthUserManager,
+    private val googleAuthenticator: GoogleAuthenticator
 ) : AuthRepository {
 
     override suspend fun signIn(signInModel: SignInModel): ApiResult<AuthResponseModel> {
         val body = signInModel.toDto()
 
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.AUTH_URL}/signIn") {
+            httpClient.post("${HttpConstants.AUTH_URL}/login") {
                 setBody(body)
 
                 retry {
@@ -54,8 +52,7 @@ class AuthRepositoryImpl(
                 }
             }
         }.onSuccess {
-            setAccessTokens(it.jwtToken, it.refreshToken)
-            authUserManager.setCurrentUid(it.uid)
+            setAccessTokens(it.accessToken, it.refreshToken)
         }.map {
             it.toModel()
         }
@@ -64,7 +61,7 @@ class AuthRepositoryImpl(
     override suspend fun signUp(signUpModel: SignUpModel): ApiResult<AuthResponseModel> {
         val body = signUpModel.toDto()
         return saveNetworkCall<AuthResponseModelDto> {
-            httpClient.post("${HttpConstants.AUTH_URL}/signUp") {
+            httpClient.post("${HttpConstants.AUTH_URL}/signup") {
                 setBody(body)
 
                 retry {
@@ -81,8 +78,7 @@ class AuthRepositoryImpl(
                 }
             }
         }.onSuccess {
-            setAccessTokens(it.jwtToken, it.refreshToken)
-            authUserManager.setCurrentUid(it.uid)
+            setAccessTokens(it.accessToken, it.refreshToken)
         }.map { it.toModel() }
     }
 
@@ -118,8 +114,7 @@ class AuthRepositoryImpl(
                 }
             }
         }.onSuccess {
-            setAccessTokens(it.jwtToken, it.refreshToken)
-            authUserManager.setCurrentUid(it.uid)
+            setAccessTokens(it.accessToken, it.refreshToken)
         }.map { it.toModel() }
     }
 

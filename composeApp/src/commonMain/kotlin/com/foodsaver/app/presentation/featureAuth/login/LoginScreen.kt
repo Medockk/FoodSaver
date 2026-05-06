@@ -68,7 +68,6 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LoginScreenRoot(
     navController: NavController,
-    onLogged: (String?) -> Unit,
     viewModel: LoginViewModel = koinViewModel(),
 ) {
 
@@ -87,11 +86,12 @@ fun LoginScreenRoot(
             is LoginAction.OnError -> {
                 snackbarHostState.showSnackbar(action.message, withDismissAction = true)
             }
-            is LoginAction.OnLoggedWithRemember -> {
-                onLogged(action.uid)
-            }
-            LoginAction.OnLoggedWithoutRemember -> {
-                onLogged(null)
+            is LoginAction.OnLogged -> {
+                navController.navigate(Route.HomeGraph) {
+                    popUpTo<Route.AuthGraph> {
+                        inclusive = true
+                    }
+                }
             }
         }
     }
@@ -168,18 +168,24 @@ private fun LoginScreen(
             // Remember + Forgot password
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuthenticationCheckbox(
-                        isChecked = state.isRememberMe,
-                        onCheckedChange = { value ->
-                            onEvent(LoginEvent.OnRememberMeValueChange(value))
+                    TextButton(
+                        onClick = {
+                            onEvent(LoginEvent.OnRememberMeValueChange(!state.isRememberMe))
                         }
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = stringResource(Res.string.auth_remember_me),
-                        style = FoodSaverTheme.typography.headerUppercase,
-                        color = FoodSaverTheme.colorScheme.checkboxTitle
-                    )
+                    ) {
+                        AuthenticationCheckbox(
+                            isChecked = state.isRememberMe,
+                            onCheckedChange = { value ->
+                                onEvent(LoginEvent.OnRememberMeValueChange(value))
+                            }
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = stringResource(Res.string.auth_remember_me),
+                            style = FoodSaverTheme.typography.headerUppercase,
+                            color = FoodSaverTheme.colorScheme.checkboxTitle
+                        )
+                    }
 
                     Spacer(Modifier.weight(1f))
 

@@ -4,8 +4,8 @@ import com.foodsaver.app.coreModel.dto.CategoryDto
 import com.foodsaver.app.coreModel.model.CategoryModel
 
 fun CategoryDto.toModel() = CategoryModel(
-    categoryName = categoryName,
-    categoryId = categoryId
+    categoryName = name,
+    categoryId = id
 )
 
 fun List<CategoryDto>.mapToCategoryModel() = map {

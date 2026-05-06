@@ -26,8 +26,7 @@ private val module = module {
         AuthRepositoryImpl(
             httpClient = get(),
             accessTokenManager = get(),
-            googleAuthenticator = get<GoogleAuthenticator>(),
-            authUserManager = get(),
+            googleAuthenticator = get<GoogleAuthenticator>()
         )
     }
 

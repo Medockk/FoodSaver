@@ -98,7 +98,7 @@ private fun HomeScreen(
             item {
                 HomeTopBar(
                     deliverTo = state.deliverTo,
-                    cartItemValue = state.cartProducts.size,
+                    cartItemValue = state.cartSize,
                     onCartClick = { TODO() },
                     onMenuClick = { TODO() },
                     modifier = Modifier

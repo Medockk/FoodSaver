@@ -1,0 +1,27 @@
+import kotlin.collections.List;
+import kotlin.String;
+
+CREATE TABLE IF NOT EXISTS restaurantEntity (
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    serverId TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    photoUris TEXT AS List<String>,
+
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    addressName TEXT NOT NULL,
+
+    companyId TEXT NOT NULL,
+    rating REAL DEFAULT NULL,
+    deliveryCost REAL DEFAULT NULL,
+    averageDeliveryTime REAL DEFAULT NULL
+);
+
+getAllRestaurants:
+SELECT * FROM restaurantEntity;
+
+insertRestaurant:
+INSERT OR REPLACE INTO restaurantEntity (serverId, name, description, photoUris, latitude, longitude, addressName,
+ companyId, rating, deliveryCost, averageDeliveryTime)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

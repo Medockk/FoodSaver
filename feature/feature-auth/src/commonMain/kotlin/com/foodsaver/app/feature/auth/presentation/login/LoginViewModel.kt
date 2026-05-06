@@ -6,11 +6,13 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onLocalFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
+import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreFcm.service.FcmService
 import com.foodsaver.app.domain.model.SignInModel
 import com.foodsaver.app.domain.usecase.AuthenticateWithGoogleUseCase
 import com.foodsaver.app.domain.usecase.SignInUseCase
 import com.foodsaver.app.domain.utils.AuthExceptions
+import com.foodsaver.app.feature.auth.common.AuthLocalError
 import com.foodsaver.app.feature.auth.common.AuthLocalError.Companion.fromException
 import com.foodsaver.app.feature.auth.presentation.login.LoginAction.*
 import com.foodsaver.app.feature.auth.presentation.utils.AuthenticationBaseViewModel
@@ -22,9 +24,10 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     fcmService: FcmService,
+    authManager: AuthUserManager,
     private val signInUseCase: SignInUseCase,
     private val authenticateWithGoogleUseCase: AuthenticateWithGoogleUseCase,
-): AuthenticationBaseViewModel<LoginAction>(fcmService) {
+) : AuthenticationBaseViewModel<LoginAction>(fcmService, authManager) {
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state.asStateFlow()
@@ -34,14 +37,31 @@ class LoginViewModel(
             LoginEvent.ChangePasswordVisibility -> {
                 _state.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
             }
+
             is LoginEvent.OnEmailValueChange -> {
                 _state.update { it.copy(email = event.value) }
             }
+
             LoginEvent.OnLogin -> {
-                val isFieldsNotEmpty = checkFields(fields = listOf(
-                    _state.value.email,
-                    _state.value.password,
-                ))
+                val isFieldsNotEmpty = checkFields(
+                    fields = listOf(
+                        _state.value.email,
+                        _state.value.password,
+                    )
+                )
+
+                val currentState = _state.value
+
+                if (currentState.email.isBlank()) {
+                    val error = AuthLocalError.EmptyEmail
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
+                if (currentState.password.isBlank()) {
+                    val error = AuthLocalError.EmptyPassword
+                    sendError(ApiResult.Error.Local(error))
+                    return
+                }
 
                 if (isFieldsNotEmpty) {
                     _state.update { it.copy(isLoading = true) }
@@ -54,10 +74,11 @@ class LoginViewModel(
                                 _state.update { it.copy(isLoading = false) }
 
                                 if (_state.value.isRememberMe) {
-                                    baseChannel.send(OnLoggedWithRemember(responseModel.uid))
-                                } else {
-                                    baseChannel.send(OnLoggedWithoutRemember)
+                                    saveAuthenticationSession(responseModel.uid)
+                                    println("Remember user with uid: ${responseModel.uid}")
                                 }
+
+                                baseChannel.send(OnLogged)
                             }.onFailure { error ->
                                 _state.update { it.copy(isLoading = false) }
                                 sendError(error)
@@ -67,6 +88,7 @@ class LoginViewModel(
                     trySendError("Something empty")
                 }
             }
+
             is LoginEvent.OnPasswordValueChange -> {
                 _state.update { it.copy(password = event.value) }
             }
@@ -79,8 +101,9 @@ class LoginViewModel(
                     authenticateWithGoogleUseCase(event.platformContext)
                         .onSuccess { responseModel ->
                             onSaveFcmToken()
+                            saveAuthenticationSession(responseModel.uid)
                             _state.update { it.copy(isLoading = false) }
-                            baseChannel.send(OnLoggedWithRemember(responseModel.uid))
+                            baseChannel.send(OnLogged)
                         }.onFailure { error ->
                             _state.update { it.copy(isLoading = false) }
 
@@ -99,9 +122,11 @@ class LoginViewModel(
             }
 
             is LoginEvent.OnRememberMeValueChange -> {
-                _state.update { it.copy(
-                    isRememberMe = event.value
-                ) }
+                _state.update {
+                    it.copy(
+                        isRememberMe = event.value
+                    )
+                }
             }
         }
     }

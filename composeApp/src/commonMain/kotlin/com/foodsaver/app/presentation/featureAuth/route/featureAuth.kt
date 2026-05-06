@@ -15,8 +15,7 @@ import com.foodsaver.app.presentation.featureAuth.signup.SignupScreenRoot
 import com.foodsaver.app.presentation.featureAuth.verification.VerificationScreenRoot
 
 fun NavGraphBuilder.featureAuth(
-    navController: NavController,
-    onLogged: (String?) -> Unit
+    navController: NavController
 ) {
     navigation<Route.AuthGraph>(
         startDestination = Route.AuthGraph.LoginScreen
@@ -51,7 +50,7 @@ fun NavGraphBuilder.featureAuth(
                 popEnterTransition
             },
         ) {
-            LoginScreenRoot(navController, onLogged = onLogged)
+            LoginScreenRoot(navController)
         }
         composable<Route.AuthGraph.SignupScreen>(
             enterTransition = {
@@ -73,7 +72,7 @@ fun NavGraphBuilder.featureAuth(
                 popExitTransition
             }
         ) {
-            SignupScreenRoot(navController, onLogged = onLogged)
+            SignupScreenRoot(navController)
         }
         composable<Route.AuthGraph.ForgotScreen>(
             enterTransition = { enterTransition },

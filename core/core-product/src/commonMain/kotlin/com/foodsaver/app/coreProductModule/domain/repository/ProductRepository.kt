@@ -13,12 +13,9 @@ interface ReadProductRepository {
     suspend fun getCachedProduct(productId: String): Flow<ProductModel?>
     suspend fun getCachedProducts(): ApiResult<List<ProductModel>>
 
-    /**
-     * Что-то типа пагинации
-     * TODO: может вынести в отдельный data class ?
-     */
     suspend fun searchProduct(name: String, categoryIds: List<String>, page: Int, size: Int): ApiResult<List<ProductModel>>
-
+    suspend fun getProductsByRestaurantId(restaurantId: String, page: Int, size: Int): ApiResult<List<ProductModel>>
+    suspend fun getProductById(productId: String): ApiResult<ProductModel>
 }
 
 /**

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CategoryDto(
-    val categoryName: String,
-    val categoryId: String
+    val name: String,
+    val id: String
 )

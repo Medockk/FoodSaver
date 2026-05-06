@@ -1,8 +1,8 @@
 package com.foodsaver.app.coreEnterprises.di
 
-import com.foodsaver.app.coreEnterprises.data.repository.EnterprisesRepositoryImpl
-import com.foodsaver.app.coreEnterprises.domain.repository.EditEnterpriseRepository
-import com.foodsaver.app.coreEnterprises.domain.repository.EnterprisesRepository
+import com.foodsaver.app.coreEnterprises.data.repository.RestaurantRepositoryImpl
+import com.foodsaver.app.coreEnterprises.domain.repository.EditRestaurantRepository
+import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreEnterprises.domain.usecase.UploadEnterpriseImageUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -10,10 +10,10 @@ import org.koin.dsl.module
 
 val coreRestaurantModule = module {
 
-    singleOf(::EnterprisesRepositoryImpl)
-    single<EnterprisesRepository> {
-        get<EnterprisesRepositoryImpl>()
+    singleOf(::RestaurantRepositoryImpl)
+    single<RestaurantRepository> {
+        get<RestaurantRepositoryImpl>()
     }
-    single<EditEnterpriseRepository> { get<EnterprisesRepositoryImpl>() }
+    single<EditRestaurantRepository> { get<RestaurantRepositoryImpl>() }
     factoryOf(::UploadEnterpriseImageUseCase)
 }

@@ -16,16 +16,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
-import com.foodsaver.app.presentation.featureAuth.forgotPassword.ForgotPasswordScreenRoot
-import com.foodsaver.app.presentation.featureAuth.login.LoginScreenRoot
 import com.foodsaver.app.presentation.featureAuth.route.featureAuth
-import com.foodsaver.app.presentation.featureAuth.signup.SignupScreenRoot
-import com.foodsaver.app.presentation.featureAuth.verification.VerificationScreenRoot
 import com.foodsaver.app.presentation.featureHome.route.featureHome
-import com.foodsaver.app.presentation.featureOnBoarding.OnBoardingScreenRoot
 import com.foodsaver.app.presentation.featureOnBoarding.route.featureOnboarding
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import com.foodsaver.app.ui.colorScheme
@@ -63,17 +57,12 @@ fun App(
                 ) { _ ->
                     NavHost(
                         navController = navController,
-                        startDestination = Route.HomeGraph
+                        startDestination = startDestination
                     ) {
                         featureOnboarding(navController, onOnboardingComplete = {
                             navController.navigate(Route.AuthGraph)
                         })
-                        featureAuth(navController, onLogged = { uid ->
-                            uid?.let { uid ->
-                                viewModel.onUserAuthenticate(uid)
-                            }
-                            navController.navigate(Route.HomeGraph)
-                        })
+                        featureAuth(navController)
                         featureHome(navController)
                     }
                 }

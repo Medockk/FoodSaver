@@ -1,12 +1,10 @@
 package com.foodsaver.app.coreDb.data.repository
 
-import com.databases.cache.CachedProduct
-import com.databases.cache.CartEntity
 import com.databases.cache.MainAppDatabase
+import com.databases.cache.RestaurantEntity
 import com.databases.cache.UserEntity
-import com.foodsaver.app.coreDb.data.adapters.ProductColumnAdapter
 import com.foodsaver.app.coreDb.data.adapters.instantAdapter
-import com.foodsaver.app.coreDb.data.adapters.listAdapter
+import com.foodsaver.app.coreDb.data.adapters.listOfStringAdapter
 import com.foodsaver.app.coreDb.data.factory.SqlDriverFactory
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import kotlinx.coroutines.sync.Mutex
@@ -20,15 +18,12 @@ internal class DatabaseProviderImpl(
         val driver = sqlDriverFactory.createSync()
         MainAppDatabase.invoke(
             driver = driver,
-            cartEntityAdapter = CartEntity.Adapter(
-                productAdapter = ProductColumnAdapter
-            ),
             userEntityAdapter = UserEntity.Adapter(
                 createdAtAdapter = instantAdapter,
-                rolesAdapter = listAdapter
+                rolesAdapter = listOfStringAdapter
             ),
-            cachedProductAdapter = CachedProduct.Adapter(
-                productAdapter = ProductColumnAdapter
+            restaurantEntityAdapter = RestaurantEntity.Adapter(
+                photoUrisAdapter = listOfStringAdapter
             )
         )
     }.value
@@ -60,22 +55,19 @@ internal class DatabaseProviderImpl(
             )
         }*/
 
-        return database!!
+        return database
     }
 
     private suspend fun createDatabase(): MainAppDatabase {
         val driver = sqlDriverFactory.create()
         return MainAppDatabase.invoke(
             driver = driver,
-            cartEntityAdapter = CartEntity.Adapter(
-                productAdapter = ProductColumnAdapter
-            ),
             userEntityAdapter = UserEntity.Adapter(
                 createdAtAdapter = instantAdapter,
-                rolesAdapter = listAdapter
+                rolesAdapter = listOfStringAdapter
             ),
-            cachedProductAdapter = CachedProduct.Adapter(
-                productAdapter = ProductColumnAdapter
+            restaurantEntityAdapter = RestaurantEntity.Adapter(
+                photoUrisAdapter = listOfStringAdapter
             )
         )
     }

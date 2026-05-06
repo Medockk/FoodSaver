@@ -8,9 +8,9 @@ object WidgetUtils {
 
     fun toWidgetModel(dto: ProductModel): WidgetProductModel = with(dto) {
         return WidgetProductModel(
-            title = this.title,
-            imageUri = this.photoUrl,
-            price = this.cost,
+            title = this.name,
+            imageUri = this.imageUris.firstOrNull(),
+            price = this.price.toFloat(),
             productId = this.productId,
             description = this.description,
         )

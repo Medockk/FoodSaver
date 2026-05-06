@@ -10,13 +10,16 @@ import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.plugins.pluginOrNull
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.Cookie
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
+import io.ktor.http.cookies
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
@@ -37,6 +40,11 @@ internal class AuthInterceptor(
             // setup JWT-token before executing original request
             accessTokenManager.getJwtToken()?.let { localJwtToken ->
                 originalRequest.replaceAuthorizationHeader(localJwtToken)
+            }
+
+            val cookies = originalRequest.cookies()
+            cookies.forEach { cookie ->
+                println("Cookie name is: ${cookie.name}")
             }
 
             // setup CSRF-token before executing original request
@@ -78,15 +86,15 @@ internal class AuthInterceptor(
                             accessToken = currentLocalJwtToken
                         )
 
-                        val refreshResponse = post(HttpConstants.REFRESH_URL) {
+                        val refreshResponse = put(HttpConstants.REFRESH_URL) {
                             setBody(refreshRequestDto)
                             expectSuccess = false
                         }
 
                         if (refreshResponse.status.isSuccess()) {
-                            val refreshResponseDto = refreshResponse.body<RefreshResponseDto>()
+                            val refreshResponseDto = refreshResponse.body<String>()
 
-                            val newJwtToken = refreshResponseDto.jwtToken
+                            val newJwtToken = refreshResponseDto
                             accessTokenManager.setJwtToken(newJwtToken)
 
                             originalRequest.replaceAuthorizationHeader(newJwtToken)

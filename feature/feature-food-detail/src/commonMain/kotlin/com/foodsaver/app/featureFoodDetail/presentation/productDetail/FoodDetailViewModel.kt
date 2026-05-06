@@ -8,6 +8,7 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
 import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.domain.model.CartItemModel
@@ -39,6 +40,7 @@ class FoodDetailViewModel(
     private val increaseProductCountUseCase: IncreaseProductCountUseCase,
     private val decreaseProductCountUseCase: DecreaseProductCountUseCase,
     private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
+    private val productRepository: ReadProductRepository,
 
     private val ingredientsRepository: IngredientsRepository,
 ) : BaseViewModel<FoodDetailActions>() {
@@ -56,50 +58,22 @@ class FoodDetailViewModel(
     override val channel = baseChannel.receiveAsFlow()
 
     init {
-        getProduct()
-        getIngredients()
+        loadProduct(productId = navArgs.productId)
     }
 
-    private fun getIngredients() {
+    private fun loadProduct(productId: String) {
         viewModelScope.launch {
-            val ingredients = ingredientsRepository.getIngredients(navArgs.productId)
-            ingredients.onSuccess { model ->
-                model?.let { model ->
-//                    _state.update { it.copy(ingredients = model) }
-                    TODO()
+            productRepository.getProductById(productId)
+                .onSuccess { product ->
+                    _state.update { it.copy(
+                        product = product
+                    ) }
                 }
-            }
         }
     }
 
     fun onRefresh() {
-        _state.update { it.copy(isRefresh = true) }
-        viewModelScope.launch(Dispatchers.InputOutput) {
 
-            val jobs = arrayOf(getProduct())
-
-            joinAll(*jobs)
-            delay(750)
-            withContext(Dispatchers.Main) {
-                _state.update { it.copy(isRefresh = false) }
-            }
-        }
-    }
-
-    private fun getProduct(): Job {
-        return viewModelScope.launch(Dispatchers.InputOutput) {
-            getCachedProductUseCase.invoke(navArgs.productId).collect { product ->
-
-                println("ProductDetails $product")
-                if (product != null) {
-                    _state.update {
-                        it.copy(
-                            product = product
-                        )
-                    }
-                }
-            }
-        }
     }
 
     fun onEvent(events: FoodDetailEvents) {

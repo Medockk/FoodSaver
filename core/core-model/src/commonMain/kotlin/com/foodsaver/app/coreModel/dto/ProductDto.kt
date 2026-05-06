@@ -2,32 +2,33 @@
 
 package com.foodsaver.app.coreModel.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
 data class ProductDto(
+    @SerialName("id")
     val productId: String,
 
-    val title: String,
+    val name: String,
     val description: String,
-    val photoUrl: String?,
 
-    val cost: Float,
-    val costUnit: String,
-    val oldCost: Float? = null,
+    val imageUris: List<String>,
+    val expiresAt: Instant,
 
+    val price: Double,
+    val discount: Double,
+    val count: Long,
 
-    val count: Int,
-    val rating: Float?,
+    val unit: String,
+    val currency: String,
 
+    val restaurantId: String,
+    val ingredientIds: List<String>,
     val categoryIds: List<String>,
 
-    val unit: Long,
-    val unitName: String,
-
-    val enterpriseId: String,
-
-    val expiresAt: Instant
+    val isDeleted: Boolean = false,
+    val isAvailable: Boolean = true
 )

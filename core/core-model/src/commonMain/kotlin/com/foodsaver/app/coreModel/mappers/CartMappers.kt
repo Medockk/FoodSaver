@@ -11,20 +11,20 @@ fun ProductDto.toModel(): ProductModel {
 
     return ProductModel(
         productId = productId,
-        title = title,
+        name = name,
         description = description,
-        photoUrl = photoUrl,
-        cost = cost,
-        costUnit = costUnit,
-        oldCost = oldCost,
+        imageUris = imageUris,
+        expiresAt = expiresAt,
+        price = price,
+        discount = discount,
         count = count,
-        rating = rating,
-        categoryIds = categoryIds,
         unit = unit,
-        unitType = ProductUtils.getUnitType(unitName),
-        expiresAt = ProductUtils.castExpiresDate(expiresAt).toString(),
-        enterpriseId = enterpriseId,
-        expiresDateType = ProductUtils.getExpiresType(expiresAt),
+        currency = currency,
+        restaurantId = restaurantId,
+        categoryIds = categoryIds,
+        ingredientIds = ingredientIds,
+        isDeleted = isDeleted,
+        isAvailable = isAvailable
     )
 }
 

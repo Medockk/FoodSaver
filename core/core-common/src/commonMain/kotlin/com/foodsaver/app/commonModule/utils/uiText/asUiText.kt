@@ -27,7 +27,7 @@ import org.jetbrains.compose.resources.StringResource
 
 fun GlobalErrorResponse.asUiText(): UiText {
     println("asUiText globalErrorResponse is $this")
-    return when (this.errorCode) {
+    return when (this.serverErrorCode) {
         // Authentication (1000-1999)
         1001 -> UiText.StringRes(Res.string.error_auth_username_occupied)
         1002 -> UiText.StringRes(Res.string.error_auth_invalid_email)
