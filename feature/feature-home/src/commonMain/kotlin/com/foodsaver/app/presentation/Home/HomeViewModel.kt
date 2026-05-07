@@ -35,8 +35,7 @@ class HomeViewModel(
     private val restaurantPaginator = OfflineFirstPaginator(
         initialKey = 0,
         onCacheRequest = {
-            // TODO
-            ApiResult.loading()
+            restaurantRepository.getCachedRestaurants()
         },
         onNetworkRequest = { page ->
             restaurantRepository.getAllRestaurants(page, 10)
@@ -67,25 +66,10 @@ class HomeViewModel(
     )
 
     init {
-        t()
         loadRestaurants()
         loadCart()
         getAllCategories()
         getCurrentAddress()
-    }
-
-    private fun t() {
-        viewModelScope.launch {
-            restaurantRepository.getCachedRestaurants().collectRequest(
-                onSuccess = {
-                    println("Successfully exact local repositories")
-                    println("Local repositories ${it.map { m -> m.name + "\n" }}")
-                },
-                onError = {
-                    println("Local database error ${it.uiText.asString()}")
-                }
-            )
-        }
     }
 
     private fun loadRestaurants() {

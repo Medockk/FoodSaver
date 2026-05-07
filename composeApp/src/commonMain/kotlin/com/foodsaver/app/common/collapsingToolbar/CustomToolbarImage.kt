@@ -6,22 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Composable
@@ -53,7 +45,7 @@ fun CollapsingToolbarImage(
         Layout(
             content = {
                 if (collapsingImage != null) {
-                    Box(modifier = Modifier.layoutId(ExpandedTitleId)) { collapsingImage(collapsedFraction) }
+                    Box(modifier = Modifier.layoutId(ExpandedImageId)) { collapsingImage(collapsedFraction) }
                 }
                 if (navigationIcon != null) {
                     Box(modifier = Modifier.layoutId(NavigationIconId)) { navigationIcon() }
@@ -69,7 +61,6 @@ fun CollapsingToolbarImage(
             },
             modifier = modifier.then(Modifier.heightIn(min = MinCollapsedHeight))
         ) { measurables, constraints ->
-
             val collapsedSizePx = collapsedImageSize.toPx()
             val expandedHeightPx = expandedImageHeight.toPx()
             val navigationIconPlaceable =
@@ -94,8 +85,14 @@ fun CollapsingToolbarImage(
             val currentImgHeight =
                 lerp(expandedHeightPx, collapsedSizePx, collapsedFraction).roundToInt()
 
+            val actualCollapsedHeightPx = maxOf(
+                MinCollapsedHeight.toPx(),
+                navigationIconPlaceable?.height?.toFloat() ?: 0f,
+                actionsPlaceable?.height?.toFloat() ?: 0f
+            )
+
             val imagePlaceable =
-                measurables.firstOrNull { it.layoutId == ExpandedTitleId }?.measure(
+                measurables.firstOrNull { it.layoutId == ExpandedImageId }?.measure(
                     constraints.copy(
                         minWidth = currentImgWidth,
                         maxWidth = currentImgWidth,
@@ -103,10 +100,9 @@ fun CollapsingToolbarImage(
                         maxHeight = currentImgHeight
                     )
                 )
-
             // 2. ВЫЧИСЛЯЕМ ВЫСОТУ ТУЛБАРА
             val collapsedHeightPx = MinCollapsedHeight.toPx()
-            val layoutHeightPx = lerp(expandedHeightPx, collapsedHeightPx, collapsedFraction)
+            val layoutHeightPx = lerp(expandedHeightPx, actualCollapsedHeightPx, collapsedFraction)
 
             // 3. КООРДИНАТЫ ИЗОБРАЖЕНИЯ
             // По X: от 0 до (середина между иконками или просто после навигации)
@@ -124,8 +120,9 @@ fun CollapsingToolbarImage(
             val imgX = lerp(0f, imgTargetX, collapsedFraction).roundToInt()
 
             // По Y: от 0 до центрирования в тулбаре
-            val imgTargetY = (collapsedHeightPx - collapsedSizePx) / 2
+            val imgTargetY = (actualCollapsedHeightPx - collapsedSizePx) / 2
             val imgY = lerp(0f, imgTargetY, collapsedFraction).roundToInt()
+
 
             // Настройка лимита скролла (чтобы знать, на сколько можно "задвинуть" тулбар)
             scrollBehavior?.state?.heightOffsetLimit = -(expandedHeightPx - collapsedHeightPx)
@@ -143,7 +140,7 @@ fun CollapsingToolbarImage(
                 // Затем экшены
                 actionsPlaceable?.placeRelative(
                     x = constraints.maxWidth - actionsPlaceable.width - HorizontalPadding.toPx().roundToInt(),
-                    y = ((collapsedHeightPx - actionsPlaceable.height) / 2).roundToInt()
+                    y = ((actualCollapsedHeightPx - actionsPlaceable.height) / 2).roundToInt()
                 )
 
                 // И доп. контент
@@ -163,13 +160,9 @@ private fun lerp(a: Float, b: Float, fraction: Float): Float {
 
 private val MinCollapsedHeight = 56.dp
 private val HorizontalPadding = 16.dp
-private val ExpandedTitleBottomPadding = 8.dp
-private val CollapsedTitleLineHeight = 28.sp
 private val DefaultCollapsedElevation = 4.dp
 
-private const val ExpandedTitleId = "expandedTitle"
-private const val CollapsedTitleId = "collapsedTitle"
+private const val ExpandedImageId = "expandedImage"
 private const val NavigationIconId = "navigationIcon"
 private const val ActionsId = "actions"
-private const val CentralContentId = "centralContent"
 private const val AdditionalContentId = "additionalContent"

@@ -11,15 +11,21 @@ import com.foodsaver.app.featureFoodDetail.domain.model.IngredientModel
 
 data class FoodDetailState(
     val product: ProductModel? = null,
+    val productName: String = "",
+    val selectedImageIndex: Int = 0,
+
     val isFavoriteProduct: Boolean = false,
+
     val restaurant: RestaurantModel? = null,
     val restaurantDetails: RestaurantDetails? = null,
+
     val foodSizes: List<FoodSizeModel> = listOf(
         FoodSizeModel("", "10”"),
         FoodSizeModel("", "14”"),
         FoodSizeModel("", "16”"),
     ),
     val selectedSizeIndex: Int = 0,
+
     val ingredients: List<FoodIngredientModel> = emptyList(),
 
     val productCount: Long = 1,

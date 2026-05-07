@@ -11,4 +11,6 @@ sealed interface FoodDetailEvents {
     data object OnAnalyzeIngredients: FoodDetailEvents
     data object OnOpenIngredientMenu: FoodDetailEvents
     data object OnCloseIngredientMenu: FoodDetailEvents
+
+    data class OnChangeSelectedImageIndex(val index: Int): FoodDetailEvents
 }

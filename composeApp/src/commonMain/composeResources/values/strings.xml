@@ -60,4 +60,6 @@ you just place the orer we do the rest</string>
     <string name="size">Size</string>
     <string name="ingredients">Ingredients</string>
     <string name="ingredients_allergy">Allergy</string>
+
+    <string name="cart">Cart</string>
 </resources>

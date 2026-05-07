@@ -12,7 +12,7 @@ interface EditRestaurantRepository : RestaurantRepository {
 
 interface RestaurantRepository {
 
-    suspend fun getCachedRestaurants(): Flow<ApiResult<List<RestaurantModel>>>
+    suspend fun getCachedRestaurants(): ApiResult<List<RestaurantModel>>
 
     suspend fun getNearestRestaurants(userLocationModel: UserLocationModel): ApiResult<List<RestaurantModel>>
     suspend fun getRestaurantById(restaurantId: String): ApiResult<RestaurantModel>

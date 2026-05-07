@@ -64,11 +64,14 @@ kotlin {
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.jetbrains.compose.navigation)
+
+            // palette
+            implementation(libs.palette.kamel)
         }
         jvmMain.dependencies {
 
         }
-        nativeMain.dependencies {
+        iosMain.dependencies {
 
         }
         webMain.dependencies {

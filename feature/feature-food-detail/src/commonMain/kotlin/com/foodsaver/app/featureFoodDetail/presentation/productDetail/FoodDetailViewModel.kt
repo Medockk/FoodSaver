@@ -48,6 +48,7 @@ class FoodDetailViewModel(
     private val navArgs = savedStateHandle.toRoute<Route.HomeGraph.FoodDetailsScreen>()
     private val _state = MutableStateFlow(
         FoodDetailState(
+            productName = navArgs.productName,
             isProductInCart = navArgs.isProductInCart,
             productCount = navArgs.initialQuantity
         )
@@ -68,7 +69,17 @@ class FoodDetailViewModel(
                     _state.update { it.copy(
                         product = product
                     ) }
+
+                    product.imageUris.firstOrNull()?.let { uri ->
+                        loadProductColor(uri)
+                    }
                 }
+        }
+    }
+
+    private fun loadProductColor(imageUri: String) {
+        viewModelScope.launch(Dispatchers.InputOutput) {
+
         }
     }
 
@@ -195,6 +206,14 @@ class FoodDetailViewModel(
                 _state.update {
                     it.copy(
                         isIngredientMenuExpanded = true
+                    )
+                }
+            }
+
+            is FoodDetailEvents.OnChangeSelectedImageIndex -> {
+                _state.update {
+                    it.copy(
+                        selectedImageIndex = events.index
                     )
                 }
             }

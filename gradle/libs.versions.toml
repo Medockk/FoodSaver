@@ -11,6 +11,7 @@ androidx-appcompat = "1.7.1"
 androidx-core = "1.18.0"
 androidx-lifecycle = "2.9.6"
 androidSecurity = "1.1.0"
+kmpaletteCore = "3.1.0"
 splashScreen = "1.2.0"
 uiTest = "1.10.2"
 yandexMapKitAndroid = "4.33.0-lite"
@@ -24,7 +25,7 @@ androidWork = "2.11.2"
 
 #kotlin
 kotlinxDateTime = "0.7.1"
-kotlin = "2.3.20"
+kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
 kotlinSerialization = "1.9.0"
 kotlinxBrowser = "0.5.0"
@@ -37,6 +38,8 @@ navigationCompose = "2.9.1"
 imagePicker = "1.0.34"
 coil3 = "3.3.0"
 material3Version = "1.9.0"
+kmpalette = "4.0.0-beta02"
+paletteKamel = "1.0.9"
 
 #database
 sqldelight = "2.3.2"
@@ -168,6 +171,16 @@ compose-foundation-foundation = { module = "org.jetbrains.compose.foundation:fou
 compose-runtime-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+#KMP Pallet
+kmpalette-core = { module = "com.materialkolor.palette:core", version.ref = "kmpalette" }
+kmpalette-androidx-palette = { module = "com.materialkolor.palette:androidx-palette", version.ref = "kmpalette" }
+kmpalette-extensions-network = { module = "com.materialkolor.palette:extensions-network", version.ref = "kmpalette" }
+
+palette-kamel = { module = "media.kamel:kamel-image", version.ref = "paletteKamel" }
+palette-kamel-default = { module = "media.kamel:kamel-image-default", version.ref = "paletteKamel" }
+kmpalette-kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
+
 
 [bundles]
 coil = [

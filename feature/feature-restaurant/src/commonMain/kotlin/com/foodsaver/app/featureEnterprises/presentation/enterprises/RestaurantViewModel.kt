@@ -34,7 +34,9 @@ class RestaurantViewModel(
     private val navArgs = savedStateHandle.toRoute<Route.HomeGraph.Restaurant>()
     private val restaurantId = navArgs.restaurantId
 
-    private val _state = MutableStateFlow(RestaurantState())
+    private val _state = MutableStateFlow(RestaurantState(
+        restaurantName = navArgs.restaurantName
+    ))
     val state = _state.asStateFlow()
 
     private val pageSize = 10

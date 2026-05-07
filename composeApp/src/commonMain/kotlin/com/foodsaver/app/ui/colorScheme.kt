@@ -48,6 +48,9 @@ data class ColorScheme(
     val counterColor: Color = Color.Unspecified,
     val counterButtonColor: Color = Color.Unspecified,
     val ingredientBackgroundColor: Color = Color.Unspecified,
+
+    val cartFabColor: Color = Color.Unspecified,
+    val onCartFabColor: Color = Color.Unspecified,
 )
 
 val lightColorScheme = ColorScheme(
@@ -94,6 +97,9 @@ val lightColorScheme = ColorScheme(
     counterColor = Color(0xFF121223),
     counterButtonColor = Color(0x33FFFFFF),
     ingredientBackgroundColor = Color(0xFFFFEBE4),
+
+    cartFabColor = Color(0x1AFFFFFF),
+    onCartFabColor = Color(0xFFFFFFFF),
 )
 
 val darkColorScheme = ColorScheme(

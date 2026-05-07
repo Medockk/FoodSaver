@@ -1,5 +1,6 @@
 package com.foodsaver.app.presentation.featureRestaurant
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,11 +20,15 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,8 +43,9 @@ import com.foodsaver.app.common.scaffold.PrimaryScaffold
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantState
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantEvent
 import com.foodsaver.app.featureEnterprises.presentation.enterprises.RestaurantViewModel
-import com.foodsaver.app.presentation.featureRestaurant.components.ImagePageIndicator
+import com.foodsaver.app.common.ImagePageIndicator
 import com.foodsaver.app.common.restaurant.RestaurantSpecifications
+import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
@@ -86,7 +92,11 @@ private fun RestaurantScreen(
     navController: NavController,
 ) {
 
-    val restaurantImagePager = rememberPagerState { state.restaurant?.photoUris?.size ?: 0 }
+    val restaurantImagePager = rememberPagerState { state.restaurant?.photoUris?.size ?: 1 }
+    val shouldShowProductsSkeleton by retain(state.restaurantProducts, state.isProductsLoading) {
+        val value = state.restaurantProducts.isEmpty() && state.isProductsLoading
+        mutableStateOf(value)
+    }
 
     PrimaryScaffold(
         actionButton = ActionButtonItem(
@@ -131,10 +141,9 @@ private fun RestaurantScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(FoodSaverTheme.colorScheme.background)
-                .padding(paddingValues),
+                .padding(top = paddingValues.calculateTopPadding()),
             columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(bottom = 15.dp)
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // specifications
             item(
@@ -142,14 +151,16 @@ private fun RestaurantScreen(
             ) {
                 Column {
                     Spacer(Modifier.height(25.dp))
-                    RestaurantSpecifications(
-                        rating = state.restaurant?.rating,
-                        deliveryCost = state.restaurant?.deliveryCost,
-                        averageDeliveryTime = state.restaurant?.averageDeliveryTime,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                    )
+                    if (state.restaurant != null) {
+                        RestaurantSpecifications(
+                            rating = state.restaurant?.rating,
+                            deliveryCost = state.restaurant?.deliveryCost,
+                            averageDeliveryTime = state.restaurant?.averageDeliveryTime,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp)
+                        )
+                    }
                 }
             }
 
@@ -161,16 +172,17 @@ private fun RestaurantScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
+                        .animateContentSize()
                 ) {
                     Spacer(Modifier.height(15.dp))
                     Text(
-                        text = state.restaurant?.name.toString(),
+                        text = state.restaurantName,
                         color = FoodSaverTheme.colorScheme.onBackground,
                         style = FoodSaverTheme.typography.bodyBold
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = state.restaurant?.description.toString(),
+                        text = state.restaurant?.description ?: "",
                         color = FoodSaverTheme.colorScheme.onBackgroundTertiary,
                         style = FoodSaverTheme.typography.bodyRegular,
                         textAlign = TextAlign.Justify
@@ -214,32 +226,53 @@ private fun RestaurantScreen(
             }
 
             // product by category
-            itemsIndexed(state.restaurantProducts) { index, product ->
+            if (shouldShowProductsSkeleton) {
+                items(6) { index ->
+                    val isLeftColumn = index % 2 == 0
 
-                val isLeftColumn = index % 2 == 0
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = if (isLeftColumn) 24.dp else 0.dp,
-                            end = if (isLeftColumn) 0.dp else 24.dp,
-                        )
-                ) {
-                    AddProductCard(
-                        product = product,
-                        isProductInCart = false,
-                        onAddClick = { TODO() },
-                        onRemoveClick = { TODO() },
-                        onProductClick = {
-                            navController.navigate(Route.HomeGraph.FoodDetailsScreen(
-                                product.productId,
-                                false // TODO
-                            ))
-                        },
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = if (isLeftColumn) 24.dp else 0.dp,
+                                end = if (isLeftColumn) 0.dp else 24.dp,
+                                bottom = 15.dp
+                            )
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(25.dp))
+                            .shimmerEffect()
                     )
                 }
+            } else {
+                itemsIndexed(state.restaurantProducts) { index, product ->
+
+                    val isLeftColumn = index % 2 == 0
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = if (isLeftColumn) 24.dp else 0.dp,
+                                end = if (isLeftColumn) 0.dp else 24.dp,
+                            )
+                    ) {
+                        AddProductCard(
+                            product = product,
+                            isProductInCart = false,
+                            onAddClick = { TODO() },
+                            onRemoveClick = { TODO() },
+                            onProductClick = {
+                                navController.navigate(Route.HomeGraph.FoodDetailsScreen(
+                                    product.productId,
+                                    product.name,
+                                    false // TODO
+                                ))
+                            },
+                        )
+                    }
+                }
             }
+
         }
     }
 }

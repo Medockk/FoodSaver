@@ -1,7 +1,9 @@
 package com.foodsaver.app.presentation.featureHome
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,15 +14,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.searchField.SearchTextField
 import com.foodsaver.app.common.searchField.SearchTextFieldState
+import com.foodsaver.app.common.shimmerEffect
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.Home.HomeEvent
 import com.foodsaver.app.presentation.Home.HomeState
@@ -81,6 +91,15 @@ private fun HomeScreen(
     onEvent: (HomeEvent) -> Unit,
     navController: NavController,
 ) {
+
+    val shouldShowCategorySkeletonCards by retain(state.categories, state.isCategoriesLoading) {
+        val value = state.isCategoriesLoading && state.categories.isEmpty()
+        mutableStateOf(value)
+    }
+    val shouldShowRestaurantSkeletonCards by retain(state.restaurants, state.isRestaurantsLoading) {
+        val value = state.restaurants.isEmpty() && state.isRestaurantsLoading
+        mutableStateOf(value)
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars,
@@ -170,6 +189,7 @@ private fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
+                    // all categories chip
                     item {
                         if (state.selectedCategoryIds.isEmpty()) {
                             CategoryChip(
@@ -184,19 +204,29 @@ private fun HomeScreen(
                             )
                         }
                     }
-                    items(state.categories) { category ->
-                        CategoryChip(
-                            state = CategoryChipState(
-                                name = category.categoryName,
-                                imageUri = "",
-                                isMainChip = state.selectedCategoryIds.contains(category.categoryId),
-                                onCategoryClick = {
-                                    TODO("Navigate to Food - Burgers screen")
-                                }
-                            ),
-                            modifier = Modifier
-                                .heightIn(min = 60.dp)
-                        )
+
+                    if (shouldShowCategorySkeletonCards) {
+                        items(5) {
+                            Box(
+                                Modifier.widthIn(120.dp).heightIn(60.dp).clip(CircleShape)
+                                    .shimmerEffect()
+                            )
+                        }
+                    } else {
+                        items(state.categories) { category ->
+                            CategoryChip(
+                                state = CategoryChipState(
+                                    name = category.categoryName,
+                                    imageUri = "",
+                                    isMainChip = state.selectedCategoryIds.contains(category.categoryId),
+                                    onCategoryClick = {
+                                        TODO("Navigate to Food - Burgers screen")
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .heightIn(min = 60.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -216,17 +246,33 @@ private fun HomeScreen(
             }
 
             // TODO add transition animation
-            items(state.restaurants) { restaurant ->
-                RestaurantCard(
-                    restaurant = restaurant,
-                    onRestaurantClick = {
-                        navController.navigate(Route.HomeGraph.Restaurant(restaurant.id))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                )
-                Spacer(Modifier.height(25.dp))
+            // restaurants skeleton shimmers
+            if (shouldShowRestaurantSkeletonCards) {
+                items(3) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(170.dp)
+                            .padding(horizontal = 25.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .shimmerEffect()
+                    )
+
+                    Spacer(Modifier.height(25.dp))
+                }
+            } else {
+                items(state.restaurants) { restaurant ->
+                    RestaurantCard(
+                        restaurant = restaurant,
+                        onRestaurantClick = {
+                            navController.navigate(Route.HomeGraph.Restaurant(restaurant.id, restaurant.name))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                    )
+                    Spacer(Modifier.height(25.dp))
+                }
             }
         }
     }

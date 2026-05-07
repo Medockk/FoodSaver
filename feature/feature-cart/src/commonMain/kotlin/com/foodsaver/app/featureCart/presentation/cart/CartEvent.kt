@@ -1,4 +1,4 @@
-package com.foodsaver.app.presentation.Cart
+package com.foodsaver.app.featureCart.presentation.cart
 
 sealed interface CartEvent {
 

@@ -76,10 +76,10 @@ kotlin {
         binaries.executable()
     }
 
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
 
     sourceSets {
         androidMain.dependencies {
@@ -151,6 +151,11 @@ kotlin {
             implementation(projects.feature.featureRestaurant)
 
             implementation(libs.image.picker)
+
+            implementation(libs.palette.kamel)
+            implementation(libs.palette.kamel.default)
+
+            implementation(libs.kmpalette.kmpalette.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -162,6 +167,9 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.compose.ui.tooling)
+        }
+        iosMain.dependencies {
+
         }
 
         webMain.dependencies {

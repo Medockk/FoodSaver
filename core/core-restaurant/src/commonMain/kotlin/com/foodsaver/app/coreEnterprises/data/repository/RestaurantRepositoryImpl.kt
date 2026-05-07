@@ -38,42 +38,30 @@ internal class RestaurantRepositoryImpl(
     private val databaseProvider: DatabaseProvider
 ) : RestaurantRepository, EditRestaurantRepository {
 
-    override suspend fun getCachedRestaurants(): Flow<ApiResult<List<RestaurantModel>>> {
+    override suspend fun getCachedRestaurants(): ApiResult<List<RestaurantModel>> {
         return withContext(Dispatchers.InputOutput) {
-            return@withContext channelFlow {
-                send(ApiResult.loading())
+            val database = databaseProvider.getSync()
+            val restaurantQueries = database.restaurantEntityQueries
 
-                val database = databaseProvider.getSync()
-                val restaurantQueries = database.restaurantEntityQueries
-
-                val databaseJob = launch {
-                    restaurantQueries.getAllRestaurants().asFlow().collect { query ->
-                        val restaurants = query.executeAsList()
-                            .map {
-                                // TODO make normal mapper
-                                RestaurantModel(
-                                    id = it.serverId,
-                                    name = it.name,
-                                    description = it.description,
-                                    photoUris = it.photoUris ?: emptyList(),
-                                    longitude = it.longitude,
-                                    latitude = it.latitude,
-                                    addressName = it.addressName,
-                                    rating = it.rating,
-                                    deliveryCost = it.deliveryCost,
-                                    averageDeliveryTime = it.averageDeliveryTime,
-                                    companyId = it.companyId
-                                )
-                            }
-
-                        send(ApiResult.success(restaurants))
-                    }
+            val restaurants = restaurantQueries.getAllRestaurants().executeAsList()
+                .map {
+                    // TODO make normal mapper
+                    RestaurantModel(
+                        id = it.serverId,
+                        name = it.name,
+                        description = it.description,
+                        photoUris = it.photoUris ?: emptyList(),
+                        longitude = it.longitude,
+                        latitude = it.latitude,
+                        addressName = it.addressName,
+                        rating = it.rating,
+                        deliveryCost = it.deliveryCost,
+                        averageDeliveryTime = it.averageDeliveryTime,
+                        companyId = it.companyId
+                    )
                 }
 
-                awaitClose {
-                    databaseJob.cancel()
-                }
-            }
+            return@withContext ApiResult.success(restaurants)
         }
     }
 

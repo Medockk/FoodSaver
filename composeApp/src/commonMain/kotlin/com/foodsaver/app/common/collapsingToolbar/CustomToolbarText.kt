@@ -63,52 +63,6 @@ fun CustomToolbarText(
         Layout(
             content = {
                 if (collapsingTitle != null) {
-//                    Box(
-//                        modifier = Modifier
-//                            .layoutId(ExpandedTitleId)
-//                            .wrapContentHeight(align = Alignment.Top)
-//                            .graphicsLayer(
-//                                scaleX = collapsingTitleScale,
-//                                scaleY = collapsingTitleScale,
-//                                transformOrigin = TransformOrigin(0f, 0f)
-//                            )
-//                    ) {
-//                        collapsingContent(collapsedFraction)
-//                    }
-
-//                    Box(
-//                        modifier = Modifier
-//                            .layoutId(ExpandedTitleId)
-//                            .wrapContentHeight(align = Alignment.Top)
-//                            .graphicsLayer(
-//                                scaleX = collapsingTitleScale,
-//                                scaleY = collapsingTitleScale,
-//                                transformOrigin = TransformOrigin(0f, 0f)
-//                            )
-//                    ) {
-//                        CollapsingImageContainer(
-//                            collapsedFraction = collapsedFraction,
-//                            isCollapsed = false,
-//                            content = collapsingContent
-//                        )
-//                    }
-//
-//                    Box(
-//                        modifier = Modifier
-//                            .layoutId(CollapsedTitleId)
-//                            .wrapContentHeight(align = Alignment.Top)
-//                            .graphicsLayer(
-//                                scaleX = collapsingTitleScale,
-//                                scaleY = collapsingTitleScale,
-//                                transformOrigin = TransformOrigin(0f, 0f)
-//                            )
-//                    ) {
-//                        CollapsingImageContainer(
-//                            collapsedFraction = collapsedFraction,
-//                            isCollapsed = true,
-//                            content = collapsingContent
-//                        )
-//                    }
                     Text(
                         modifier = Modifier
                             .layoutId(ExpandedTitleId)
@@ -121,18 +75,6 @@ fun CustomToolbarText(
                         text = collapsingTitle.titleText,
                         style = collapsingTitle.expandedTextStyle
                     )
-//                    Box(
-//                        modifier = Modifier
-//                            .layoutId(CollapsedTitleId)
-//                            .wrapContentHeight(align = Alignment.Top)
-//                            .graphicsLayer(
-//                                scaleX = collapsingTitleScale,
-//                                scaleY = collapsingTitleScale,
-//                                transformOrigin = TransformOrigin(0f, 0f)
-//                            )
-//                    ) {
-//                        collapsingContent(collapsedFraction)
-//                    }
                     Text(
                         modifier = Modifier
                             .layoutId(CollapsedTitleId)

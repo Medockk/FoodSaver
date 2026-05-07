@@ -29,6 +29,7 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://repo1.maven.org/maven2/")
         maven("https://mirrors.aliyun.com/maven/")

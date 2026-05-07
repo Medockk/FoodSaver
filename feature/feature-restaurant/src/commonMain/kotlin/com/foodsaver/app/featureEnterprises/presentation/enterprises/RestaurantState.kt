@@ -5,9 +5,12 @@ import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.featureEnterprises.domain.model.RestaurantCategoryModel
 
 data class RestaurantState(
-    val isFavoriteRestaurant: Boolean = false,
     val restaurant: RestaurantModel? = null,
+    val restaurantName: String = "",
+
+    val isFavoriteRestaurant: Boolean = false,
     val selectedImageIndex: Int = 0,
+
     val restaurantCategories: List<RestaurantCategoryModel> = emptyList(),
     val selectedCategoryId: String? = null,
     val selectedCategoryName: String? = null,

@@ -13,6 +13,7 @@ import com.foodsaver.app.corePaymentMethod.di.corePaymentMethod
 import com.foodsaver.app.coreProductModule.di.coreProductModule
 import com.foodsaver.app.coreProfile.di.coreProfileModule
 import com.foodsaver.app.coreSettings.di.coreSettingsModule
+import com.foodsaver.app.featureCart.di.featureCartModule
 import com.foodsaver.app.featureEnterprises.di.featureRestaurantModule
 import com.foodsaver.app.featureFoodDetail.di.featureFoodDetailModule
 import org.koin.core.module.Module

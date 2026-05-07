@@ -1,4 +1,4 @@
-package com.foodsaver.app.presentation.featureRestaurant.components
+package com.foodsaver.app.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

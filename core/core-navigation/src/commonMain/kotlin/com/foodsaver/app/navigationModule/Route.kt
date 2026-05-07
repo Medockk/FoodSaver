@@ -33,12 +33,16 @@ sealed class Route {
         @Serializable
         data class FoodDetailsScreen(
             val productId: String,
+            val productName: String,
             val isProductInCart: Boolean,
             val initialQuantity: Long = 1,
         ) : Route()
 
         @Serializable
-        data class Restaurant(val restaurantId: String): Route()
+        data class Restaurant(
+            val restaurantId: String,
+            val restaurantName: String,
+        ): Route()
 
 
     }

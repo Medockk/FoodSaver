@@ -7,8 +7,6 @@ import com.foodsaver.app.coreDb.data.adapters.instantAdapter
 import com.foodsaver.app.coreDb.data.adapters.listOfStringAdapter
 import com.foodsaver.app.coreDb.data.factory.SqlDriverFactory
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 internal class DatabaseProviderImpl(
     private val sqlDriverFactory: SqlDriverFactory
@@ -27,34 +25,12 @@ internal class DatabaseProviderImpl(
             )
         )
     }.value
-    private val mutex = Mutex()
 
     override suspend fun get(): MainAppDatabase {
-        return database ?: mutex.withLock {
-            database ?: createDatabase()/*.also {
-                database = it
-            }*/
-        }
+        return database
     }
 
     override fun getSync(): MainAppDatabase {
-        /*if (database == null) {
-            val driver = sqlDriverFactory.createSync()
-            database = MainAppDatabase.invoke(
-                driver = driver,
-                cartEntityAdapter = CartEntity.Adapter(
-                    productAdapter = ProductColumnAdapter
-                ),
-                userEntityAdapter = UserEntity.Adapter(
-                    createdAtAdapter = instantAdapter,
-                    rolesAdapter = listAdapter
-                ),
-                cachedProductAdapter = CachedProduct.Adapter(
-                    productAdapter = ProductColumnAdapter
-                )
-            )
-        }*/
-
         return database
     }
 

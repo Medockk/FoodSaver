@@ -38,11 +38,11 @@ abstract class BasePaginator<Key, Item>(
             onSuccess(currentKey, result)
             currentKey = onNextKey(currentKey, result)
             isEndReaching = onEndReaching(currentKey, result)
+            onLoadUpdated(false)
         }.onFailure { error ->
             println("BasePaginator onFailure \n${error.uiText.asString()}")
             onError(error)
         }
-        onLoadUpdated(false)
     }
 
     open fun reset() {

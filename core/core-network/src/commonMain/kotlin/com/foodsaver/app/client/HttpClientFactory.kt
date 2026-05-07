@@ -47,9 +47,9 @@ internal class HttpClientFactory(
                     maxRetries = 3
                     delayMillis { it * 3_000L }
                     retryOnException(3, true)
-                    retryOnExceptionIf(maxRetries = 3) { _, cause ->
-                        cause !is ConnectTimeoutException
-                    }
+//                    retryOnExceptionIf(maxRetries = 3) { _, cause ->
+//                        cause !is ConnectTimeoutException
+//                    }
                 }
 
                 install(SSE) {
