@@ -44,7 +44,7 @@ fun HomeTopBarPreview() {
 @Composable
 fun HomeTopBar(
     deliverTo: String,
-    cartItemValue: Int?,
+    cartItemValue: Long?,
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,

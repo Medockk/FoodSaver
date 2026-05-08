@@ -8,6 +8,8 @@ import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
+import com.foodsaver.app.coreCart.domain.model.CartRequestModel
+import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
@@ -25,6 +27,7 @@ import kotlin.getValue
 class RestaurantViewModel(
     private val restaurantRepository: RestaurantRepository,
     private val productRepository: ReadProductRepository,
+    private val cartRepository: CartRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<RestaurantAction>() {
 
@@ -104,6 +107,17 @@ class RestaurantViewModel(
                 _state.update {
                     it.copy(
                         selectedImageIndex = event.index
+                    )
+                }
+            }
+
+            is RestaurantEvent.OnAddProductToCart -> {
+                viewModelScope.launch {
+                    cartRepository.addProductToCart(
+                        request = CartRequestModel(
+                            productId = event.productId,
+                            quantity = 1L
+                        )
                     )
                 }
             }

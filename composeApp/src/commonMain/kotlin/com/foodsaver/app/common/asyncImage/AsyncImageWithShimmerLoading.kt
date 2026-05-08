@@ -44,25 +44,18 @@ fun AsyncImageWithShimmerLoading(
     contentScale: ContentScale = ContentScale.Crop,
     shimmerDurationMillis: Int = 3000
 ) {
-
-    var state: AsyncImagePainter.State by retain {
-        mutableStateOf(AsyncImagePainter.State.Empty)
-    }
-
     Box(modifier) {
-        if (state !is AsyncImagePainter.State.Success) {
-            Box(Modifier.matchParentSize().shimmerEffect(shimmerDurationMillis))
-        }
-
-        AsyncImage(
-            model = model,
+        KamelImage(
+            resource = { asyncPainterResource(model ?: "") },
             contentDescription = null,
-            modifier = Modifier
-                .matchParentSize(),
-            contentScale = contentScale,
-            onState = { currentState ->
-                state = currentState
-            }
+            onLoading = {
+                Box(Modifier.matchParentSize().shimmerEffect(shimmerDurationMillis))
+            },
+            onFailure = {
+                Box(Modifier.fillMaxSize().shimmerEffect(shimmerDurationMillis))
+            },
+            modifier = Modifier.matchParentSize(),
+            contentScale = contentScale
         )
     }
 }

@@ -18,7 +18,7 @@ import com.foodsaver.app.feature.auth.presentation.ForgotPassword.ForgotPassword
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
-import com.foodsaver.app.presentation.featureAuth.common.textField.AuthenticationTextFieldState
+import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.auth_email
@@ -26,6 +26,7 @@ import foodsaver.composeapp.generated.resources.auth_email_example
 import foodsaver.composeapp.generated.resources.auth_forgot_password
 import foodsaver.composeapp.generated.resources.auth_forgot_password_send_code
 import foodsaver.composeapp.generated.resources.auth_login_subtitle
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -64,10 +65,10 @@ private fun ForgotPasswordScreen(
             AuthenticationItem(
                 state = AuthenticationItemState(
                     title = Res.string.auth_email,
-                    state = AuthenticationTextFieldState(
+                    state = PrimaryTextFieldState(
                         value = email,
                         onValueChange = { onEvent(ForgotPasswordEvent.OnEmailChange(it)) },
-                        placeholder = Res.string.auth_email_example,
+                        placeholder = stringResource(Res.string.auth_email_example),
                         keyboardType = KeyboardType.Email
                     ),
                 )

@@ -259,7 +259,9 @@ private fun RestaurantScreen(
                         AddProductCard(
                             product = product,
                             isProductInCart = false,
-                            onAddClick = { TODO() },
+                            onAddClick = {
+                                onEvent(RestaurantEvent.OnAddProductToCart(product.productId))
+                            },
                             onRemoveClick = { TODO() },
                             onProductClick = {
                                 navController.navigate(Route.HomeGraph.FoodDetailsScreen(

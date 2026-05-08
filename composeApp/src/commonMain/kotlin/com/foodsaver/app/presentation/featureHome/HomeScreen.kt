@@ -118,7 +118,9 @@ private fun HomeScreen(
                 HomeTopBar(
                     deliverTo = state.deliverTo,
                     cartItemValue = state.cartSize,
-                    onCartClick = { TODO() },
+                    onCartClick = {
+                        navController.navigate(Route.CartGraph.CartScreen(state.cartId))
+                    },
                     onMenuClick = { TODO() },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -8,6 +8,7 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
+import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
@@ -24,6 +25,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val categoryRepository: CategoryRepository,
     private val restaurantRepository: RestaurantRepository,
+
+    private val cartRepository: CartRepository
 ) : BaseViewModel<HomeAction>() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -96,7 +99,16 @@ class HomeViewModel(
     }
 
     private fun loadCart(): Job = viewModelScope.launch(Dispatchers.InputOutput) {
-        // TODO
+        cartRepository.getCartSize().collect { result ->
+            result.onSuccess { result ->
+                _state.update {
+                    it.copy(
+                        cartSize = result.quantity,
+                        cartId = result.cartId
+                    )
+                }
+            }
+        }
     }
 
     fun onEvent(event: HomeEvent) {

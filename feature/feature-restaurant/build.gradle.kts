@@ -59,6 +59,7 @@ kotlin {
             implementation(projects.core.coreNavigation)
             implementation(projects.core.coreRestaurant)
             implementation(projects.core.coreProduct)
+            implementation(projects.core.coreCart)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.serialization.json)

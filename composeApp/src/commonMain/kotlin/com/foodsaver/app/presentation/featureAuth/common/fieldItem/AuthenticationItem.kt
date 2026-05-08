@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.presentation.featureAuth.common.textField.AuthenticationTextField
-import com.foodsaver.app.presentation.featureAuth.common.textField.AuthenticationTextFieldState
+import com.foodsaver.app.common.textField.PrimaryTextField
+import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.auth_email
@@ -23,10 +23,10 @@ fun AuthenticationItemPreview() {
     AuthenticationItem(
         state = AuthenticationItemState(
             title = Res.string.auth_email,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = "",
                 onValueChange = {  },
-                placeholder = Res.string.auth_email_example
+                placeholder = stringResource(Res.string.auth_email_example)
             )
         )
     )
@@ -47,7 +47,7 @@ fun AuthenticationItem(
 
         Spacer(Modifier.height(8.dp))
 
-        AuthenticationTextField(
+        PrimaryTextField(
             state = state.state,
             modifier = Modifier
                 .fillMaxWidth()

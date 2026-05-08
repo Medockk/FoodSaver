@@ -50,7 +50,11 @@ data class ColorScheme(
     val ingredientBackgroundColor: Color = Color.Unspecified,
 
     val cartFabColor: Color = Color.Unspecified,
+    val cartBottomBarColor: Color = Color.Unspecified,
     val onCartFabColor: Color = Color.Unspecified,
+    val completeColor: Color = Color.Unspecified,
+
+    val deleteColor: Color = Color.Unspecified,
 )
 
 val lightColorScheme = ColorScheme(
@@ -100,6 +104,9 @@ val lightColorScheme = ColorScheme(
 
     cartFabColor = Color(0x1AFFFFFF),
     onCartFabColor = Color(0xFFFFFFFF),
+    completeColor = Color(0xFF059C6A),
+    cartBottomBarColor = Color(0xFFFFFFFF),
+    deleteColor = Color(0xFFE04444),
 )
 
 val darkColorScheme = ColorScheme(

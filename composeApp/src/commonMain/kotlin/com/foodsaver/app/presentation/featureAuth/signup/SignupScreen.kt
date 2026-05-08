@@ -33,7 +33,7 @@ import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
-import com.foodsaver.app.presentation.featureAuth.common.textField.AuthenticationTextFieldState
+import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
@@ -109,33 +109,33 @@ private fun SignupScreen(
     val authenticationFields = listOf(
         AuthenticationItemState(
             title = Res.string.auth_signup_name,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.name,
                 onValueChange = {
                     onEvent(SignupEvent.OnNameValueChange(it))
                 },
-                placeholder = Res.string.auth_signup_name_example
+                placeholder = stringResource(Res.string.auth_signup_name_example)
             )
         ),
         AuthenticationItemState(
             title = Res.string.auth_email,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.email,
                 onValueChange = {
                     onEvent(SignupEvent.OnEmailValueChange(it))
                 },
-                placeholder = Res.string.auth_email_example,
+                placeholder = stringResource(Res.string.auth_email_example),
                 keyboardType = KeyboardType.Email
             )
         ),
         AuthenticationItemState(
             title = Res.string.auth_password,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.password,
                 onValueChange = {
                     onEvent(SignupEvent.OnPasswordValueChange(it))
                 },
-                placeholder = Res.string.auth_password_example,
+                placeholder = stringResource(Res.string.auth_password_example),
                 keyboardType = KeyboardType.Password,
                 trailingIcon = {
                     passwordTrailingIcon {
@@ -143,19 +143,19 @@ private fun SignupScreen(
                         state.isPasswordVisible
                     }
                 },
-                passwordField = AuthenticationTextFieldState.PasswordField(
+                passwordField = PrimaryTextFieldState.PasswordField(
                     isPasswordVisible = state.isPasswordVisible
                 )
             )
         ),
         AuthenticationItemState(
             title = Res.string.auth_signup_retype_password,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.retypePassword,
                 onValueChange = {
                     onEvent(SignupEvent.OnRetypePasswordValueChange(it))
                 },
-                placeholder = Res.string.auth_password_example,
+                placeholder = stringResource(Res.string.auth_password_example),
                 keyboardType = KeyboardType.Password,
                 trailingIcon = {
                     passwordTrailingIcon {
@@ -163,7 +163,7 @@ private fun SignupScreen(
                         state.isRetypePasswordVisible
                     }
                 },
-                passwordField = AuthenticationTextFieldState.PasswordField(
+                passwordField = PrimaryTextFieldState.PasswordField(
                     isPasswordVisible = state.isRetypePasswordVisible
                 )
             )

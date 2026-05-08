@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.route.featureAuth
+import com.foodsaver.app.presentation.featureCart.route.featureCart
 import com.foodsaver.app.presentation.featureHome.route.featureHome
 import com.foodsaver.app.presentation.featureOnBoarding.route.featureOnboarding
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
@@ -64,6 +65,8 @@ fun App(
                         })
                         featureAuth(navController)
                         featureHome(navController)
+
+                        featureCart(navController)
                     }
                 }
             }

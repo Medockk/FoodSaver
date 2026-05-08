@@ -8,37 +8,27 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreCart.domain.model.CartItemModel
+import com.foodsaver.app.coreCart.domain.model.CartRequestModel
+import com.foodsaver.app.coreCart.domain.model.ChangeQuantityRequest
+import com.foodsaver.app.coreCart.domain.repository.CartRepository
+import com.foodsaver.app.coreCart.domain.usecase.AddProductToCartUseCase
+import com.foodsaver.app.coreCart.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
-import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductUseCase
-import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
-import com.foodsaver.app.domain.model.CartItemModel
-import com.foodsaver.app.domain.model.CartRequestModel
-import com.foodsaver.app.domain.usecase.AddProductToCartUseCase
-import com.foodsaver.app.domain.usecase.DecreaseProductCountUseCase
-import com.foodsaver.app.domain.usecase.IncreaseProductCountUseCase
-import com.foodsaver.app.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.featureFoodDetail.domain.repository.IngredientsRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FoodDetailViewModel(
     savedStateHandle: SavedStateHandle,
-    private val getCachedProductUseCase: GetCachedProductUseCase,
-    private val getProductsUseCase: GetProductsUseCase,
-
+    private val cartRepository: CartRepository,
     private val addProductToCartUseCase: AddProductToCartUseCase,
-    private val increaseProductCountUseCase: IncreaseProductCountUseCase,
-    private val decreaseProductCountUseCase: DecreaseProductCountUseCase,
     private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
     private val productRepository: ReadProductRepository,
 
@@ -115,36 +105,11 @@ class FoodDetailViewModel(
             }
 
             FoodDetailEvents.OnDecreaseCountClick -> {
-                _state.update {
-                    if (it.productCount != 1L) {
-                        it.copy(productCount = it.productCount - 1)
-                    } else {
-                        it
-                    }
-                }
-
-                if (_state.value.isProductInCart) {
-                    viewModelScope.launch(Dispatchers.InputOutput) {
-                        val request = CartRequestModel(productId = navArgs.productId)
-                        decreaseProductCountUseCase(request)
-                            .onFailure {
-                                sendError(it)
-                            }
-                    }
-                }
+                TODO()
             }
 
             FoodDetailEvents.OnIncreaseCountClick -> {
-                _state.update { it.copy(productCount = it.productCount + 1) }
-
-                if (_state.value.isProductInCart) {
-                    viewModelScope.launch(Dispatchers.InputOutput) {
-                        val request = CartRequestModel(productId = navArgs.productId)
-                        increaseProductCountUseCase(request).onFailure {
-                            sendError(it)
-                        }
-                    }
-                }
+                TODO()
             }
 
             FoodDetailEvents.OnRemoveProductFromCart -> {

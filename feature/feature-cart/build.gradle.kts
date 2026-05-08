@@ -58,6 +58,9 @@ kotlin {
             implementation(projects.core.coreAddress)
 
             implementation(libs.koin.compose.viewmodel)
+            implementation(projects.core.coreNavigation)
+            implementation(libs.jetbrains.compose.navigation)
+            implementation(projects.core.coreProduct)
         }
         jvmMain.dependencies {
 

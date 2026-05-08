@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS cartItemEntity (
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    serverId TEXT UNIQUE,
+    quantity INTEGER NOT NULL,
+    tempId TEXT UNIQUE
+);
+
+getCartSize:
+SELECT COUNT(*)
+FROM cartItemEntity;
+
+getItems:
+SELECT *
+FROM cartItemEntity;
+
+insertItem:
+INSERT OR REPLACE INTO cartItemEntity(serverId, quantity)
+VALUES (?, ?);
+
+insertLocalItem:
+INSERT OR REPLACE INTO cartItemEntity
+VALUES ?;

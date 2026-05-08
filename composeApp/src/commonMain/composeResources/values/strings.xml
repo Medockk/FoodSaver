@@ -62,4 +62,12 @@ you just place the orer we do the rest</string>
     <string name="ingredients_allergy">Allergy</string>
 
     <string name="cart">Cart</string>
+    <string name="edit_items">EDIT Items</string>
+    <string name="edit">EDIT</string>
+    <string name="done">Done</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="your_delivery_address">Your Delivery Address</string>
+    <string name="total">Total</string>
+    <string name="breakdown">Breakdown</string>
+    <string name="place_order">Place ORder</string>
 </resources>

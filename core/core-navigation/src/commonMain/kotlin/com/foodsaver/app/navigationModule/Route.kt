@@ -48,6 +48,13 @@ sealed class Route {
     }
 
     @Serializable
+    data object CartGraph: Route() {
+
+        @Serializable
+        data class CartScreen(val cartId: String? = null): Route()
+    }
+
+    @Serializable
     data object ProfileGraph : Route() {
 
         @Serializable

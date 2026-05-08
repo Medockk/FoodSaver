@@ -173,10 +173,6 @@ compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.r
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 #KMP Pallet
-kmpalette-core = { module = "com.materialkolor.palette:core", version.ref = "kmpalette" }
-kmpalette-androidx-palette = { module = "com.materialkolor.palette:androidx-palette", version.ref = "kmpalette" }
-kmpalette-extensions-network = { module = "com.materialkolor.palette:extensions-network", version.ref = "kmpalette" }
-
 palette-kamel = { module = "media.kamel:kamel-image", version.ref = "paletteKamel" }
 palette-kamel-default = { module = "media.kamel:kamel-image-default", version.ref = "paletteKamel" }
 kmpalette-kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }

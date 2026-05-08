@@ -104,7 +104,7 @@ sqldelight {
         create("MainAppDatabase") {
             packageName.set("com.databases.cache")
             verifyMigrations.set(true)
-            version = 2
+            version = 3
             dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.3.2")
             module("app.cash.sqldelight:sqlite-json-module:2.3.2")
 

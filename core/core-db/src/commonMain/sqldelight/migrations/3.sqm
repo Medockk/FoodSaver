@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS cartItemEntity (
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    serverId TEXT UNIQUE,
+    quantity INTEGER NOT NULL,
+    tempId TEXT UNIQUE
+);

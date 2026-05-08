@@ -207,7 +207,9 @@ private fun FoodDetailsScreen(
                     productCount = state.productCount.toInt(),
                     onIncreaseClick = { TODO() },
                     onDecreaseClick = { TODO() },
-                    onAddProductToCart = { TODO() },
+                    onAddProductToCart = {
+                        onEvent(FoodDetailEvents.OnAddProductToCart)
+                    },
                     modifier = Modifier
                         .background(FoodSaverTheme.colorScheme.placeholderBackground)
                         .padding(bottomBarPaddingValues)

@@ -4,6 +4,7 @@ package com.foodsaver.app.di
 import com.foodsaver.app.addProductModule.di.featureAddProductModule
 import com.foodsaver.app.coreAddress.di.coreAddressModule
 import com.foodsaver.app.coreAuth.coreAuthModule
+import com.foodsaver.app.coreCart.di.coreCartModule
 import com.foodsaver.app.coreCategory.di.coreCategoryModule
 import com.foodsaver.app.coreDb.di.databaseModule
 import com.foodsaver.app.coreEnterprises.di.coreRestaurantModule

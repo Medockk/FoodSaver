@@ -38,7 +38,7 @@ import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
 import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
-import com.foodsaver.app.presentation.featureAuth.common.textField.AuthenticationTextFieldState
+import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.presentation.featureAuth.login.components.AuthenticationCheckbox
 import com.foodsaver.app.presentation.featureAuth.login.components.AuthenticationVariant
 import com.foodsaver.app.presentation.featureAuth.login.components.AuthenticationVariantState
@@ -108,25 +108,25 @@ private fun LoginScreen(
     val authenticationItemStates = listOf(
         AuthenticationItemState(
             title = Res.string.auth_email,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.email,
                 onValueChange = {
                     onEvent(LoginEvent.OnEmailValueChange(it))
                 },
-                placeholder = Res.string.auth_email_example,
+                placeholder = stringResource(Res.string.auth_email_example),
                 keyboardType = KeyboardType.Email
             )
         ),
         AuthenticationItemState(
             title = Res.string.auth_password,
-            state = AuthenticationTextFieldState(
+            state = PrimaryTextFieldState(
                 value = state.password,
                 onValueChange = {
                     onEvent(LoginEvent.OnPasswordValueChange(it))
                 },
-                placeholder = Res.string.auth_password_example,
+                placeholder = stringResource(Res.string.auth_password_example),
                 keyboardType = KeyboardType.Password,
-                passwordField = AuthenticationTextFieldState.PasswordField(
+                passwordField = PrimaryTextFieldState.PasswordField(
                     isPasswordVisible = state.isPasswordVisible
                 ),
                 trailingIcon = {
