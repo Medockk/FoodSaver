@@ -57,6 +57,7 @@ kotlin {
             implementation(projects.core.coreDb)
             implementation(projects.core.coreModel)
             implementation(projects.core.corePaymentMethod)
+            implementation(projects.core.coreAuth)
         }
         jvmMain.dependencies {
 

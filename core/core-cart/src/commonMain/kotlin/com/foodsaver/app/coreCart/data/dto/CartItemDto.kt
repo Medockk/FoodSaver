@@ -8,5 +8,13 @@ internal data class CartItemDto(
     @SerialName("id")
     val cartItemId: String,
     val productId: String,
-    val quantity: Long
-)
+    val quantity: Long,
+    val attributes: Attributes?
+) {
+
+    @Serializable
+    internal data class Attributes(
+        val size: String? = null,
+        val additions: List<String> = emptyList()
+    )
+}

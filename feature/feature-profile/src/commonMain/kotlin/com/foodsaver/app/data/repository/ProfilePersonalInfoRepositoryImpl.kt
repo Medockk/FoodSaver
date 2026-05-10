@@ -26,23 +26,7 @@ internal class ProfilePersonalInfoRepositoryImpl(
 ) : ProfilePersonalInfoRepository {
 
     override suspend fun save(profilePersonalInfoModel: ProfilePersonalInfoModel): ApiResult<Unit> {
-        return saveNetworkCall<UserDto> {
-            httpClient.put(HttpConstants.USER_URL) {
-                setBody(profilePersonalInfoModel.toDto())
-            }
-        }.onSuccess {
-            val database = provider.get()
-
-            val userEntityQueries = database.userEntityQueries
-            userEntityQueries.updateUser(
-                name = it.name,
-                email = it.email,
-                photoUrl = it.photoUrl,
-                bio = it.bio,
-                phone = it.phone,
-                uid = it.uid
-            )
-        }.map { }
+        TODO()
     }
 
     override suspend fun uploadAvatar(
@@ -50,28 +34,6 @@ internal class ProfilePersonalInfoRepositoryImpl(
         contentType: String,
         fileName: String,
     ): ApiResult<String> {
-        return saveNetworkCall<String> {
-            httpClient.put(HttpConstants.USER_URL + "/upload-avatar") {
-                setBody(
-                    MultiPartFormDataContent(
-                        parts = formData {
-                            append("avatar", bytes, Headers.build {
-                                append(HttpHeaders.ContentType, contentType)
-                                append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
-                            })
-                        }
-                    ))
-            }
-        }.onSuccess { url ->
-            val queries = provider.get().userEntityQueries
-            authUserManager.getCurrentUid()?.let { uid ->
-                queries.getUserByUid(uid).executeAsOneOrNull()
-                    ?.let { user ->
-                        queries.updatePhotoUrl(url, user.uid)
-                    }
-            }
-        }.map {
-            it
-        }
+        TODO()
     }
 }

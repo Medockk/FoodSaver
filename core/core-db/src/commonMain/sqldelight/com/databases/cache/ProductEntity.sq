@@ -1,0 +1,32 @@
+import kotlin.time.Instant;
+
+CREATE TABLE productCacheEntity (
+    productId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    imageUri TEXT,
+    price REAL NOT NULL,
+    discount REAL NOT NULL,
+    currency TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    restaurantId TEXT NOT NULL,
+    expiresAt INTEGER AS Instant NOT NULL
+);
+
+insertProduct:
+INSERT OR REPLACE INTO productCacheEntity VALUES ?;
+
+getProduct:
+SELECT * FROM productCacheEntity WHERE productId = ?;
+
+getProductsByIds:
+SELECT * FROM productCacheEntity
+WHERE productId IN ?;
+
+getExistingIds:
+SELECT productId FROM productCacheEntity
+WHERE productId IN ?;
+
+getProductByRestaurantId:
+SELECT * FROM productCacheEntity
+WHERE restaurantId = ?;

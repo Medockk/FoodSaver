@@ -1,22 +1,117 @@
+import com.foodsaver.app.coreDb.domain.model.ProductAttributes;
+import com.foodsaver.app.coreDb.domain.model.SyncStatus;
+import kotlin.Boolean;
+import kotlin.Double;
+
 CREATE TABLE IF NOT EXISTS cartItemEntity (
-    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    localId TEXT NOT NULL PRIMARY KEY,
     serverId TEXT UNIQUE,
+    productId TEXT NOT NULL,
+    cartId TEXT NOT NULL,
+    userId TEXT NOT NULL,
+
     quantity INTEGER NOT NULL,
-    tempId TEXT UNIQUE
+    attributes TEXT AS ProductAttributes,
+
+    addedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    syncStatus INTEGER AS SyncStatus NOT NULL DEFAULT 0,
+    isDeleted INTEGER AS Boolean DEFAULT 0, -- default false
+
+    FOREIGN KEY (cartId) REFERENCES cartEntity(id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES userEntity(id) ON DELETE CASCADE,
+
+    UNIQUE(productId, attributes, userId)
 );
 
-getCartSize:
-SELECT COUNT(*)
-FROM cartItemEntity;
+getCartItemsByUserId:
+SELECT * FROM cartItemEntity
+WHERE userId = ?
+AND isDeleted = 0;
 
-getItems:
-SELECT *
-FROM cartItemEntity;
+getCartItemByServerId:
+SELECT * FROM cartItemEntity
+WHERE serverId = ?;
 
-insertItem:
-INSERT OR REPLACE INTO cartItemEntity(serverId, quantity)
-VALUES (?, ?);
+getCartWithProductDetails:
+SELECT
+    ci.localId,
+    ci.serverId,
+    ci.quantity,
+    ci.attributes,
+    pc.productId,
+    pc.name,
+    pc.price,
+    pc.imageUri,
+    pc.currency
+FROM cartItemEntity AS ci
+INNER JOIN productCacheEntity AS pc ON ci.productId = pc.productId
+WHERE ci.userId = :currentUserId
+AND isDeleted = 0;
 
-insertLocalItem:
-INSERT OR REPLACE INTO cartItemEntity
-VALUES ?;
+upsertCartItem:
+INSERT INTO cartItemEntity (
+    localId,
+    serverId,
+    productId,
+    cartId,
+    userId,
+    quantity,
+    attributes,
+    addedAt,
+    syncStatus
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(serverId) DO UPDATE SET
+    quantity = excluded.quantity,
+    attributes = excluded.attributes,
+    syncStatus = excluded.syncStatus
+ON CONFLICT(productId, attributes, userId) DO UPDATE SET
+    serverId = excluded.serverId,
+    quantity = quantity + excluded.quantity,
+    syncStatus = excluded.syncStatus
+WHERE isDeleted = 0;
+
+deleteAllSynchronizedByUserId:
+DELETE FROM cartItemEntity
+WHERE userId = ?
+AND syncStatus = 0
+AND isDeleted = 0;
+
+deleteOldSynchronizedItems:
+DELETE FROM cartItemEntity
+WHERE userId = :userId
+AND syncStatus = 0
+AND isDeleted = 0
+AND serverId NOT IN :serverIds;
+
+changeQuantity:
+UPDATE cartItemEntity
+SET quantity = ?,
+syncStatus = 1
+WHERE serverId = ? OR localId = ?;
+
+getPendingItems:
+SELECT * FROM cartItemEntity
+WHERE syncStatus = 1
+AND isDeleted = 0;
+
+changeSyncStatus:
+UPDATE cartItemEntity
+SET syncStatus = ?,
+serverId = ?
+WHERE localId = ?;
+
+markAsDeleted:
+UPDATE cartItemEntity
+SET syncStatus = 1,
+isDeleted = 1
+WHERE (serverId IS NOT NULL AND serverId = :serverId)
+   OR (localId = :localId);
+
+delete:
+DELETE FROM cartItemEntity
+WHERE (serverId IS NOT NULL AND serverId = :serverId)
+   OR (localId = :localId);
+
+getDeletedPendingItems:
+SELECT * FROM cartItemEntity WHERE isDeleted = 1 AND syncStatus = 1;

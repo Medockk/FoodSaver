@@ -204,12 +204,12 @@ private fun FoodDetailsScreen(
             state.product?.let { product ->
                 FoodDetailsBottomBar(
                     price = product.price,
-                    productCount = state.productCount.toInt(),
-                    onIncreaseClick = { TODO() },
-                    onDecreaseClick = { TODO() },
-                    onAddProductToCart = {
-                        onEvent(FoodDetailEvents.OnAddProductToCart)
-                    },
+                    productCount = state.productCount,
+                    onIncreaseClick = { onEvent(FoodDetailEvents.OnIncreaseCountClick) },
+                    onDecreaseClick = { onEvent(FoodDetailEvents.OnDecreaseCountClick) },
+                    onAddProductToCart = { onEvent(FoodDetailEvents.OnAddProductToCart) },
+                    onRemoveProductFromCart = { onEvent(FoodDetailEvents.OnRemoveProductFromCart) },
+                    isProductInCart = state.isProductInCart,
                     modifier = Modifier
                         .background(FoodSaverTheme.colorScheme.placeholderBackground)
                         .padding(bottomBarPaddingValues)

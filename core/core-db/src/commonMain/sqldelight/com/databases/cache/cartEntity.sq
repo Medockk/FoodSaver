@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS cartEntity (
+    id TEXT NOT NULL PRIMARY KEY, -- server id
+    userId TEXT NOT NULL,
+    totalQuantity INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (userId) REFERENCES userEntity(id) ON DELETE CASCADE
+);
+
+getCartByUserId:
+SELECT * FROM cartEntity WHERE userId = ?;
+
+insertOrUpdateCart:
+INSERT OR REPLACE INTO cartEntity(id, userId, totalQuantity)
+VALUES (?, ?, ?);

@@ -54,7 +54,7 @@ private fun CartProductItemPreview() {
         productName = "Qewewyyfkfdkdgfdqfaggggggggge",
         productPrice = 120.00,
         productSize = "14''",
-        productImageUri = listOf(""),
+        productImageUri = "",
         productCount = 2,
         onIncreaseClick = { TODO() },
         onDecreaseClick = { TODO() },
@@ -124,7 +124,7 @@ fun CartProductItem(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = ripple(),
-                                onClick = state.onDecreaseClick
+                                onClick = state.onRemoveClick
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -160,7 +160,7 @@ fun CartProductItem(
                 )
                 Spacer(Modifier.weight(1f))
                 ProductCounter(
-                    productCount = state.productCount.toInt(),
+                    productCount = state.productCount,
                     onIncreaseClick = state.onIncreaseClick,
                     onDecreaseClick = state.onDecreaseClick
                 )

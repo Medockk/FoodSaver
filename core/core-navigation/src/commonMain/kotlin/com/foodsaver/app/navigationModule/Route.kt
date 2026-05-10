@@ -34,7 +34,7 @@ sealed class Route {
         data class FoodDetailsScreen(
             val productId: String,
             val productName: String,
-            val isProductInCart: Boolean,
+            var productCartItemId: String? = null,
             val initialQuantity: Long = 1,
         ) : Route()
 

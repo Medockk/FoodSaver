@@ -1,5 +1,6 @@
 package com.foodsaver.app.coreProductModule.data.mappers
 
+import com.databases.cache.ProductCacheEntity
 import com.foodsaver.app.coreModel.dto.OrganizationDto
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.OrganizationModel
@@ -34,21 +35,33 @@ internal fun ProductDto.toModel(): ProductModel {
 internal fun List<ProductDto>.toModel() =
     map { it.toModel() }
 
-internal fun OrganizationDto.toModel() =
-    OrganizationModel(
-        id = id,
-        organizationName = organizationName
-    )
-
-internal fun AddProductModel.toDto() = AddProductDto(
-    title = title,
+internal fun ProductCacheEntity.mapEntityToModel() = ProductModel(
+    productId = productId,
+    name = name,
     description = description,
-    cost = cost,
-    costUnit = costUnit,
-    categoryIds = categoryIds,
-    count = count,
+    imageUris = listOf(imageUri ?: ""),
+    expiresAt = expiresAt,
+    price = price,
+    discount = discount,
+    count = 1L,
     unit = unit,
-    unitName = unitName,
-    ingredients = ingredients,
-    expiresAt = expiresAt.atStartOfDayIn(TimeZone.currentSystemDefault())
+    currency = currency,
+    restaurantId = restaurantId,
+    categoryIds = emptyList(),
+    ingredientIds = emptyList(),
+    isDeleted = false,
+    isAvailable = true
+)
+
+internal fun ProductDto.mapDtoToEntity() = ProductCacheEntity(
+    productId = productId,
+    name = name,
+    description = description,
+    imageUri = imageUris.firstOrNull(),
+    price = price,
+    discount = discount,
+    currency = currency,
+    unit = unit,
+    restaurantId = restaurantId,
+    expiresAt = expiresAt
 )

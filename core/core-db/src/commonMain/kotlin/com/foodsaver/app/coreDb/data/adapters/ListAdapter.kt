@@ -3,7 +3,7 @@ package com.foodsaver.app.coreDb.data.adapters
 import app.cash.sqldelight.ColumnAdapter
 import kotlinx.serialization.json.Json
 
-internal val listOfStringAdapter = object: ColumnAdapter<List<String>, String> {
+internal val ListOfStringAdapter = object: ColumnAdapter<List<String>, String> {
     override fun decode(databaseValue: String): List<String> {
         return if (databaseValue.isEmpty()) {
             listOf()

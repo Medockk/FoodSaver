@@ -40,7 +40,7 @@ internal class RestaurantRepositoryImpl(
 
     override suspend fun getCachedRestaurants(): ApiResult<List<RestaurantModel>> {
         return withContext(Dispatchers.InputOutput) {
-            val database = databaseProvider.getSync()
+            val database = databaseProvider.invoke()
             val restaurantQueries = database.restaurantEntityQueries
 
             val restaurants = restaurantQueries.getAllRestaurants().executeAsList()
@@ -94,7 +94,7 @@ internal class RestaurantRepositoryImpl(
 //        return@withContext channelFlow {
 //            send(ApiResult.loading())
 //
-//            val database = databaseProvider.getSync()
+//            val database = databaseProvider.invoke()
 //            val restaurantQueries = database.restaurantEntityQueries
 //
 //            val databaseJob = launch {
@@ -162,7 +162,7 @@ internal class RestaurantRepositoryImpl(
                 parameter("size", size)
             }
         }.onSuccess { page ->
-            val restaurantQueries = databaseProvider.getSync().restaurantEntityQueries
+            val restaurantQueries = databaseProvider.invoke().restaurantEntityQueries
             restaurantQueries.transaction {
                 page.content.forEach {
                     with(it) {

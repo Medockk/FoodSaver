@@ -4,7 +4,6 @@ package com.foodsaver.app.presentation.Home
 
 import androidx.lifecycle.viewModelScope
 import com.foodsaver.app.commonModule.InputOutput
-import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
@@ -99,7 +98,7 @@ class HomeViewModel(
     }
 
     private fun loadCart(): Job = viewModelScope.launch(Dispatchers.InputOutput) {
-        cartRepository.getCartSize().collect { result ->
+        cartRepository.observeCart().collect { result ->
             result.onSuccess { result ->
                 _state.update {
                     it.copy(

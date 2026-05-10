@@ -15,15 +15,18 @@ import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_to_cart
+import foodsaver.composeapp.generated.resources.remove_from_cart
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FoodDetailsBottomBar(
     price: Double,
-    productCount: Int,
+    productCount: Long,
+    isProductInCart: Boolean,
     onIncreaseClick: () -> Unit,
     onDecreaseClick: () -> Unit,
     onAddProductToCart: () -> Unit,
+    onRemoveProductFromCart: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -53,8 +56,12 @@ fun FoodDetailsBottomBar(
 
         Spacer(Modifier.height(25.dp))
         PrimaryButton(
-            onClick = onAddProductToCart,
-            text = stringResource(Res.string.add_to_cart),
+            onClick = {
+                if (isProductInCart) onRemoveProductFromCart()
+                else onAddProductToCart()
+            },
+            text = if (isProductInCart) stringResource(Res.string.remove_from_cart)
+            else stringResource(Res.string.add_to_cart),
             modifier = Modifier
                 .fillMaxWidth()
         )

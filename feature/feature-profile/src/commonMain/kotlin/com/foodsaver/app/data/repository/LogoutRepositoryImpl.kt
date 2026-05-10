@@ -13,17 +13,6 @@ internal class LogoutRepositoryImpl(
 ) : LogoutRepository {
 
     override suspend fun logout(): ApiResult<Unit> {
-        val queries = databaseProvider.get().userEntityQueries
-        accessTokenManager.clearTokens()
-        authUserManager.logout()
-
-        queries.transactionWithResult {
-
-            authUserManager.getCurrentUid()?.let { uid ->
-                queries.deleteUser(uid)
-            }
-        }
-
-        return ApiResult.Success(Unit)
+        TODO()
     }
 }

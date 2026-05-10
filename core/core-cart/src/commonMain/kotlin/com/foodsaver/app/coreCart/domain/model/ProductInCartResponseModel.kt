@@ -1,6 +1,6 @@
 package com.foodsaver.app.coreCart.domain.model
 
-data class CartRequestModel(
+data class ProductInCartResponseModel(
     val productId: String,
-    val quantity: Long? =  null
+    val cartItemId: String?
 )

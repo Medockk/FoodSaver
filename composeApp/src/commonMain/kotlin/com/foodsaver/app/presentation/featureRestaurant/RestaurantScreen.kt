@@ -256,18 +256,26 @@ private fun RestaurantScreen(
                                 end = if (isLeftColumn) 0.dp else 24.dp,
                             )
                     ) {
+                        val productInCartResponseModel = state.productInCartIds
+                            .find { it.productId == product.productId}
                         AddProductCard(
                             product = product,
-                            isProductInCart = false,
+                            isProductInCart = productInCartResponseModel != null,
                             onAddClick = {
                                 onEvent(RestaurantEvent.OnAddProductToCart(product.productId))
                             },
-                            onRemoveClick = { TODO() },
+                            onRemoveClick = {
+                                navController.navigate(Route.HomeGraph.FoodDetailsScreen(
+                                    productId = product.productId,
+                                    productName = product.name,
+                                    productCartItemId = productInCartResponseModel?.cartItemId
+                                ))
+                            },
                             onProductClick = {
                                 navController.navigate(Route.HomeGraph.FoodDetailsScreen(
                                     product.productId,
                                     product.name,
-                                    false // TODO
+                                    productInCartResponseModel?.cartItemId
                                 ))
                             },
                         )

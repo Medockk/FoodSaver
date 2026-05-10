@@ -1,10 +1,14 @@
 package com.foodsaver.app.coreDb.data.repository
 
+import com.databases.cache.CartItemEntity
 import com.databases.cache.MainAppDatabase
+import com.databases.cache.ProductCacheEntity
+import com.databases.cache.ProductEntityQueries
 import com.databases.cache.RestaurantEntity
-import com.databases.cache.UserEntity
-import com.foodsaver.app.coreDb.data.adapters.instantAdapter
-import com.foodsaver.app.coreDb.data.adapters.listOfStringAdapter
+import com.foodsaver.app.coreDb.data.adapters.InstantAdapter
+import com.foodsaver.app.coreDb.data.adapters.ListOfStringAdapter
+import com.foodsaver.app.coreDb.data.adapters.ProductAttributesAdapter
+import com.foodsaver.app.coreDb.data.adapters.SyncStatusAdapter
 import com.foodsaver.app.coreDb.data.factory.SqlDriverFactory
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 
@@ -16,35 +20,20 @@ internal class DatabaseProviderImpl(
         val driver = sqlDriverFactory.createSync()
         MainAppDatabase.invoke(
             driver = driver,
-            userEntityAdapter = UserEntity.Adapter(
-                createdAtAdapter = instantAdapter,
-                rolesAdapter = listOfStringAdapter
-            ),
             restaurantEntityAdapter = RestaurantEntity.Adapter(
-                photoUrisAdapter = listOfStringAdapter
-            )
+                photoUrisAdapter = ListOfStringAdapter
+            ),
+            cartItemEntityAdapter = CartItemEntity.Adapter(
+                attributesAdapter = ProductAttributesAdapter,
+                syncStatusAdapter = SyncStatusAdapter
+            ),
+            productCacheEntityAdapter = ProductCacheEntity.Adapter(
+                expiresAtAdapter = InstantAdapter
+            ),
         )
     }.value
 
-    override suspend fun get(): MainAppDatabase {
+    override operator fun invoke(): MainAppDatabase {
         return database
-    }
-
-    override fun getSync(): MainAppDatabase {
-        return database
-    }
-
-    private suspend fun createDatabase(): MainAppDatabase {
-        val driver = sqlDriverFactory.create()
-        return MainAppDatabase.invoke(
-            driver = driver,
-            userEntityAdapter = UserEntity.Adapter(
-                createdAtAdapter = instantAdapter,
-                rolesAdapter = listOfStringAdapter
-            ),
-            restaurantEntityAdapter = RestaurantEntity.Adapter(
-                photoUrisAdapter = listOfStringAdapter
-            )
-        )
     }
 }

@@ -119,15 +119,17 @@ private fun CartScreen(
             items(state.products) { product ->
                 CartProductItem(
                     state = CartProductItemState(
-                        productName = product.productName,
-                        productPrice = product.productPrice,
+                        productName = product.name,
+                        productPrice = product.price,
                         productSize = "14 ''",
-                        productImageUri = product.productImageUris,
+                        productImageUri = product.imageUri,
                         isProductEditing = state.isItemsEditing,
-                        productCount = product.quantityInCart,
+                        productCount = product.quantity,
                         onIncreaseClick = { onEvent(CartEvent.IncreaseProductClick(product)) },
                         onDecreaseClick = { onEvent(CartEvent.DecreaseProductClick(product)) },
-                        onRemoveClick = { TODO() }
+                        onRemoveClick = {
+                            onEvent(CartEvent.OnDeleteItem(product))
+                        }
                     )
                 )
             }

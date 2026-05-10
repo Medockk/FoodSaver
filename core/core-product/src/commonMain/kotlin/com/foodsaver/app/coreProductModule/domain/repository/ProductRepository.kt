@@ -14,8 +14,11 @@ interface ReadProductRepository {
     suspend fun getCachedProducts(): ApiResult<List<ProductModel>>
 
     suspend fun searchProduct(name: String, categoryIds: List<String>, page: Int, size: Int): ApiResult<List<ProductModel>>
-    suspend fun getProductsByRestaurantId(restaurantId: String, page: Int, size: Int): ApiResult<List<ProductModel>>
-    suspend fun getProductById(productId: String): ApiResult<ProductModel>
+    fun observeProductsByRestaurantId(restaurantId: String): Flow<ApiResult<List<ProductModel>>>
+    fun observeProductById(productId: String): Flow<ApiResult<ProductModel>>
+
+    suspend fun fetchProductByRestaurantId(restaurantId: String, page: Int, size: Int): ApiResult<List<ProductModel>>
+    suspend fun fetchProductById(productId: String): ApiResult<ProductModel>
 }
 
 /**

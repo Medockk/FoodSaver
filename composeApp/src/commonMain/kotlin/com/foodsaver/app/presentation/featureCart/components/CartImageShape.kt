@@ -21,7 +21,7 @@ private fun CartProductItemPreview() {
             productName = "Qewew",
             productPrice = 120.00,
             productSize = "14''",
-            productImageUri = listOf(),
+            productImageUri = "",
             productCount = 2,
             onIncreaseClick = { TODO() },
             onDecreaseClick = { TODO() },

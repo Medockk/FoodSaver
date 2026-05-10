@@ -12,7 +12,8 @@ val coreCartModule = module {
     single<CartRepository> {
         CartRepositoryImpl(
             httpClient = get(),
-            databaseProvider = get()
+            databaseProvider = get(),
+            authUserManager = get(),
         )
     }
 

@@ -1,9 +1,72 @@
-CREATE TABLE IF NOT EXISTS userEntity (
-    uid TEXT NOT NULL PRIMARY KEY,
-    username TEXT NOT NULL,
-    email TEXT,
-    name TEXT,
-    photoUrl TEXT,
-    createdAt INTEGER NOT NULL,
-    roles TEXT NOT NULL
+import com.foodsaver.app.coreDb.domain.model.ProductAttributes;
+import com.foodsaver.app.coreDb.domain.model.SyncStatus;
+import kotlin.Boolean;
+import kotlin.String;
+import kotlin.collections.List;
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS userEntity(
+    id TEXT NOT NULL PRIMARY KEY,
+    email TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    imageUri TEXT,
+    restaurantId TEXT,
+    authorities TEXT AS List<String> NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cartEntity (
+    id TEXT NOT NULL PRIMARY KEY, -- server id
+    userId TEXT NOT NULL,
+    totalQuantity INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (userId) REFERENCES userEntity(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cartItemEntity (
+    localId TEXT NOT NULL PRIMARY KEY,
+    serverId TEXT UNIQUE,
+    productId TEXT NOT NULL,
+    cartId TEXT NOT NULL,
+    userId TEXT NOT NULL,
+
+    quantity INTEGER NOT NULL,
+    attributes TEXT AS ProductAttributes,
+
+    addedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    syncStatus INTEGER AS SyncStatus NOT NULL DEFAULT 0,
+    isDeleted INTEGER AS Boolean DEFAULT 0, -- default false
+
+    FOREIGN KEY (cartId) REFERENCES cartEntity(id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES userEntity(id) ON DELETE CASCADE,
+
+    UNIQUE(productId, attributes, userId)
+);
+
+CREATE TABLE productCacheEntity (
+    productId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    imageUri TEXT,
+    price REAL NOT NULL,
+    discount REAL NOT NULL,
+    currency TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    restaurantId TEXT NOT NULL,
+    expiresAt INTEGER AS Instant NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS restaurantEntity (
+    localId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    serverId TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    photoUris TEXT AS List<String>,
+
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    addressName TEXT NOT NULL,
+
+    companyId TEXT NOT NULL,
+    rating REAL DEFAULT NULL,
+    deliveryCost REAL DEFAULT NULL,
+    averageDeliveryTime REAL DEFAULT NULL
 );

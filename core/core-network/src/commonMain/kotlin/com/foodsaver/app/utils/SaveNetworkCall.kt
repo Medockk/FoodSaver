@@ -8,6 +8,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 suspend inline fun<reified T> saveNetworkCall(
     crossinline action: suspend () -> HttpResponse
@@ -17,8 +18,17 @@ suspend inline fun<reified T> saveNetworkCall(
 
         // if status code between 200..299
         if (result.status.isSuccess()) {
+            val textBody = result.bodyAsText()
 
-            // if no content return null
+            // if no content return null OR empty list, if body instance of List
+            if (textBody.isBlank()) {
+                return if (typeOf<T>().classifier == List::class) {
+                    ApiResult.success(emptyList<T>() as T)
+                } else {
+                    ApiResult.success(null as T)
+                }
+            }
+
             if (result.status == HttpStatusCode.NoContent) {
                 return ApiResult.success(null as T)
             }

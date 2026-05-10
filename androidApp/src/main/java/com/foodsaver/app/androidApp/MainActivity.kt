@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 val extras = intent.extras?.getString("product_id")
                 if (extras != null) {
                     { navController: NavController ->
-                        navController.navigate(Route.HomeGraph.FoodDetailsScreen(extras, "",true))
+                        navController.navigate(Route.HomeGraph.FoodDetailsScreen(extras, "" /*TODO make normal deeplink*/))
                     }
                 } else { null }
             }

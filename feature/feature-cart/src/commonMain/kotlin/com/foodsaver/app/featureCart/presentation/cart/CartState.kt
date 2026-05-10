@@ -11,20 +11,8 @@ data class CartState(
     val isDeliveryAddressEditing: Boolean = false,
     val totalCost: Double = 0.0,
     val deliveryAddress: String = "",
-    val products: List<CartItem> = emptyList(),
+    val products: List<CartItemModel> = emptyList(),
 
 
     val isLoading: Boolean = false,
-) {
-
-    data class CartItem(
-        val productName: String,
-        val productPrice: Double,
-        val productImageUris: List<String>,
-        val quantityInCart: Long,
-        val productSize: String,
-        val productId: String,
-
-        val cartItemId: String
-    )
-}
+)

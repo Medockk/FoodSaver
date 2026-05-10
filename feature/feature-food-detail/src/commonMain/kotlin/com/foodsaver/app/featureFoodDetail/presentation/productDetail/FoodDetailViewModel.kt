@@ -8,9 +8,10 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
+import com.foodsaver.app.coreCart.domain.model.AddProductToCartRequestModel
+import com.foodsaver.app.coreCart.domain.model.CartItemAttributes
 import com.foodsaver.app.coreCart.domain.model.CartItemModel
-import com.foodsaver.app.coreCart.domain.model.CartRequestModel
-import com.foodsaver.app.coreCart.domain.model.ChangeQuantityRequest
+import com.foodsaver.app.coreCart.domain.model.DeleteCartItemRequestModel
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCart.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.coreCart.domain.usecase.RemoveProductFromCartUseCase
@@ -39,7 +40,7 @@ class FoodDetailViewModel(
     private val _state = MutableStateFlow(
         FoodDetailState(
             productName = navArgs.productName,
-            isProductInCart = navArgs.isProductInCart,
+            isProductInCart = navArgs.productCartItemId != null,
             productCount = navArgs.initialQuantity
         )
     )
@@ -54,22 +55,15 @@ class FoodDetailViewModel(
 
     private fun loadProduct(productId: String) {
         viewModelScope.launch {
-            productRepository.getProductById(productId)
-                .onSuccess { product ->
-                    _state.update { it.copy(
-                        product = product
-                    ) }
-
-                    product.imageUris.firstOrNull()?.let { uri ->
-                        loadProductColor(uri)
-                    }
-                }
-        }
-    }
-
-    private fun loadProductColor(imageUri: String) {
-        viewModelScope.launch(Dispatchers.InputOutput) {
-
+            productRepository.observeProductById(productId)
+                .collectRequest(
+                    onSuccess = { product ->
+                        _state.update {
+                            it.copy(
+                                product = product
+                            )
+                        }
+                    })
         }
     }
 
@@ -82,7 +76,11 @@ class FoodDetailViewModel(
             FoodDetailEvents.OnAddProductToCart -> {
                 if (_state.value.isProductInCart) return
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    val request = CartRequestModel(navArgs.productId, _state.value.productCount)
+                    val request = AddProductToCartRequestModel(
+                        productId = navArgs.productId,
+                        quantity = _state.value.productCount,
+                        attributes = CartItemAttributes() // TODO
+                    )
 
                     when (val result = addProductToCartUseCase(request)) {
                         is ApiResult.Error -> {
@@ -97,29 +95,46 @@ class FoodDetailViewModel(
                         is ApiResult.Success<CartItemModel> -> {
                             _state.value =
                                 state.value.copy(isLoading = false, isProductInCart = true)
+                            navArgs.productCartItemId = result.data.serverId
                             baseChannel.send(FoodDetailActions.OnAddedToCart)
                         }
+
                         else -> Unit
                     }
                 }
             }
 
             FoodDetailEvents.OnDecreaseCountClick -> {
-                TODO()
+                val newCount = if (_state.value.productCount < 1L) 1L
+                else _state.value.productCount - 1L
+                _state.update {
+                    it.copy(
+                        productCount = newCount
+                    )
+                }
             }
 
             FoodDetailEvents.OnIncreaseCountClick -> {
-                TODO()
+                val newCount = _state.value.productCount + 1L
+                _state.update {
+                    it.copy(productCount = newCount)
+                }
             }
 
             FoodDetailEvents.OnRemoveProductFromCart -> {
+                if (!_state.value.isProductInCart) return
                 viewModelScope.launch(Dispatchers.InputOutput) {
-                    removeProductFromCartUseCase(navArgs.productId)
-                        .onSuccess {
-                            _state.update { it.copy(isProductInCart = false) }
-                        }.onFailure {
-                            sendError(it)
+                    navArgs.productCartItemId?.let { cartItemId ->
+                        val request = DeleteCartItemRequestModel(
+                            localId = "",
+                            cartItemId = cartItemId
+                        )
+                        cartRepository.removeProductFromCart(request).onSuccess {
+                            _state.update { it.copy(
+                                isProductInCart = false
+                            ) }
                         }
+                    }
                 }
             }
 

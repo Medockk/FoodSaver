@@ -29,7 +29,7 @@ import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun ProductCounter(
-    productCount: Int,
+    productCount: Long,
     onIncreaseClick: () -> Unit,
     onDecreaseClick: () -> Unit
 ) {

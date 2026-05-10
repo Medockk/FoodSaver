@@ -4,7 +4,7 @@ data class CartProductItemState(
     val productName: String,
     val productPrice: Double,
     val productSize: String,
-    val productImageUri: List<String>,
+    val productImageUri: String?,
     val isProductEditing: Boolean,
 
     val productCount: Long,

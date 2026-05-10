@@ -3,40 +3,10 @@ import kotlin.collections.List;
 import kotlin.time.Instant;
 
 CREATE TABLE IF NOT EXISTS userEntity(
-    uid TEXT NOT NULL PRIMARY KEY,
-    username TEXT NOT NULL,
-    email TEXT,
-    name TEXT,
-    photoUrl TEXT,
-    createdAt INTEGER AS Instant NOT NULL,
-    roles TEXT AS List<String> NOT NULL,
-    phone TEXT,
-    bio TEXT
+    id TEXT NOT NULL PRIMARY KEY,
+    email TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    imageUri TEXT,
+    restaurantId TEXT,
+    authorities TEXT AS List<String> NOT NULL
 );
-
-insertUser:
-INSERT OR REPLACE INTO userEntity
-VALUES ?;
-
-deleteUser:
-DELETE FROM userEntity
-WHERE uid = ?;
-
-getUserByUid:
-SELECT *
-FROM userEntity
-WHERE uid = :uid;
-
-updateUser:
-UPDATE userEntity
-SET name = ?,
-email = ?,
-photoUrl = ?,
-bio = ?,
-phone = ?
-WHERE uid = ?;
-
-updatePhotoUrl:
-UPDATE userEntity
-SET photoUrl = ?
-WHERE uid = ?;

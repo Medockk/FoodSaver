@@ -6,7 +6,7 @@ import app.cash.sqldelight.ColumnAdapter
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-internal val instantAdapter = object: ColumnAdapter<Instant, Long> {
+internal val InstantAdapter = object: ColumnAdapter<Instant, Long> {
     override fun decode(databaseValue: Long): Instant {
         return Instant.fromEpochMilliseconds(databaseValue)
     }

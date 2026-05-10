@@ -4,7 +4,7 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 
-abstract class BasePaginator<Key, Item>(
+open class BasePaginator<Key, Item>(
     protected val initialKey: Key,
     protected val onRequest: suspend (nextKey: Key) -> ApiResult<Item>,
     protected val onSuccess: suspend (nextKey: Key, result: Item) -> Unit,

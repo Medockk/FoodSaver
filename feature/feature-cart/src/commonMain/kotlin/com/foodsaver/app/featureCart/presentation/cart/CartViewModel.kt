@@ -3,18 +3,13 @@ package com.foodsaver.app.featureCart.presentation.cart
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
-import com.foodsaver.app.coreCart.domain.model.CartItemModel
-import com.foodsaver.app.coreCart.domain.model.CartRequestModel
 import com.foodsaver.app.coreCart.domain.model.ChangeQuantityRequest
+import com.foodsaver.app.coreCart.domain.model.DeleteCartItemRequestModel
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
-import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
-import com.foodsaver.app.coreProfile.domain.usecase.GetProfileUseCase
 import com.foodsaver.app.navigationModule.Route
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,32 +38,10 @@ class CartViewModel(
     private fun getCartItems() {
         navArgs.cartId?.let { cartId ->
             viewModelScope.launch {
-                cartRepository.getCartItems(cartId).collect { result ->
+                cartRepository.observeCartItems(cartId).collect { result ->
                     result.onSuccess { items ->
-                        getProducts(items)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getProducts(items: List<CartItemModel>) {
-        items.forEach { item ->
-            val currentState = _state.value
-            if (currentState.products.find { it.productId == item.productId } == null) {
-                viewModelScope.launch(Dispatchers.InputOutput) {
-                    productRepository.getProductById(item.productId).onSuccess { product ->
-                        val item = CartState.CartItem(
-                            productName = product.name,
-                            productPrice = product.price,
-                            productImageUris = product.imageUris,
-                            quantityInCart = item.quantity,
-                            productSize = "14 ''" /*TODO*/,
-                            productId = product.productId,
-                            cartItemId = item.cartItemId,
-                        )
                         _state.update { it.copy(
-                            products = it.products + item
+                            products = items
                         ) }
                     }
                 }
@@ -79,17 +52,25 @@ class CartViewModel(
     fun onEvent(event: CartEvent) {
         when (event) {
             is CartEvent.DecreaseProductClick -> {
-
+                val newQuantity = if (event.item.quantity < 1L) 1L
+                else event.item.quantity - 1L
+                val request = ChangeQuantityRequest(
+                    cartItemId = event.item.serverId,
+                    newQuantity = newQuantity,
+                    localId = event.item.localId
+                )
+                viewModelScope.launch {
+                    cartRepository.changeProductQuantity(request)
+                }
             }
             is CartEvent.IncreaseProductClick -> {
                 val request = ChangeQuantityRequest(
-                    cartItemId = event.item.cartItemId,
-                    newQuantity = event.item.quantityInCart + 1L
+                    cartItemId = event.item.serverId,
+                    newQuantity = event.item.quantity + 1L,
+                    localId = event.item.localId
                 )
                 viewModelScope.launch {
-                    cartRepository.changeProductQuantity(request).onSuccess {
-
-                    }
+                    cartRepository.changeProductQuantity(request)
                 }
             }
             is CartEvent.OnAddressValueChange -> {
@@ -113,7 +94,19 @@ class CartViewModel(
                     )
                 }
             }
-            CartEvent.OnPlaceOrderClick -> TODO()
+
+            CartEvent.OnPlaceOrderClick -> {
+
+            }
+            is CartEvent.OnDeleteItem -> {
+                viewModelScope.launch {
+                    val request = DeleteCartItemRequestModel(
+                        localId = event.item.localId,
+                        cartItemId = event.item.serverId
+                    )
+                    cartRepository.removeProductFromCart(request)
+                }
+            }
         }
     }
 
