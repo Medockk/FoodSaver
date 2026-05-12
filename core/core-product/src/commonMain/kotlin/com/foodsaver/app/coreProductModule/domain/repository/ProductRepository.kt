@@ -19,6 +19,9 @@ interface ReadProductRepository {
 
     suspend fun fetchProductByRestaurantId(restaurantId: String, page: Int, size: Int): ApiResult<List<ProductModel>>
     suspend fun fetchProductById(productId: String): ApiResult<ProductModel>
+
+
+    suspend fun getSuggestedProducts(): ApiResult<List<ProductModel>>
 }
 
 /**

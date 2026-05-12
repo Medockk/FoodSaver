@@ -36,7 +36,7 @@ class FoodDetailViewModel(
     private val ingredientsRepository: IngredientsRepository,
 ) : BaseViewModel<FoodDetailActions>() {
 
-    private val navArgs = savedStateHandle.toRoute<Route.HomeGraph.FoodDetailsScreen>()
+    private val navArgs = savedStateHandle.toRoute<Route.MainGraph.FoodDetailsScreen>()
     private val _state = MutableStateFlow(
         FoodDetailState(
             productName = navArgs.productName,

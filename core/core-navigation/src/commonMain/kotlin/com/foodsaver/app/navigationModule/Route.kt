@@ -25,7 +25,7 @@ sealed class Route {
     }
 
     @Serializable
-    data object HomeGraph : Route() {
+    data object MainGraph : Route() {
 
         @Serializable
         data object HomeScreen : Route()
@@ -42,6 +42,13 @@ sealed class Route {
         data class Restaurant(
             val restaurantId: String,
             val restaurantName: String,
+        ): Route()
+
+        @Serializable
+        data class SearchScreen(
+            val searchCategoryId: String? = null,
+            val categoryName: String? = null,
+            val query: String? = null
         ): Route()
 
 

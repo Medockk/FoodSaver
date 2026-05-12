@@ -120,6 +120,10 @@ internal class CartRepositoryImpl(
                         .collect { products ->
                             println("Получил новые значения из локальной базы")
                             println("Новые значения для ${products.map { it.serverId }}")
+                            db.cartEntityQueries.updateCount(
+                                totalQuantity = products.size.toLong(),
+                                userId = userId
+                            )
                             val cartItems = products.map {
                                 CartItemModel(
                                     localId = it.localId,

@@ -71,4 +71,11 @@ you just place the orer we do the rest</string>
     <string name="total">Total</string>
     <string name="breakdown">Breakdown</string>
     <string name="place_order">Place ORder</string>
+
+    <string name="search">Search</string>
+    <string name="recent_keywords">Recent Keywords</string>
+    <string name="suggested_restaurants">Suggested Restaurants</string>
+    <string name="popular_food">Popular Food</string>
+    <string name="popular_item">Popular %1$s</string>
+    <string name="products">products</string>
 </resources>

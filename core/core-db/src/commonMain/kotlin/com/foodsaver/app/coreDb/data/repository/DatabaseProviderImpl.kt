@@ -4,6 +4,7 @@ import com.databases.cache.CartItemEntity
 import com.databases.cache.MainAppDatabase
 import com.databases.cache.ProductCacheEntity
 import com.databases.cache.ProductEntityQueries
+import com.databases.cache.RecentKeywordsEntity
 import com.databases.cache.RestaurantEntity
 import com.foodsaver.app.coreDb.data.adapters.InstantAdapter
 import com.foodsaver.app.coreDb.data.adapters.ListOfStringAdapter
@@ -30,6 +31,9 @@ internal class DatabaseProviderImpl(
             productCacheEntityAdapter = ProductCacheEntity.Adapter(
                 expiresAtAdapter = InstantAdapter
             ),
+            recentKeywordsEntityAdapter = RecentKeywordsEntity.Adapter(
+                addedAtAdapter = InstantAdapter
+            )
         )
     }.value
 

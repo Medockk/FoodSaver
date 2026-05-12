@@ -73,7 +73,7 @@ fun SignupScreenRoot(
                 snackbarHostState.showSnackbar(it.message, withDismissAction = true)
             }
             SignupAction.OnRegistered -> {
-                navController.navigate(Route.HomeGraph) {
+                navController.navigate(Route.MainGraph) {
                     popUpTo<Route.AuthGraph> {
                         inclusive = true
                     }

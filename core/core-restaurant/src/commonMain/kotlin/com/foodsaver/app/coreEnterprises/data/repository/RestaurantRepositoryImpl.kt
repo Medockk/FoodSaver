@@ -186,6 +186,16 @@ internal class RestaurantRepositoryImpl(
         }.map { it.content.map { r -> r.mapToModel() } }
     }
 
+    override suspend fun getSuggestedRestaurants(): ApiResult<List<RestaurantModel>> {
+        return withContext(Dispatchers.InputOutput) {
+            return@withContext saveNetworkCall<List<RestaurantDto>> {
+                httpClient.get(HttpConstants.ENTERPRISE_URL + "/suggested")
+            }.map { restaurants ->
+                restaurants.map { it.mapToModel() }
+            }
+        }
+    }
+
     override suspend fun uploadRestaurantImage(uploadRestaurantImageModel: UploadRestaurantImageModel): ApiResult<String?> =
         withContext(
             Dispatchers.InputOutput

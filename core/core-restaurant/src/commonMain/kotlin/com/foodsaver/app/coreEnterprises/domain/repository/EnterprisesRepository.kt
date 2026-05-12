@@ -18,4 +18,6 @@ interface RestaurantRepository {
     suspend fun getRestaurantById(restaurantId: String): ApiResult<RestaurantModel>
 
     suspend fun getAllRestaurants(page: Int, size: Int): ApiResult<List<RestaurantModel>>
+
+    suspend fun getSuggestedRestaurants(): ApiResult<List<RestaurantModel>>
 }

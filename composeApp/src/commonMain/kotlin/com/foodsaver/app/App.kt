@@ -40,7 +40,7 @@ fun App(
     val authenticationState by viewModel.authenticationState.collectAsState()
 
     val startDestination = when {
-        authenticationState is AuthenticationState.Authenticated -> Route.HomeGraph
+        authenticationState is AuthenticationState.Authenticated -> Route.MainGraph
         authenticationState is AuthenticationState.OnBoarding -> Route.OnBoarding
 //        initialAuthRoute is Route.AuthGraph.ResetPasswordScreen -> Route.AuthGraph
         else -> Route.AuthGraph

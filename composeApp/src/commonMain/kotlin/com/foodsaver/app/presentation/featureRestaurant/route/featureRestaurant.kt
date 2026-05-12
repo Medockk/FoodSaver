@@ -7,7 +7,7 @@ import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureRestaurant.RestaurantScreenRoot
 
 fun NavGraphBuilder.featureRestaurant(navController: NavController) {
-    composable<Route.HomeGraph.Restaurant>() {
+    composable<Route.MainGraph.Restaurant>() {
         RestaurantScreenRoot(navController)
     }
 }

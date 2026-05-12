@@ -265,14 +265,14 @@ private fun RestaurantScreen(
                                 onEvent(RestaurantEvent.OnAddProductToCart(product.productId))
                             },
                             onRemoveClick = {
-                                navController.navigate(Route.HomeGraph.FoodDetailsScreen(
+                                navController.navigate(Route.MainGraph.FoodDetailsScreen(
                                     productId = product.productId,
                                     productName = product.name,
                                     productCartItemId = productInCartResponseModel?.cartItemId
                                 ))
                             },
                             onProductClick = {
-                                navController.navigate(Route.HomeGraph.FoodDetailsScreen(
+                                navController.navigate(Route.MainGraph.FoodDetailsScreen(
                                     product.productId,
                                     product.name,
                                     productInCartResponseModel?.cartItemId

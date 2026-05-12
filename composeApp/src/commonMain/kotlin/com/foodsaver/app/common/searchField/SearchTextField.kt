@@ -40,10 +40,11 @@ import org.jetbrains.compose.resources.vectorResource
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SearchTextFieldPreview() {
-    var q by remember { mutableStateOf(TextFieldValue("")) }
+    var q by remember { mutableStateOf(TextFieldValue("bbnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn66")) }
     SearchTextField(
         state = SearchTextFieldState(
             q, { q = it },
+            onSearch = {},
             suggestion = "Hello World!"
         )
     )
@@ -69,6 +70,7 @@ fun SearchTextField(
     BasicTextField(
         value = state.query,
         onValueChange = state.onQueryChange,
+        enabled = state.enabled,
         modifier = modifier
             .onKeyEvent { keyEvent ->
                 if (keyEvent.key == Key.Tab || keyEvent.key == Key.DirectionRight) {
@@ -97,6 +99,8 @@ fun SearchTextField(
                         )
                     )
                 }
+
+                state.onSearch(state.query)
             }
         ),
         decorationBox = { innerTextField ->
@@ -106,14 +110,20 @@ fun SearchTextField(
                         color = FoodSaverTheme.colorScheme.searchFieldBackground,
                         shape = RoundedCornerShape(10.dp)
                     )
-                    .padding(16.dp),
+                    .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.search_icon),
-                    contentDescription = null,
-                    tint = FoodSaverTheme.colorScheme.onBackgroundTertiary
-                )
+                IconButton(
+                    onClick = {
+                        state.onSearch(state.query)
+                    }
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.search_icon),
+                        contentDescription = null,
+                        tint = FoodSaverTheme.colorScheme.onBackgroundTertiary
+                    )
+                }
 
                 Box(
                     modifier = Modifier.weight(1f).padding(start = 10.dp),
@@ -125,21 +135,6 @@ fun SearchTextField(
                             color = FoodSaverTheme.colorScheme.placeholderHint,
                             style = FoodSaverTheme.typography.bodySmall
                         )
-                    } else {
-                        IconButton(
-                            onClick = {
-                                state.onQueryChange(TextFieldValue())
-                            },
-                            modifier = Modifier
-                                .size(20.dp)
-                                .align(Alignment.CenterEnd)
-                        ) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.clear_search_icon),
-                                contentDescription = null,
-                                tint = Color.Unspecified
-                            )
-                        }
                     }
 
                     if (suggestionToDisplay.isNotEmpty()) {
@@ -160,6 +155,23 @@ fun SearchTextField(
 
                     // user input
                     innerTextField()
+
+                    if (state.query.text.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                state.onQueryChange(TextFieldValue())
+                            },
+                            modifier = Modifier
+                                .size(20.dp)
+                                .align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.clear_search_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified
+                            )
+                        }
+                    }
                 }
             }
         }

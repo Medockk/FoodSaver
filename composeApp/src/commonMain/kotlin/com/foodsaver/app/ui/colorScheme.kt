@@ -55,6 +55,7 @@ data class ColorScheme(
     val completeColor: Color = Color.Unspecified,
 
     val deleteColor: Color = Color.Unspecified,
+    val dividerLineColor: Color = Color.Unspecified,
 )
 
 val lightColorScheme = ColorScheme(
@@ -107,6 +108,7 @@ val lightColorScheme = ColorScheme(
     completeColor = Color(0xFF059C6A),
     cartBottomBarColor = Color(0xFFFFFFFF),
     deleteColor = Color(0xFFE04444),
+    dividerLineColor = Color(0xFFEBEBEB),
 )
 
 val darkColorScheme = ColorScheme(

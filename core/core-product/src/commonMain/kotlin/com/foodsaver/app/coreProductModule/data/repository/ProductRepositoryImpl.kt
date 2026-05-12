@@ -102,6 +102,14 @@ internal class ProductRepositoryImpl(
         }
     }
 
+    override suspend fun getSuggestedProducts(): ApiResult<List<ProductModel>> {
+        return withContext(Dispatchers.InputOutput) {
+            return@withContext saveNetworkCall<List<ProductDto>> {
+                httpClient.get(HttpConstants.PRODUCTS_URL + "/suggested")
+            }.map { dtos -> dtos.toModel() }
+        }
+    }
+
     override fun observeProductsByRestaurantId(restaurantId: String): Flow<ApiResult<List<ProductModel>>> {
         return db.productEntityQueries.getProductByRestaurantId(restaurantId)
             .asFlow()

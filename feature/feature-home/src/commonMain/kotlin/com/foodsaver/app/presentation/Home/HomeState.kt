@@ -19,7 +19,7 @@ data class HomeState(
     val selectedCategoryIds: Set<String> = emptySet(),
     val isCategoriesLoading: Boolean = true,
 
-    val cartSize: Long = 0,
+    val cartSize: Long? = null,
     val cartId: String? = null,
     val profile: UserModel? = null,
 )

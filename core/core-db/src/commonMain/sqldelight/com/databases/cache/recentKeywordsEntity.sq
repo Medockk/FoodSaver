@@ -1,0 +1,22 @@
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS recentKeywordsEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL UNIQUE,
+    addedAt INTEGER AS Instant NOT NULL
+);
+
+insertValue:
+INSERT INTO recentKeywordsEntity(id, value, addedAt)
+VALUES (?, ?, ?)
+ON CONFLICT (value) DO UPDATE SET
+    addedAt = excluded.addedAt;
+
+getValues:
+SELECT * FROM recentKeywordsEntity
+ORDER BY addedAt DESC;
+
+updateDate:
+UPDATE recentKeywordsEntity
+SET addedAt = ?
+WHERE id = ?;

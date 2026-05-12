@@ -34,7 +34,7 @@ class RestaurantViewModel(
     override val baseChannel: Channel<RestaurantAction> = Channel()
     override val channel: Flow<RestaurantAction> = baseChannel.receiveAsFlow()
 
-    private val navArgs = savedStateHandle.toRoute<Route.HomeGraph.Restaurant>()
+    private val navArgs = savedStateHandle.toRoute<Route.MainGraph.Restaurant>()
     private val restaurantId = navArgs.restaurantId
 
     private val _state = MutableStateFlow(

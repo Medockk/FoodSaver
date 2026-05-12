@@ -8,6 +8,11 @@ CREATE TABLE IF NOT EXISTS cartEntity (
 getCartByUserId:
 SELECT * FROM cartEntity WHERE userId = ?;
 
+updateCount:
+UPDATE cartEntity
+SET totalQuantity = ?
+WHERE userId = ?;
+
 insertOrUpdateCart:
 INSERT OR REPLACE INTO cartEntity(id, userId, totalQuantity)
 VALUES (?, ?, ?);

@@ -1,6 +1,5 @@
 package com.foodsaver.app.coreEnterprises.data.dto
 
-import com.foodsaver.app.coreModel.dto.OrganizationDto
 import kotlinx.serialization.Serializable
 
 @Serializable

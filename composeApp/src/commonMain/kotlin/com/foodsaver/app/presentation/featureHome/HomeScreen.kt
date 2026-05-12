@@ -2,6 +2,7 @@ package com.foodsaver.app.presentation.featureHome
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -163,12 +164,17 @@ private fun HomeScreen(
                         onQueryChange = {
                             onEvent(HomeEvent.OnSearchQueryChange(it))
                         },
-                        suggestion = "Hello World!"
+                        suggestion = "Hello World!",
+                        onSearch = {},
+                        enabled = false
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateContentSize()
                         .padding(horizontal = 24.dp)
+                        .clickable {
+                            navController.navigate(Route.MainGraph.SearchScreen())
+                        }
                 )
             }
 
@@ -200,7 +206,7 @@ private fun HomeScreen(
                                     imageUri = "",
                                     isMainChip = true,
                                     onCategoryClick = {
-                                        TODO()
+                                        navController.navigate(Route.MainGraph.SearchScreen())
                                     }
                                 )
                             )
@@ -222,7 +228,10 @@ private fun HomeScreen(
                                     imageUri = "",
                                     isMainChip = state.selectedCategoryIds.contains(category.categoryId),
                                     onCategoryClick = {
-                                        TODO("Navigate to Food - Burgers screen")
+                                        navController.navigate(Route.MainGraph.SearchScreen(
+                                            searchCategoryId = category.categoryId,
+                                            categoryName = category.categoryName
+                                        ))
                                     }
                                 ),
                                 modifier = Modifier
@@ -267,7 +276,7 @@ private fun HomeScreen(
                     RestaurantCard(
                         restaurant = restaurant,
                         onRestaurantClick = {
-                            navController.navigate(Route.HomeGraph.Restaurant(restaurant.id, restaurant.name))
+                            navController.navigate(Route.MainGraph.Restaurant(restaurant.id, restaurant.name))
                         },
                         modifier = Modifier
                             .fillMaxWidth()

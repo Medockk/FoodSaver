@@ -1,7 +1,5 @@
 package com.foodsaver.app.coreEnterprises.domain.model
 
-import com.foodsaver.app.coreModel.model.OrganizationModel
-
 /**
  * @param [deliveryCost] if this is null, to delivery is free!
  */

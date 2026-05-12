@@ -87,7 +87,7 @@ fun LoginScreenRoot(
                 snackbarHostState.showSnackbar(action.message, withDismissAction = true)
             }
             is LoginAction.OnLogged -> {
-                navController.navigate(Route.HomeGraph) {
+                navController.navigate(Route.MainGraph) {
                     popUpTo<Route.AuthGraph> {
                         inclusive = true
                     }
