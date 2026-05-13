@@ -4,10 +4,9 @@ package com.foodsaver.app.corePaymentMethod.data.repository
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.databases.cache.PaymentMethodTypeEntity
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreAuth.UserNotAuthorizedException
@@ -16,8 +15,9 @@ import com.foodsaver.app.corePaymentMethod.data.dto.PaymentMethodDto
 import com.foodsaver.app.corePaymentMethod.data.dto.PaymentMethodTypeDto
 import com.foodsaver.app.corePaymentMethod.data.mappers.mapDtoToEntity
 import com.foodsaver.app.corePaymentMethod.data.mappers.mapEntityToModel
+import com.foodsaver.app.corePaymentMethod.data.mappers.mapRequestToDto
 import com.foodsaver.app.corePaymentMethod.data.mappers.mapResponseToModel
-import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodModel
+import com.foodsaver.app.corePaymentMethod.domain.model.AddPaymentMethodRequest
 import com.foodsaver.app.corePaymentMethod.domain.model.PaymentMethodCardModel
 import com.foodsaver.app.corePaymentMethod.domain.model.PaymentMethodTypesModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRepository
@@ -26,6 +26,8 @@ import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -70,30 +72,27 @@ internal class PaymentMethodRepositoryImpl(
         }
     }
 
-    override fun observeCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodCardModel?>> {
+    override fun observePaymentMethods(): Flow<ApiResult<List<PaymentMethodCardModel>>> {
         return channelFlow {
             val userId = requireUserId()
 
             val databaseJob = launch {
-                db.paymentMethodEntityQueries.getSelectedPaymentMethod(userId)
+                db.paymentMethodEntityQueries.getPaymentMethods(userId)
                     .asFlow()
-                    .mapToOneOrNull(Dispatchers.InputOutput)
-                    .collect { method ->
-                        method?.typeId?.let { typeId ->
-                            println("Получил из локальной БД текущий способ оплаты - ${method.cardHolderName}")
-
-                            send(ApiResult.success(method.mapResponseToModel()))
+                    .mapToList(Dispatchers.InputOutput)
+                    .collect { methods ->
+                        val models = methods.map { method ->
+                            method.mapResponseToModel()
                         }
+                        send(ApiResult.success(models))
                     }
             }
 
-            saveNetworkCall<PaymentMethodDto?> {
+            saveNetworkCall<List<PaymentMethodDto>> {
                 httpClient.get(HttpConstants.PAYMENT_METHOD_URL + "/my")
-            }.onSuccess { dto ->
-                dto?.let { dto ->
-                    println("Получил от сервера текущий способ оплаты - ${dto.id}")
-                    db.paymentMethodEntityQueries.transaction {
-
+            }.onSuccess { dtos ->
+                db.paymentMethodEntityQueries.transaction {
+                    dtos.forEach { dto ->
                         db.paymentMethodTypeEntityQueries.upsertValue(dto.type.mapDtoToEntity())
 
                         val existing =
@@ -104,8 +103,8 @@ internal class PaymentMethodRepositoryImpl(
                             serverId = dto.id,
                             userId = userId,
                             typeId = dto.type.id,
-                            isSelected = true,
-                            cardHolderName = dto.holderName,
+                            isSelected = existing?.isSelected ?: true,
+                            cardHolderName = dto.holderName ?: "", // TODO
                             lastFourSymbols = dto.lastFourSymbols,
                             expiresDate = dto.expiresAt,
                             addedAt = dto.addedAt
@@ -118,8 +117,25 @@ internal class PaymentMethodRepositoryImpl(
         }
     }
 
-    override suspend fun addPaymentMethod(methodModel: AddPaymentMethodModel): ApiResult<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun addPaymentMethod(methodModel: AddPaymentMethodRequest): ApiResult<Unit> {
+        return saveNetworkCall<PaymentMethodDto> {
+            httpClient.post(HttpConstants.PAYMENT_METHOD_URL + "/add") {
+                setBody(methodModel.mapRequestToDto())
+            }
+        }.onSuccess { response ->
+            val userId = requireUserId()
+            db.paymentMethodEntityQueries.upsertCard(
+                localId = Uuid.random().toString(),
+                serverId = response.id,
+                userId = userId,
+                typeId = response.type.id,
+                isSelected = false,
+                cardHolderName = response.holderName ?: "", // TODO
+                lastFourSymbols = response.lastFourSymbols,
+                expiresDate = response.expiresAt,
+                addedAt = response.addedAt
+            )
+        }.map {  }
     }
 
     private fun requireUserId() = authUserManager.getCurrentUid()

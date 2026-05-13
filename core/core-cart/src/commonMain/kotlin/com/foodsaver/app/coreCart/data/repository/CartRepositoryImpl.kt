@@ -88,7 +88,8 @@ internal class CartRepositoryImpl(
                     db.cartEntityQueries.insertOrUpdateCart(
                         id = response.id,
                         userId = userId,
-                        totalQuantity = response.quantity
+                        totalQuantity = response.quantity,
+                        price = response.finalPrice
                     )
                 }.map { dto -> dto.mapDtoToModel() }
 

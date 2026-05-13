@@ -31,17 +31,30 @@ class PaymentMethodViewModel(
             currency = navArgs.currency
         ) }
 
-        observeCurrentPaymentMethod()
+        observePaymentMethodTypes()
+        observePaymentMethods()
     }
 
-    private fun observeCurrentPaymentMethod() {
+    private fun observePaymentMethodTypes() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            readPaymentMethodRepository.observeCurrentPaymentMethod()
+            readPaymentMethodRepository.observePaymentMethodTypes()
                 .collect { result ->
-                    result.onSuccess { method ->
+                    result.onSuccess { types ->
                         _state.update { it.copy(
-                            currentPaymentMethodCardModel = method,
-                            currentPaymentMethodType = method?.type
+                            paymentMethodTypes = types
+                        ) }
+                    }
+                }
+        }
+    }
+
+    private fun observePaymentMethods() {
+        viewModelScope.launch(Dispatchers.InputOutput) {
+            readPaymentMethodRepository.observePaymentMethods()
+                .collect { result ->
+                    result.onSuccess { methods ->
+                        _state.update { it.copy(
+                            paymentMethods = methods
                         ) }
                     }
                 }
@@ -50,8 +63,22 @@ class PaymentMethodViewModel(
 
     fun onEvent(event: PaymentMethodEvent) {
         when (event) {
-            is PaymentMethodEvent.OnChangePaymentMethod -> TODO()
-            PaymentMethodEvent.OnPayClick -> TODO()
+            is PaymentMethodEvent.OnChangePaymentMethod -> {
+                val methodsByType = _state.value.paymentMethods
+                    .filter { it.type.id == event.type.id }
+                _state.update { it.copy(
+                    currentPaymentMethodType = event.type,
+                    selectedPaymentTypeIndex = event.index,
+                    paymentMethodsByType = methodsByType
+                ) }
+            }
+            PaymentMethodEvent.OnPayClick -> {
+                viewModelScope.launch {
+                    // TODO
+
+                    baseChannel.send(PaymentMethodAction.OnSuccessfulPay)
+                }
+            }
         }
     }
 

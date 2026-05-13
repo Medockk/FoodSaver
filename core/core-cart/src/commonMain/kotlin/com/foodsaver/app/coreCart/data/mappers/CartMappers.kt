@@ -6,10 +6,12 @@ import com.foodsaver.app.coreCart.domain.model.CartResponseModel
 
 internal fun CartEntity.mapCartEntityToModel() = CartResponseModel(
     cartId = this.id,
-    quantity = this.totalQuantity
+    quantity = this.totalQuantity,
+    finalPrice = price,
 )
 
 internal fun CartResponseDto.mapDtoToModel() = CartResponseModel(
     cartId = this.id,
-    quantity = this.quantity
+    quantity = this.quantity,
+    finalPrice = finalPrice
 )

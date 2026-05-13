@@ -92,4 +92,12 @@ you just place the orer we do the rest</string>
 
     <string name="payment">Payment</string>
     <string name="pay_and_confirm"><![CDATA[Pay & Confirm]]></string>
+    <string name="no_card_added">No %1$s Added</string>
+    <string name="you_can_add_card">You can add a %1$s card and save it for later</string>
+    <string name="add_new">Add New</string>
+    <string name="payment_method_cash">Cash</string>
+    <string name="track_order">Track Order</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="successful_maked_payment">You successfully maked a payment,
+        enjoy our service!</string>
 </resources>

@@ -20,6 +20,7 @@ data class HomeState(
     val isCategoriesLoading: Boolean = true,
 
     val cartSize: Long? = null,
+    val cartPrice: Double = 0.0,
     val cartId: String? = null,
     val profile: UserModel? = null,
 )

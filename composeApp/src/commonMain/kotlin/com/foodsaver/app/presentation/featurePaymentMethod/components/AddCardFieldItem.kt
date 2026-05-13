@@ -34,6 +34,7 @@ fun AddCardFieldItem(
         TextField(
             value = state.value,
             onValueChange = state.onValueChange,
+            visualTransformation = state.visualTransformation,
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 62.dp),

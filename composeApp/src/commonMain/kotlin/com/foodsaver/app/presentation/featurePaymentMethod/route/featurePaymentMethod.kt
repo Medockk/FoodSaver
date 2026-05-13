@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featurePaymentMethod.PaymentMethodScreenRoot
 import com.foodsaver.app.presentation.featurePaymentMethod.AddCardScreenRoot
+import com.foodsaver.app.presentation.featurePaymentMethod.PaymentSuccessfulScreenRoot
 
 internal fun NavGraphBuilder.featurePaymentMethod(navController: NavController) {
     navigation<Route.PaymentMethodGraph>(
@@ -18,6 +19,9 @@ internal fun NavGraphBuilder.featurePaymentMethod(navController: NavController) 
 
         composable<Route.PaymentMethodGraph.AddCardScreen> {
             AddCardScreenRoot(navController)
+        }
+        composable<Route.PaymentMethodGraph.PaymentSuccessfulScreen> {
+            PaymentSuccessfulScreenRoot(navController)
         }
     }
 }

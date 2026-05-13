@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface ReadPaymentMethodRepository {
 
     fun observePaymentMethodTypes(): Flow<ApiResult<List<PaymentMethodTypesModel>>>
-    fun observeCurrentPaymentMethod(): Flow<ApiResult<PaymentMethodCardModel?>>
+    fun observePaymentMethods(): Flow<ApiResult<List<PaymentMethodCardModel>>>
 }

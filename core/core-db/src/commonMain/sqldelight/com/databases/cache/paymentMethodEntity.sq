@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS paymentMethodEntity (
     UNIQUE(userId, cardHolderName, lastFourSymbols)
 );
 
+getMethodsByTypeId:
+SELECT
+    pm.*,
+    pt.name AS typeName,
+    pt.iconUri AS typeIcon
+FROM paymentMethodEntity pm
+JOIN paymentMethodTypeEntity pt ON pm.typeId = pt.serverId
+WHERE pm.userId = :userId
+AND pm.typeId = :typeId ;
+
 upsertCard:
 INSERT INTO paymentMethodEntity (
     localId,
@@ -57,11 +67,11 @@ getByServerId:
 SELECT * FROM paymentMethodEntity
 WHERE serverId = ?;
 
-getSelectedPaymentMethod:
+getPaymentMethods:
 SELECT
     pm.*,
     pt.name AS typeName,
     pt.iconUri AS typeIcon
 FROM paymentMethodEntity pm
 JOIN paymentMethodTypeEntity pt ON pm.typeId = pt.serverId
-WHERE pm.userId = :userId AND pm.isSelected = 1;
+WHERE pm.userId = :userId;

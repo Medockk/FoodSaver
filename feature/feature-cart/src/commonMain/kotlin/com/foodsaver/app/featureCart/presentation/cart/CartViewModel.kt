@@ -32,6 +32,9 @@ class CartViewModel(
     override val channel = baseChannel.receiveAsFlow()
 
     init {
+        _state.update { it.copy(
+            totalCost = navArgs.cartPrice
+        ) }
         getCartItems()
     }
 

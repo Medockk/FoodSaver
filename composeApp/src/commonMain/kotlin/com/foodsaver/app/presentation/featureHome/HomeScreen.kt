@@ -120,7 +120,10 @@ private fun HomeScreen(
                     deliverTo = state.deliverTo,
                     cartItemValue = state.cartSize,
                     onCartClick = {
-                        navController.navigate(Route.CartGraph.CartScreen(state.cartId))
+                        navController.navigate(Route.CartGraph.CartScreen(
+                            state.cartId,
+                            state.cartPrice
+                        ))
                     },
                     onMenuClick = { TODO() },
                     modifier = Modifier

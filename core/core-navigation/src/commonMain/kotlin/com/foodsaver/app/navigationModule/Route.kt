@@ -58,7 +58,10 @@ sealed class Route {
     data object CartGraph: Route() {
 
         @Serializable
-        data class CartScreen(val cartId: String? = null): Route()
+        data class CartScreen(
+            val cartId: String? = null,
+            val cartPrice: Double = 0.0
+        ): Route()
     }
 
     @Serializable
@@ -93,5 +96,8 @@ sealed class Route {
         data class AddCardScreen(
             val typeId: String = ""
         ): Route()
+
+        @Serializable
+        data object PaymentSuccessfulScreen: Route()
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,6 +34,7 @@ import com.foodsaver.app.presentation.featurePaymentMethod.components.AddCardFie
 import com.foodsaver.app.presentation.featurePaymentMethod.components.AddCardTopBar
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
+import com.foodsaver.app.utils.date.DateVisualTransformation
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_and_make_payment
 import foodsaver.composeapp.generated.resources.card_holder_name
@@ -105,19 +107,22 @@ private fun AddCardScreen(
             value = state.expiresDate,
             onValueChange = { onEvent(AddCardEvent.OnExpiresDateChange(it)) },
             placeholder = Res.string.placeholder_expires_date,
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.Number,
+            visualTransformation = DateVisualTransformation()
         ),
         AddCardFieldItemState(
             label = Res.string.cvc,
             value = state.cvc,
             onValueChange = { onEvent(AddCardEvent.OnCvcChange(it)) },
             placeholder = Res.string.placeholder_cvc,
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.Number,
+            visualTransformation = PasswordVisualTransformation('*')
         ),
     )
     Scaffold(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .imePadding(),
         contentWindowInsets = WindowInsets.systemBars,
         containerColor = FoodSaverTheme.colorScheme.background,
         topBar = {

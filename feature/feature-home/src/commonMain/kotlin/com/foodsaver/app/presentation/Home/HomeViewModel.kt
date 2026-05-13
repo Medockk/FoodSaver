@@ -103,7 +103,8 @@ class HomeViewModel(
                 _state.update {
                     it.copy(
                         cartSize = result.quantity,
-                        cartId = result.cartId
+                        cartId = result.cartId,
+                        cartPrice = result.finalPrice
                     )
                 }
             }
