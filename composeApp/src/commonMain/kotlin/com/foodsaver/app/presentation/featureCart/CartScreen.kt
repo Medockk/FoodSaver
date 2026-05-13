@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.featureCart.presentation.cart.CartEvent
 import com.foodsaver.app.featureCart.presentation.cart.CartState
 import com.foodsaver.app.featureCart.presentation.cart.CartViewModel
+import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureCart.components.CartBottomBar
 import com.foodsaver.app.presentation.featureCart.components.CartHeader
 import com.foodsaver.app.presentation.featureCart.components.CartProductItem
@@ -82,7 +83,13 @@ private fun CartScreen(
                 onDeliveryAddressValueChange = { onEvent(CartEvent.OnAddressValueChange(it)) },
                 totalPrice = state.totalCost,
                 onBreakdownClick = { TODO() },
-                onPlaceOrderClick = { TODO() },
+                onPlaceOrderClick = {
+                    navController.navigate(Route.PaymentMethodGraph.PaymentMethodScreen(
+                        state.totalCost,
+                        currency = state.currency
+                    ))
+                },
+                currency = state.currency,
                 modifier = Modifier
                     .fillMaxWidth()
             )

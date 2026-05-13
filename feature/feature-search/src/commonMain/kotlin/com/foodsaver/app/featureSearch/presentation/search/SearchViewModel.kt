@@ -5,11 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.BasePaginator
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
+import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
 import com.foodsaver.app.featureSearch.domain.repository.SearchRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
@@ -84,14 +86,51 @@ class SearchViewModel(
 
         getSuggestedRestaurants()
         getSuggestedProducts()
+
+        getCartValues()
+    }
+
+    private fun getCartValues() {
+        viewModelScope.launch {
+            cartRepository.observeCart().collect { result ->
+                result.onSuccess { cart ->
+                    _state.update { it.copy(
+                        cartId = cart.cartId,
+                        cartItems = cart.quantity
+                    ) }
+                }
+            }
+        }
     }
 
     private fun getSuggestedProducts() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            productRepository.getSuggestedProducts().onSuccess { products ->
+                val productCardModels = products.map { product ->
+                    ProductCardModel(
+                        productId = product.productId,
+                        restaurantName = "", // TODO
+                        name = product.name,
+                        imageUri = product.imageUris.firstOrNull()
+                    )
+                }
+                _state.update { it.copy(
+                    suggestedProducts = productCardModels
+                ) }
+            }
+        }
     }
 
     private fun getSuggestedRestaurants() {
-
+        viewModelScope.launch {
+            restaurantRepository.getSuggestedRestaurants().onSuccess { restaurants ->
+                _state.update {
+                    it.copy(
+                        suggestedRestaurants = restaurants
+                    )
+                }
+            }
+        }
     }
 
     private fun search() {

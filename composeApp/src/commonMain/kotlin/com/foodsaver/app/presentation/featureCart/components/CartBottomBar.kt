@@ -67,7 +67,8 @@ private fun CartBottomBarPreview() {
                 onBreakdownClick = { TODO() },
                 onPlaceOrderClick = { TODO() },
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                currency = "$"
             )
         }
     }
@@ -80,6 +81,7 @@ fun CartBottomBar(
     deliveryAddressValue: String,
     onDeliveryAddressValueChange: (String) -> Unit,
     totalPrice: Double,
+    currency: String,
     onBreakdownClick: () -> Unit,
     onPlaceOrderClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -160,7 +162,7 @@ fun CartBottomBar(
                 Spacer(Modifier.width(12.dp))
 
                 Text(
-                    text = totalPrice.toString(),
+                    text = currency + totalPrice.toString(),
                     style = FoodSaverTheme.typography.bottomBarPrice,
                     color = FoodSaverTheme.colorScheme.onBackground
                 )

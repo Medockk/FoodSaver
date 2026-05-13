@@ -84,7 +84,10 @@ sealed class Route {
     data object PaymentMethodGraph: Route() {
 
         @Serializable
-        data class PaymentMethodScreen(val totalPrice: Double = 0.0): Route()
+        data class PaymentMethodScreen(
+            val price: Double,
+            val currency: String = ""
+        ): Route()
 
         @Serializable
         data class AddCardScreen(

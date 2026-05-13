@@ -6,19 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.button.PrimaryButton
@@ -49,6 +52,13 @@ fun AddCardScreenRoot(
     viewModel: AddCardViewModel = koinViewModel()
 ) {
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    AddCardScreen(
+        navController = navController,
+        state = state,
+        onEvent = viewModel::onEvent
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -121,6 +131,7 @@ private fun AddCardScreen(
             )
         },
         bottomBar = {
+            val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
             PrimaryButton(
                 onClick = {
                     onEvent(AddCardEvent.OnAddCard)
@@ -129,6 +140,7 @@ private fun AddCardScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
+                    .padding(navigationBarPadding)
             )
         }
     ) { paddingValues ->

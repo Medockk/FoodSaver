@@ -89,4 +89,7 @@ you just place the orer we do the rest</string>
     <string name="placeholder_card_number">1234 5678 9012 3456</string>
     <string name="placeholder_expires_date">mm/yyyy</string>
     <string name="placeholder_cvc">***</string>
+
+    <string name="payment">Payment</string>
+    <string name="pay_and_confirm"><![CDATA[Pay & Confirm]]></string>
 </resources>

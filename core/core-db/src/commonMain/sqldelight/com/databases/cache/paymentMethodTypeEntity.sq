@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS paymentMethodTypeEntity (
+    serverId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    iconUri TEXT
+);
+
+upsertValue:
+INSERT OR REPLACE INTO paymentMethodTypeEntity
+VALUES ?;
+
+getTypes:
+SELECT * FROM paymentMethodTypeEntity;
+
+getTypeById:
+SELECT * FROM paymentMethodTypeEntity
+WHERE serverId = ?;

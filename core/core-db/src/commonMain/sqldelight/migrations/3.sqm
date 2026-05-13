@@ -1,0 +1,27 @@
+import kotlin.Boolean;
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS paymentMethodTypeEntity (
+    serverId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    iconUri TEXT
+);
+
+CREATE TABLE IF NOT EXISTS paymentMethodEntity (
+    localId TEXT NOT NULL PRIMARY KEY,
+    serverId TEXT UNIQUE,
+    userId TEXT NOT NULL,
+    typeId TEXT NOT NULL,
+
+    isSelected INTEGER AS Boolean NOT NULL DEFAULT 0,
+    cardHolderName TEXT NOT NULL,
+    lastFourSymbols TEXT, -- null для оплаты наличкой
+
+    expiresDate INTEGER AS Instant, -- null для оплаты наличкой
+    addedAt INTEGER AS Instant NOT NULL,
+
+    FOREIGN KEY (typeId) REFERENCES paymentMethodTypeEntity (serverId) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES userEntity (id) ON DELETE CASCADE,
+
+    UNIQUE(userId, cardHolderName, lastFourSymbols)
+);

@@ -1,0 +1,67 @@
+import kotlin.Boolean;
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS paymentMethodEntity (
+    localId TEXT NOT NULL PRIMARY KEY,
+    serverId TEXT UNIQUE,
+    userId TEXT NOT NULL,
+    typeId TEXT NOT NULL,
+
+    isSelected INTEGER AS Boolean NOT NULL DEFAULT 0,
+    cardHolderName TEXT NOT NULL,
+    lastFourSymbols TEXT, -- null для оплаты наличкой
+
+    expiresDate INTEGER AS Instant, -- null для оплаты наличкой
+    addedAt INTEGER AS Instant NOT NULL,
+
+    FOREIGN KEY (typeId) REFERENCES paymentMethodTypeEntity (serverId) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES userEntity (id) ON DELETE CASCADE,
+
+    UNIQUE(userId, cardHolderName, lastFourSymbols)
+);
+
+upsertCard:
+INSERT INTO paymentMethodEntity (
+    localId,
+    serverId,
+    userId,
+    typeId,
+    isSelected,
+    cardHolderName,
+    lastFourSymbols,
+    expiresDate,
+    addedAt
+) VALUES (?,?,?,?,?,?,?,?, ?)
+ON CONFLICT (serverId) DO UPDATE SET
+    addedAt = excluded.addedAt,
+    lastFourSymbols = excluded.lastFourSymbols,
+    isSelected = excluded.isSelected
+    ;
+
+unselectAllForUser:
+UPDATE paymentMethodEntity
+SET isSelected = 0
+WHERE userId = ?;
+
+setSelectedMethod:
+UPDATE paymentMethodEntity
+SET isSelected = 1
+WHERE localId = ?;
+
+setSelectedMethodByServerId:
+UPDATE paymentMethodEntity
+SET isSelected = 1
+WHERE serverId = ?;
+
+getByServerId:
+SELECT * FROM paymentMethodEntity
+WHERE serverId = ?;
+
+getSelectedPaymentMethod:
+SELECT
+    pm.*,
+    pt.name AS typeName,
+    pt.iconUri AS typeIcon
+FROM paymentMethodEntity pm
+JOIN paymentMethodTypeEntity pt ON pm.typeId = pt.serverId
+WHERE pm.userId = :userId AND pm.isSelected = 1;

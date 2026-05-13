@@ -2,6 +2,7 @@ package com.foodsaver.app.coreDb.data.repository
 
 import com.databases.cache.CartItemEntity
 import com.databases.cache.MainAppDatabase
+import com.databases.cache.PaymentMethodEntity
 import com.databases.cache.ProductCacheEntity
 import com.databases.cache.ProductEntityQueries
 import com.databases.cache.RecentKeywordsEntity
@@ -32,6 +33,10 @@ internal class DatabaseProviderImpl(
                 expiresAtAdapter = InstantAdapter
             ),
             recentKeywordsEntityAdapter = RecentKeywordsEntity.Adapter(
+                addedAtAdapter = InstantAdapter
+            ),
+            paymentMethodEntityAdapter = PaymentMethodEntity.Adapter(
+                expiresDateAdapter = InstantAdapter,
                 addedAtAdapter = InstantAdapter
             )
         )
