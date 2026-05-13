@@ -78,4 +78,15 @@ you just place the orer we do the rest</string>
     <string name="popular_food">Popular Food</string>
     <string name="popular_item">Popular %1$s</string>
     <string name="products">products</string>
+
+    <string name="add_card">Add Card</string>
+    <string name="add_and_make_payment"><![CDATA[Add & Make Payment]]></string>
+    <string name="card_holder_name">card holder name</string>
+    <string name="card_number">Card number</string>
+    <string name="expire_date">expire date</string>
+    <string name="cvc">cvc</string>
+    <string name="placeholder_card_holder_name">My Card Holder</string>
+    <string name="placeholder_card_number">1234 5678 9012 3456</string>
+    <string name="placeholder_expires_date">mm/yyyy</string>
+    <string name="placeholder_cvc">***</string>
 </resources>

@@ -1,11 +1,11 @@
 package com.foodsaver.app.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.foodsaver.app.ui.provider.LocalAppLocale
-import io.kamel.core.config.Core
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.takeFrom
 import io.kamel.image.config.Default
@@ -23,8 +23,17 @@ val LocalKamelConfig: KamelConfig = KamelConfig {
 }
 
 @Composable
+private fun colorScheme(
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme()
+): ColorScheme {
+
+    return if (isSystemInDarkTheme) darkColorScheme
+    else lightColorScheme
+}
+
+@Composable
 fun LocalFoodSaverThemeComposition(
-    colorScheme: ColorScheme = FoodSaverTheme.colorScheme,
+    colorScheme: ColorScheme = colorScheme(),
     typography: ThemeTypography = FoodSaverTheme.typography,
     locale: String = LocalAppLocale.current,
     content: @Composable () -> Unit,

@@ -11,8 +11,6 @@ import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.dto.Page
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
-import com.foodsaver.app.coreEnterprises.data.dto.RestaurantDto
-import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.mappers.toModel
 import com.foodsaver.app.coreModel.model.ProductModel

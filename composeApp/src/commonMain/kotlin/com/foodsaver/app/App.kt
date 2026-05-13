@@ -22,8 +22,8 @@ import com.foodsaver.app.presentation.featureAuth.route.featureAuth
 import com.foodsaver.app.presentation.featureCart.route.featureCart
 import com.foodsaver.app.presentation.featureHome.route.featureHome
 import com.foodsaver.app.presentation.featureOnBoarding.route.featureOnboarding
+import com.foodsaver.app.presentation.featurePaymentMethod.route.featurePaymentMethod
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
-import com.foodsaver.app.ui.colorScheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -50,7 +50,7 @@ fun App(
     val coroutineScope = rememberCoroutineScope()
 
     if (authenticationState !is AuthenticationState.Loading) {
-        LocalFoodSaverThemeComposition(locale = locale, colorScheme = colorScheme()) {
+        LocalFoodSaverThemeComposition(locale = locale) {
             SharedTransitionLayout {
                 Scaffold(
                     contentWindowInsets = WindowInsets.statusBars,
@@ -67,6 +67,7 @@ fun App(
                         featureHome(navController)
 
                         featureCart(navController)
+                        featurePaymentMethod(navController)
                     }
                 }
             }
