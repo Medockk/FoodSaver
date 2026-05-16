@@ -4,6 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias { libs.plugins.androidMultiplatformLibrary }
+    alias { libs.plugins.jetbrains.kotlin.serialization }
+
+    alias { libs.plugins.koin.plugin }
 }
 
 kotlin {

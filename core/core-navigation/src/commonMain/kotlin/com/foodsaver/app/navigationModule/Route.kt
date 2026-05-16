@@ -100,4 +100,14 @@ sealed class Route {
         @Serializable
         data object PaymentSuccessfulScreen: Route()
     }
+
+    @Serializable
+    data object OrderGraph: Route() {
+
+        @Serializable
+        data object OrderScreen: Route()
+
+        @Serializable
+        data class TrackingScreen(val orderId: String): Route()
+    }
 }

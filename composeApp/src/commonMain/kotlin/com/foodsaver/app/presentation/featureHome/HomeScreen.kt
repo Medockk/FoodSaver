@@ -126,7 +126,9 @@ private fun HomeScreen(
                             state.cartPrice
                         ))
                     },
-                    onMenuClick = { TODO() },
+                    onMenuClick = {
+                        navController.navigate(Route.OrderGraph.OrderScreen)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)

@@ -1,0 +1,34 @@
+import com.foodsaver.app.coreModel.model.order.OrderStatus;
+import com.foodsaver.app.coreModel.model.order.OrderType;
+import kotlin.time.Instant;
+
+CREATE TABLE IF NOT EXISTS orderEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
+
+    type TEXT AS OrderType NOT NULL,
+    status TEXT AS OrderStatus NOT NULL,
+
+    restaurantImageUri TEXT,
+    restaurantName TEXT NOT NULL,
+
+    orderPrice REAL NOT NULL,
+    orderSize INTEGER NOT NULL,
+    trackNumber TEXT NOT NULL,
+
+    createdAt INTEGER AS Instant NOT NULL,
+
+    FOREIGN KEY (userId) REFERENCES userEntity (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS orderItemEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    productId TEXT NOT NULL,
+    orderId TEXT NOT NULL,
+
+    name TEXT NOT NULL,
+    price REAL NOT NULL,
+    quantity INTEGER NOT NULL,
+
+    FOREIGN KEY (orderId) REFERENCES orderEntity (id) ON DELETE CASCADE
+);

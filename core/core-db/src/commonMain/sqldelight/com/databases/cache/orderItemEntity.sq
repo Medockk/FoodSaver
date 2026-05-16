@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS orderItemEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    productId TEXT NOT NULL,
+    orderId TEXT NOT NULL,
+
+    name TEXT NOT NULL,
+    price REAL NOT NULL,
+    quantity INTEGER NOT NULL,
+
+    FOREIGN KEY (orderId) REFERENCES orderEntity (id) ON DELETE CASCADE
+);
+
+getOrderItemsByOrderId:
+SELECT * FROM orderItemEntity
+WHERE orderId IN ?;
+
+upsertOrderItem:
+INSERT OR REPLACE INTO orderItemEntity
+VALUES ?;
+
+deleteByOrderId:
+DELETE FROM orderItemEntity
+WHERE orderId = ?;

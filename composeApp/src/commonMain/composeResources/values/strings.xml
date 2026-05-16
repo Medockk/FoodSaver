@@ -100,4 +100,10 @@ you just place the orer we do the rest</string>
     <string name="congratulations">Congratulations!</string>
     <string name="successful_maked_payment">You successfully maked a payment,
         enjoy our service!</string>
+
+    <string name="my_orders">My Orders</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="history">History</string>
+    <string name="order_items">Items</string>
+    <string name="cancel">Cancel</string>
 </resources>

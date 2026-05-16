@@ -1,7 +1,9 @@
 package com.foodsaver.app.coreDb.data.repository
 
+import app.cash.sqldelight.EnumColumnAdapter
 import com.databases.cache.CartItemEntity
 import com.databases.cache.MainAppDatabase
+import com.databases.cache.OrderEntity
 import com.databases.cache.PaymentMethodEntity
 import com.databases.cache.ProductCacheEntity
 import com.databases.cache.ProductEntityQueries
@@ -38,6 +40,11 @@ internal class DatabaseProviderImpl(
             paymentMethodEntityAdapter = PaymentMethodEntity.Adapter(
                 expiresDateAdapter = InstantAdapter,
                 addedAtAdapter = InstantAdapter
+            ),
+            orderEntityAdapter = OrderEntity.Adapter(
+                typeAdapter = EnumColumnAdapter(),
+                statusAdapter = EnumColumnAdapter(),
+                createdAtAdapter = InstantAdapter
             )
         )
     }.value
