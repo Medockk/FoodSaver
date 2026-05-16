@@ -83,6 +83,7 @@ kotlin {
             implementation(projects.feature.featureRestaurant)
             implementation(projects.feature.featureSearch)
             implementation(projects.feature.featurePaymentMethod)
+            implementation(projects.feature.featureOrder)
 //            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {

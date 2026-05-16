@@ -17,6 +17,7 @@ import com.foodsaver.app.coreSettings.di.coreSettingsModule
 import com.foodsaver.app.featureCart.di.featureCartModule
 import com.foodsaver.app.featureEnterprises.di.featureRestaurantModule
 import com.foodsaver.app.featureFoodDetail.di.featureFoodDetailModule
+import com.foodsaver.app.featureOrder.di.featureOrderModule
 import com.foodsaver.app.featurePaymentMethod.di.featurePaymentMethodModule
 import com.foodsaver.app.featureSearch.di.featureSearchModule
 import org.koin.core.module.Module
@@ -46,7 +47,8 @@ fun initSharedKoin(modules: Array<Module> = arrayOf()) = initKoinApp(
         coreFcmModule,
         coreRestaurantModule,
         featureSearchModule,
-        featurePaymentMethodModule
+        featurePaymentMethodModule,
+        featureOrderModule
 //        featureWidgetModule
     )
 )

@@ -151,6 +151,7 @@ kotlin {
             implementation(projects.feature.featureRestaurant)
             implementation(projects.feature.featureSearch)
             implementation(projects.feature.featurePaymentMethod)
+            implementation(projects.feature.featureOrder)
 
             implementation(libs.image.picker)
 

@@ -52,7 +52,7 @@ class RestaurantViewModel(
             onRequest = { currentKey ->
                 productRepository.fetchProductByRestaurantId(restaurantId, currentKey, pageSize)
             },
-            onSuccess = { _, result ->
+            onSuccess = { _, _ ->
                 // collecting data from observe function
             },
             onError = { sendError(it) },
@@ -73,6 +73,22 @@ class RestaurantViewModel(
         loadRestaurantById(restaurantId)
         loadProductsByRestaurantId()
         loadProductsInCart()
+
+        observeProductsByRestaurantId(restaurantId)
+    }
+
+    private fun observeProductsByRestaurantId(restaurantId: String) {
+        viewModelScope.launch(Dispatchers.InputOutput) {
+            productRepository.observeProductsByRestaurantId(restaurantId).collect { apiResult ->
+                apiResult.onSuccess { products ->
+                    _state.update {
+                        it.copy(
+                            restaurantProducts = products,
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun loadProductsInCart() {
@@ -95,15 +111,10 @@ class RestaurantViewModel(
 
     private fun loadRestaurantById(restaurantId: String) {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            productRepository.observeProductsByRestaurantId(restaurantId).collect { apiResult ->
-                apiResult.onSuccess { products ->
-                    _state.update {
-                        it.copy(
-                            restaurantProducts = products,
-
-                        )
-                    }
-                }
+            restaurantRepository.getRestaurantById(restaurantId).onSuccess { restaurant ->
+                _state.update { it.copy(
+                    restaurant = restaurant
+                ) }
             }
         }
     }

@@ -69,7 +69,7 @@ class HomeViewModel(
 
     init {
         loadRestaurants()
-        loadCart()
+        observeCart()
         getAllCategories()
         getCurrentAddress()
     }
@@ -97,9 +97,9 @@ class HomeViewModel(
         }
     }
 
-    private fun loadCart(): Job = viewModelScope.launch(Dispatchers.InputOutput) {
-        cartRepository.observeCart().collect { result ->
-            result.onSuccess { result ->
+    private fun observeCart(): Job = viewModelScope.launch(Dispatchers.InputOutput) {
+        cartRepository.observeCart().collectRequest(
+            onSuccess = { result ->
                 _state.update {
                     it.copy(
                         cartSize = result.quantity,
@@ -108,7 +108,7 @@ class HomeViewModel(
                     )
                 }
             }
-        }
+        )
     }
 
     fun onEvent(event: HomeEvent) {

@@ -152,4 +152,14 @@ val darkColorScheme = ColorScheme(
     imagePageUnselectedIndicatorColor = Color(0x69FFFFFF),
     imagePageSelectedIndicatorColor = Color(0xFFFFFFFF),
     unselectedChipBorderColor = Color(0xFFEDEDED),
+    counterColor = Color(0xFF121223),
+    counterButtonColor = Color(0x33FFFFFF),
+    ingredientBackgroundColor = Color(0xFFFFEBE4),
+
+    cartFabColor = Color(0x1AFFFFFF),
+    onCartFabColor = Color(0xFFFFFFFF),
+    completeColor = Color(0xFF059C6A),
+    cartBottomBarColor = Color(0xFFFFFFFF),
+    deleteColor = Color(0xFFE04444),
+    dividerLineColor = Color(0xFFEBEBEB),
 )

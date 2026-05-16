@@ -295,6 +295,12 @@ internal class CartRepositoryImpl(
                         syncStatus = SyncStatus.SYNCHRONIZED
                     )
                     println("Успешно сохранил продукт ${request.productId} в локальную бд")
+
+                    db.cartEntityQueries.getCartByUserId(userId)
+                        .executeAsOneOrNull()
+                        ?.let { cart ->
+                            db.cartEntityQueries.updateCount(cart.totalQuantity + 1L, userId)
+                        }
                 }
             }.map { dto ->
 
