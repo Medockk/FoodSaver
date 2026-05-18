@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.common.textField.PrimaryTextField
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
@@ -28,13 +29,16 @@ fun TextFieldItemPreview() {
                 onValueChange = {  },
                 placeholder = stringResource(Res.string.auth_email_example)
             )
-        )
+        ),
+        isFullWidth = false,
     )
 }
 
 @Composable
 fun TextFieldItem(
     state: TextFieldItemState,
+    minHeight: Dp = 60.dp,
+    isFullWidth: Boolean = true,
     modifier: Modifier = Modifier
 ) {
 
@@ -49,8 +53,8 @@ fun TextFieldItem(
 
         PrimaryTextField(
             state = state.state,
-            modifier = modifier
-                .fillMaxWidth()
+            minHeight = minHeight,
+            modifier = if (isFullWidth) Modifier.fillMaxWidth() else Modifier
         )
 
         Spacer(Modifier.height(20.dp))

@@ -1,6 +1,8 @@
 package com.foodsaver.app.coreAddress.domain.model
 
 data class AddAddressRequest(
+    val name: String,
+
     val latitude: Double,
     val longitude: Double,
 

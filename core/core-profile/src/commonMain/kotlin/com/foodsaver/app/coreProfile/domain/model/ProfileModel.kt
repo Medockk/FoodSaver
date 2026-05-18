@@ -14,5 +14,9 @@ data class ProfileModel(
     val authorities: List<String>,
 
     val phone: String?,
-    val bio: String?
+    val bio: String?,
+
+    val addressIds: List<String>,
+    val currentAddressId: String?,
+    val currentPaymentMethodId: String?
 )

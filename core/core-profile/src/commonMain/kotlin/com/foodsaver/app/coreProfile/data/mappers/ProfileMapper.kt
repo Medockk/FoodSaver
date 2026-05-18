@@ -15,8 +15,9 @@ internal fun ProfileDto.mapDtoToEntity() = UserEntity(
     authorities = authorities,
     phone = phone,
     bio = bio,
-    currentAddressId = ,
-    currentPaymentMethodId = TODO(),
+    currentAddressId = currentAddressId,
+    currentPaymentMethodId = currentPaymentMethodId,
+    addressIds = addressIds,
 )
 
 internal fun UserEntity.mapEntityToModel() = ProfileModel(
@@ -28,6 +29,9 @@ internal fun UserEntity.mapEntityToModel() = ProfileModel(
     authorities = authorities,
     phone = phone,
     bio = bio,
+    addressIds = addressIds,
+    currentAddressId = currentAddressId,
+    currentPaymentMethodId = currentPaymentMethodId,
 )
 
 internal fun UpdateProfileRequest.mapRequestToDto() = UpdateProfileDto(

@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 data class ColorScheme(
     val primary: Color = Color.Unspecified,
+    val onPrimary: Color = Color.Unspecified,
     val primaryThin: Color = Color.Unspecified,
 
     val background: Color = Color.Unspecified,
@@ -61,6 +62,7 @@ data class ColorScheme(
 
 val lightColorScheme = ColorScheme(
     primary = Color(0xFFFF7622),
+    onPrimary = Color(0xFFFFFFFF),
     primaryThin = Color(0xFFFFE1CE),
 
     background = Color.White,

@@ -125,4 +125,15 @@ you just place the orer we do the rest</string>
     <string name="profile_phone_number">Phone number</string>
     <string name="profile_bio">Bio</string>
     <string name="save">Save</string>
+    <string name="add_new_address">Add new address</string>
+
+    <string name="add_address_text_field_label">ADDRESS</string>
+    <string name="add_address_street_text_field_label">STREET</string>
+    <string name="add_address_post_code_text_field_label">POST CODE</string>
+    <string name="add_address_appartment_text_field_label">APPARTMENT</string>
+    <string name="add_address_label_as">LABEL AS</string>
+    <string name="add_address_label_home">Home</string>
+    <string name="add_address_label_work">Work</string>
+    <string name="add_address_label_other">Other</string>
+    <string name="add_address_save_location">SAVE LOCATION</string>
 </resources>

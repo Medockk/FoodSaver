@@ -1,6 +1,10 @@
+import kotlin.String;
+import kotlin.collections.List;
+
 CREATE TABLE IF NOT EXISTS addressEntity (
     id TEXT NOT NULL PRIMARY KEY,
     userId TEXT NOT NULL,
+    name TEXT NOT NULL,
 
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
@@ -22,3 +26,6 @@ CREATE INDEX IF NOT EXISTS address_user_id_idx ON addressEntity(userId);
 
 ALTER TABLE userEntity ADD COLUMN currentAddressId TEXT;
 ALTER TABLE userEntity ADD COLUMN currentPaymentMethodId TEXT;
+ALTER TABLE userEntity ADD COLUMN addressIds TEXT AS List<String> NOT NULL DEFAULT '';
+ALTER TABLE userEntity ADD COLUMN phone TEXT DEFAULT NULL ;
+ALTER TABLE userEntity ADD COLUMN bio TEXT DEFAULT NULL ;

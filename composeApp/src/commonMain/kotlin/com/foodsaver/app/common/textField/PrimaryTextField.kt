@@ -60,6 +60,7 @@ fun PrimaryTextField(
     TextField(
         enabled = enabled,
         maxLines = state.maxLines,
+        leadingIcon = state.leadingIcon,
         modifier = modifier
             .heightIn(min = minHeight),
         value = state.value,

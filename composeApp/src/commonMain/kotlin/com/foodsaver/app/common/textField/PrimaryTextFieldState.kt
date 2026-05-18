@@ -11,6 +11,7 @@ data class PrimaryTextFieldState(
     val keyboardType: KeyboardType = KeyboardType.Text,
     val passwordField: PasswordField? = null,
     val trailingIcon: (@Composable () -> Unit)? = null,
+    val leadingIcon: (@Composable () -> Unit)? = null,
     val maxLines: Int = Int.MAX_VALUE,
 ) {
     data class PasswordField(

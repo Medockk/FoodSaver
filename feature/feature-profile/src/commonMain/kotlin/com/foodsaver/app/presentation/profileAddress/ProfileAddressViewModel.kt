@@ -33,10 +33,10 @@ class ProfileAddressViewModel(
     }
 
     private fun getAddresses() = viewModelScope.launch(Dispatchers.InputOutput) {
-        readAddressRepository.observeAddresses().collectRequest(
+        readAddressRepository.observeUserAddresses().collectRequest(
             onSuccess = { addresses ->
                 _state.update { it.copy(
-                    addresses = addresses ?: emptyList(),
+                    addresses = addresses,
                     isLoading = false
                 ) }
             },

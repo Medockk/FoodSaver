@@ -47,7 +47,8 @@ internal class DatabaseProviderImpl(
                 createdAtAdapter = InstantAdapter
             ),
             userEntityAdapter = UserEntity.Adapter(
-                authoritiesAdapter = ListOfStringAdapter
+                authoritiesAdapter = ListOfStringAdapter,
+                addressIdsAdapter = ListOfStringAdapter
             )
         )
     }.value

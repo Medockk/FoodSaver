@@ -1,6 +1,5 @@
 package com.foodsaver.app.presentation.featureProfile
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,14 +13,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.button.PrimaryFabButton
 import com.foodsaver.app.common.topBar.PrimaryTopBar
-import com.foodsaver.app.coreProfile.domain.model.ProfileModel
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureProfile.component.MenuItemState
 import com.foodsaver.app.presentation.featureProfile.component.MenuItems
@@ -30,7 +26,6 @@ import com.foodsaver.app.presentation.profileMenu.ProfileMenuEvent
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuState
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuViewModel
 import com.foodsaver.app.ui.FoodSaverTheme
-import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.addresses_icon
 import foodsaver.composeapp.generated.resources.faqs_icon
@@ -44,9 +39,9 @@ import foodsaver.composeapp.generated.resources.personal_info_icon
 import foodsaver.composeapp.generated.resources.profile
 import foodsaver.composeapp.generated.resources.profile_menu_addresses
 import foodsaver.composeapp.generated.resources.profile_menu_cart
+import foodsaver.composeapp.generated.resources.profile_menu_cart_icon
 import foodsaver.composeapp.generated.resources.profile_menu_faqs
 import foodsaver.composeapp.generated.resources.profile_menu_favorite
-import foodsaver.composeapp.generated.resources.profile_menu_cart_icon
 import foodsaver.composeapp.generated.resources.profile_menu_logout
 import foodsaver.composeapp.generated.resources.profile_menu_notifications
 import foodsaver.composeapp.generated.resources.profile_menu_payment_method
@@ -71,33 +66,6 @@ fun ProfileMenuScreenRoot(
         state = state,
         onEvent = viewModel::onEvent
     )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun ProfileMenuScreenPreview() {
-    LocalFoodSaverThemeComposition {
-        Scaffold { padding ->
-            Box(Modifier.padding(padding)) {
-                ProfileMenuScreen(
-                    navController = rememberNavController(),
-                    state = ProfileMenuState(
-                        profile = ProfileModel(
-                            id = "",
-                            email = "android@g.g",
-                            fullName = "Android",
-                            imageUri = "TODO()",
-                            restaurantId = "TODO()",
-                            authorities = listOf(),
-                            phone = "89123456789",
-                            bio = "I'm android phone"
-                        )
-                    ),
-                    onEvent = { TODO() }
-                )
-            }
-        }
-    }
 }
 
 @Composable

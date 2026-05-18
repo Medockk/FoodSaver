@@ -1,6 +1,7 @@
 package com.foodsaver.app.presentation.profileAddress
 
-import com.foodsaver.app.coreModel.model.AddressModel
+import com.foodsaver.app.coreAddress.domain.model.AddressModel
+
 
 data class ProfileAddressState(
     val addresses: List<AddressModel> = emptyList(),
