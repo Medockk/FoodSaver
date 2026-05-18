@@ -110,4 +110,16 @@ sealed class Route {
         @Serializable
         data class TrackingScreen(val orderId: String): Route()
     }
+
+    @Serializable
+    data object ManagerGraph: Route() {
+
+        @Serializable
+        data class AddProductScreen(
+            val productId: String? = null
+        ): Route()
+
+        @Serializable
+        data object MyFoodScreen: Route()
+    }
 }

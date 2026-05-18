@@ -98,6 +98,8 @@ fun PrimaryTextField(
             focusedTextColor = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
             unfocusedTextColor = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
             disabledTextColor = disabledTextColor,
+
+            cursorColor = FoodSaverTheme.colorScheme.onBackground
         )
     )
 }

@@ -4,6 +4,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias { libs.plugins.androidMultiplatformLibrary }
+
+    alias { libs.plugins.jetbrains.kotlin.serialization }
+    alias { libs.plugins.koin.plugin }
 }
 
 kotlin {
@@ -49,12 +52,13 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
-
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreProduct)
             implementation(projects.core.coreCategory)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.datetime)
+
+            implementation(libs.jetbrains.compose.navigation)
         }
         jvmMain.dependencies {
 

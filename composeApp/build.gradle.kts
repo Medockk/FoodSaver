@@ -62,6 +62,7 @@ kotlin {
                 isStatic = true
 
                 freeCompilerArgs += listOf("-Xbinary=bundleId=com.foodsaver.app.ComposeApp")
+                linkerOpts("-framework", "CoreLocation")
 
                 export(projects.core.coreDi)
                 export(projects.shared)

@@ -136,4 +136,9 @@ you just place the orer we do the rest</string>
     <string name="add_address_label_work">Work</string>
     <string name="add_address_label_other">Other</string>
     <string name="add_address_save_location">SAVE LOCATION</string>
+
+    <string name="add_new_items">Add New Items</string>
+    <string name="reset">Reset</string>
+    <string name="save_changes">Save changes</string>
+    <string name="details">Details</string>
 </resources>
