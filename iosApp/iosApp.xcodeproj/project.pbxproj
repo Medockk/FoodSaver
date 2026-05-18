@@ -10,6 +10,7 @@
 		3F1ECBE82FA08BD00062474B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F1ECBE62FA08A420062474B /* libsqlite3.tbd */; };
 		3F6680DA2FA1CA640041BFF0 /* ComposeApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */; };
 		3F6680DB2FA1CA640041BFF0 /* ComposeApp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3F6A1FE52FBAFDDA00A46BF7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6A1FE32FBAFDD600A46BF7 /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,7 @@
 		3F1ECBE22FA085000062474B /* Shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Shared.framework; path = ../shared/build/bin/iosX64/debugFramework/Shared.framework; sourceTree = "<group>"; };
 		3F1ECBE62FA08A420062474B /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		3F6680D82FA1CA530041BFF0 /* ComposeApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ComposeApp.framework; sourceTree = "<group>"; };
+		3F6A1FE32FBAFDD600A46BF7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F6A1FE52FBAFDDA00A46BF7 /* CoreLocation.framework in Frameworks */,
 				3F1ECBE82FA08BD00062474B /* libsqlite3.tbd in Frameworks */,
 				3F6680DA2FA1CA640041BFF0 /* ComposeApp.framework in Frameworks */,
 			);
@@ -75,6 +78,7 @@
 		3F1ECBE12FA085000062474B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3F6A1FE32FBAFDD600A46BF7 /* CoreLocation.framework */,
 				3F6680D92FA1CA530041BFF0 /* debugFramework */,
 				3F1ECBE62FA08A420062474B /* libsqlite3.tbd */,
 				3F1ECBE22FA085000062474B /* Shared.framework */,

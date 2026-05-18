@@ -19,7 +19,7 @@ fun initIosKoin() {
         val koinApp = initSharedKoin(arrayOf())
 
         val databaseProvider = koinApp.koin.get<DatabaseProvider>()
-        databaseProvider.getSync()
+        databaseProvider()
     } else {
         initSharedKoin(arrayOf())
     }
