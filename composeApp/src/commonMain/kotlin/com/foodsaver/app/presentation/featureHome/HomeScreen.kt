@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -127,7 +128,7 @@ private fun HomeScreen(
                         ))
                     },
                     onMenuClick = {
-                        navController.navigate(Route.OrderGraph.OrderScreen)
+                        navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -146,12 +147,12 @@ private fun HomeScreen(
                     Text(
                         text = stringResource(
                             Res.string.home_hello_user,
-                            state.profile?.name ?: ""
+                            state.profile?.fullName ?: ""
                         ),
                         color = FoodSaverTheme.colorScheme.onBackgroundSecondary,
                         style = FoodSaverTheme.typography.bodyRegular
                     )
-
+                    Spacer(Modifier.width(5.dp))
                     Text(
                         text = stringResource(Res.string.home_good_afternoon),
                         color = FoodSaverTheme.colorScheme.onBackgroundSecondary,

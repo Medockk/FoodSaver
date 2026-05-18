@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS addressEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    userId TEXT NOT NULL,
+
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+
+    city TEXT NOT NULL,
+    street TEXT NOT NULL,
+    house TEXT NOT NULL,
+
+    apartment TEXT,
+    floor INTEGER,
+    entrance TEXT,
+
+    fullAddress TEXT NOT NULL,
+
+    FOREIGN KEY (userId) REFERENCES userEntity (id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS address_user_id_idx ON addressEntity(userId);
+
+getAddressesByUserId:
+SELECT * FROM addressEntity
+WHERE userId = ?;
+
+
+
+upsertAddress:
+INSERT OR REPLACE INTO addressEntity
+VALUES ?;
+
+deleteAddressById:
+DELETE FROM addressEntity
+WHERE id = ?;

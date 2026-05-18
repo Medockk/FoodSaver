@@ -24,6 +24,7 @@ import com.foodsaver.app.presentation.featureHome.route.featureHome
 import com.foodsaver.app.presentation.featureOnBoarding.route.featureOnboarding
 import com.foodsaver.app.presentation.featureOrder.route.featureOrder
 import com.foodsaver.app.presentation.featurePaymentMethod.route.featurePaymentMethod
+import com.foodsaver.app.presentation.featureProfile.route.featureProfile
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -70,6 +71,7 @@ fun App(
                         featureCart(navController)
                         featurePaymentMethod(navController)
                         featureOrder(navController)
+                        featureProfile(navController)
                     }
                 }
             }

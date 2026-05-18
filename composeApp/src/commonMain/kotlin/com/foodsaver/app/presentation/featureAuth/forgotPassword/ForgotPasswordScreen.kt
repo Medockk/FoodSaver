@@ -16,8 +16,8 @@ import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.feature.auth.presentation.ForgotPassword.ForgotPasswordEvent
 import com.foodsaver.app.feature.auth.presentation.ForgotPassword.ForgotPasswordViewModel
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItem
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItemState
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
@@ -62,14 +62,15 @@ private fun ForgotPasswordScreen(
             modifier = Modifier
                 .imePadding()
         ) {
-            AuthenticationItem(
-                state = AuthenticationItemState(
+            TextFieldItem(
+                state = TextFieldItemState(
                     title = Res.string.auth_email,
                     state = PrimaryTextFieldState(
                         value = email,
                         onValueChange = { onEvent(ForgotPasswordEvent.OnEmailChange(it)) },
                         placeholder = stringResource(Res.string.auth_email_example),
-                        keyboardType = KeyboardType.Email
+                        keyboardType = KeyboardType.Email,
+                        maxLines = 1
                     ),
                 )
             )

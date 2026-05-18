@@ -9,6 +9,7 @@ data class ColorScheme(
     val primaryThin: Color = Color.Unspecified,
 
     val background: Color = Color.Unspecified,
+    val backgroundSecondary: Color = Color.Unspecified,
     val onBackground: Color = Color.Unspecified,
     val onBackgroundSubtitle: Color = Color.Unspecified,
     val onBackgroundThin: Color = Color.Unspecified,
@@ -63,6 +64,7 @@ val lightColorScheme = ColorScheme(
     primaryThin = Color(0xFFFFE1CE),
 
     background = Color.White,
+    backgroundSecondary = Color(0xFFF6F8FA),
     onBackground = Color(0xFF181C2E),
     onBackgroundSubtitle = Color(0xFF32343E),
     onBackgroundThin = Color(0xFF646982),

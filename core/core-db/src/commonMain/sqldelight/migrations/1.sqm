@@ -11,7 +11,10 @@ CREATE TABLE IF NOT EXISTS userEntity(
     fullName TEXT NOT NULL,
     imageUri TEXT,
     restaurantId TEXT,
-    authorities TEXT AS List<String> NOT NULL
+    authorities TEXT AS List<String> NOT NULL,
+
+    phone TEXT,
+    bio TEXT
 );
 
 CREATE TABLE IF NOT EXISTS cartEntity (

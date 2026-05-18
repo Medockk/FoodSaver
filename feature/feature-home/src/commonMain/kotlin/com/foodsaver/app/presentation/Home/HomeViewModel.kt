@@ -10,6 +10,7 @@ import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
+import com.foodsaver.app.coreProfile.domain.repository.ProfileRepository
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -25,7 +26,8 @@ class HomeViewModel(
     private val categoryRepository: CategoryRepository,
     private val restaurantRepository: RestaurantRepository,
 
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val profileRepository: ProfileRepository,
 ) : BaseViewModel<HomeAction>() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -72,6 +74,20 @@ class HomeViewModel(
         observeCart()
         getAllCategories()
         getCurrentAddress()
+
+        observeProfile()
+    }
+
+    private fun observeProfile() {
+        viewModelScope.launch(Dispatchers.InputOutput) {
+            profileRepository.observeProfile().collectRequest(
+                onSuccess = { profile ->
+                    _state.update { it.copy(
+                        profile = profile
+                    ) }
+                }
+            )
+        }
     }
 
     private fun loadRestaurants() {

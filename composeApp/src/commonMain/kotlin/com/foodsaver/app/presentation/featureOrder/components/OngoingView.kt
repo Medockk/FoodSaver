@@ -133,9 +133,9 @@ fun OngoingView(
                             },
                             minHeight = 40.dp,
                             modifier = Modifier
-                                .weight(0.8f)
+                                .weight(1f)
                         )
-                        Spacer(Modifier.weight(1f))
+                        Spacer(Modifier.weight(.2f))
                         InversedPrimaryButton(
                             text = stringResource(Res.string.cancel),
                             onClick = {
@@ -143,7 +143,7 @@ fun OngoingView(
                             },
                             minHeight = 40.dp,
                             modifier = Modifier
-                                .weight(0.8f)
+                                .weight(1f)
                         )
                     }
                 }

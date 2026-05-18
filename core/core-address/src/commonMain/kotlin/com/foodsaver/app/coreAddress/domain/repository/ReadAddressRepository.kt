@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ReadAddressRepository {
 
-    fun getAddresses(): Flow<ApiResult<List<AddressModel>?>>
-    fun getCurrentAddress(): Flow<ApiResult<AddressModel?>>
+    fun observeAddresses(): Flow<ApiResult<List<AddressModel>?>>
+    fun observeCurrentAddress(): Flow<ApiResult<AddressModel?>>
 }

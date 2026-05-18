@@ -37,7 +37,7 @@ fun PrimaryFabButton(
 
     Box(
         modifier = modifier
-            .size(size, size)
+            .size(size)
             .aspectRatio(1f)
             .clip(CircleShape)
             .background(

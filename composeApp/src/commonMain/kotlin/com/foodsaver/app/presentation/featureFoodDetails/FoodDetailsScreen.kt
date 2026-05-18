@@ -1,7 +1,6 @@
 package com.foodsaver.app.presentation.featureFoodDetails
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,12 +20,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -108,14 +106,12 @@ private fun FoodDetailsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.navigationBars,
         topBar = {
-            val statusBarPaddings = WindowInsets.statusBars.asPaddingValues()
-
             CollapsingToolbarImage(
                 collapsedElevation = 0.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(animatedBackgroundColor)
-                    .padding(statusBarPaddings),
+                    .statusBarsPadding(),
                 navigationIcon = {
                     PrimaryFabButton(
                         onClick = {

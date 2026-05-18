@@ -1,21 +1,31 @@
 package com.foodsaver.app.coreAddress.data.mappers
 
 import com.foodsaver.app.coreAddress.data.dto.AddAddressDto
-import com.foodsaver.app.coreAddress.domain.model.AddAddressModel
-import com.foodsaver.app.coreModel.dto.AddressDto
-import com.foodsaver.app.coreModel.model.AddressModel
+import com.foodsaver.app.coreAddress.data.dto.AddressDto
+import com.foodsaver.app.coreAddress.domain.model.AddAddressRequest
+import com.foodsaver.app.coreAddress.domain.model.AddressModel
 
-internal fun AddressDto.mapToModel() =
-    AddressModel(
-        id = id,
-        name = name,
-        address = address,
-        isCurrentAddress = isCurrentAddress
-    )
-
-internal fun AddAddressModel.mapToDto() =
+internal fun AddAddressRequest.mapToDto() =
     AddAddressDto(
-        name = name,
-        address = address,
-        isCurrentAddress = isCurrentAddress
+        latitude = latitude,
+        longitude = longitude,
+        city = city,
+        street = street,
+        house = house,
+        apartment = apartment,
+        floor = floor,
+        entrance = entrance
     )
+
+internal fun AddressDto.mapDtoToResponse() = AddressModel(
+    id = id,
+    latitude = latitude,
+    longitude = longitude,
+    city = city,
+    street = street,
+    house = house,
+    apartment = apartment,
+    floor = floor,
+    entrance = entrance,
+    fullAddress = fullAddress
+)

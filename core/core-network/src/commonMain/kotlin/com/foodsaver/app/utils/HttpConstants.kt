@@ -4,7 +4,7 @@ object HttpConstants {
 
     private const val VERSION = "v1"
 
-    internal const val ROOT_URL = "http://10.195.66.227:8088"
+    internal const val ROOT_URL = "http://10.16.240.227:8088"
     const val BASE_URL = "$ROOT_URL/api/$VERSION/"
 
     internal const val REFRESH_URL = "${BASE_URL}refreshToken"
@@ -17,6 +17,7 @@ object HttpConstants {
     const val CART_URL = "${BASE_URL}cart"
     const val CATEGORY_URL = "${BASE_URL}category"
     const val USER_URL = "${BASE_URL}user"
+    const val PROFILE_URL = "${BASE_URL}profile"
     const val OFFER_URL = "${BASE_URL}offers"
     const val BANK_URL = "${BASE_URL}bank"
     const val ADDRESS_URL = "${BASE_URL}address"

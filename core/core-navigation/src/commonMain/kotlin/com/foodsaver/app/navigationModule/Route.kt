@@ -77,10 +77,10 @@ sealed class Route {
         data object ProfileAddressScreen : Route()
 
         @Serializable
-        data object ProfilePaymentMethodScreen : Route()
+        data object EditProfileScreen : Route()
 
         @Serializable
-        data object ProfileSupportScreen : Route()
+        data object AddNewAddressScreen : Route()
     }
 
     @Serializable

@@ -31,8 +31,8 @@ import com.foodsaver.app.feature.auth.presentation.signup.SignupState
 import com.foodsaver.app.feature.auth.presentation.signup.SignupViewModel
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItem
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItemState
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.utils.ObserveActions
@@ -107,17 +107,18 @@ private fun SignupScreen(
         }
     }
     val authenticationFields = listOf(
-        AuthenticationItemState(
+        TextFieldItemState(
             title = Res.string.auth_signup_name,
             state = PrimaryTextFieldState(
                 value = state.name,
                 onValueChange = {
                     onEvent(SignupEvent.OnNameValueChange(it))
                 },
-                placeholder = stringResource(Res.string.auth_signup_name_example)
+                placeholder = stringResource(Res.string.auth_signup_name_example),
+                maxLines = 1
             )
         ),
-        AuthenticationItemState(
+        TextFieldItemState(
             title = Res.string.auth_email,
             state = PrimaryTextFieldState(
                 value = state.email,
@@ -125,10 +126,11 @@ private fun SignupScreen(
                     onEvent(SignupEvent.OnEmailValueChange(it))
                 },
                 placeholder = stringResource(Res.string.auth_email_example),
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                maxLines = 1
             )
         ),
-        AuthenticationItemState(
+        TextFieldItemState(
             title = Res.string.auth_password,
             state = PrimaryTextFieldState(
                 value = state.password,
@@ -145,10 +147,11 @@ private fun SignupScreen(
                 },
                 passwordField = PrimaryTextFieldState.PasswordField(
                     isPasswordVisible = state.isPasswordVisible
-                )
+                ),
+                maxLines = 1
             )
         ),
-        AuthenticationItemState(
+        TextFieldItemState(
             title = Res.string.auth_signup_retype_password,
             state = PrimaryTextFieldState(
                 value = state.retypePassword,
@@ -165,7 +168,8 @@ private fun SignupScreen(
                 },
                 passwordField = PrimaryTextFieldState.PasswordField(
                     isPasswordVisible = state.isRetypePasswordVisible
-                )
+                ),
+                maxLines = 1
             )
         ),
     )
@@ -182,7 +186,7 @@ private fun SignupScreen(
         LazyColumn {
             // fields
             items(authenticationFields) { field ->
-                AuthenticationItem(
+                TextFieldItem(
                     state = field,
                     modifier = Modifier
                         .fillMaxWidth()

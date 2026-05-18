@@ -6,9 +6,9 @@ import com.databases.cache.MainAppDatabase
 import com.databases.cache.OrderEntity
 import com.databases.cache.PaymentMethodEntity
 import com.databases.cache.ProductCacheEntity
-import com.databases.cache.ProductEntityQueries
 import com.databases.cache.RecentKeywordsEntity
 import com.databases.cache.RestaurantEntity
+import com.databases.cache.UserEntity
 import com.foodsaver.app.coreDb.data.adapters.InstantAdapter
 import com.foodsaver.app.coreDb.data.adapters.ListOfStringAdapter
 import com.foodsaver.app.coreDb.data.adapters.ProductAttributesAdapter
@@ -45,6 +45,9 @@ internal class DatabaseProviderImpl(
                 typeAdapter = EnumColumnAdapter(),
                 statusAdapter = EnumColumnAdapter(),
                 createdAtAdapter = InstantAdapter
+            ),
+            userEntityAdapter = UserEntity.Adapter(
+                authoritiesAdapter = ListOfStringAdapter
             )
         )
     }.value

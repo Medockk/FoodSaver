@@ -3,7 +3,7 @@ package com.foodsaver.app.presentation.Home
 import androidx.compose.ui.text.input.TextFieldValue
 import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
 import com.foodsaver.app.coreModel.model.CategoryModel
-import com.foodsaver.app.coreProfile.domain.model.UserModel
+import com.foodsaver.app.coreProfile.domain.model.ProfileModel
 
 data class HomeState(
     val deliverTo: String = "",
@@ -22,5 +22,5 @@ data class HomeState(
     val cartSize: Long? = null,
     val cartPrice: Double = 0.0,
     val cartId: String? = null,
-    val profile: UserModel? = null,
+    val profile: ProfileModel? = null,
 )

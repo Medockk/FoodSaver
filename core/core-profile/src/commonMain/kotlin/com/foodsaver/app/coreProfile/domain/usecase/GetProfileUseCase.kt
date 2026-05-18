@@ -7,5 +7,5 @@ class GetProfileUseCase(
 ) {
 
     operator fun invoke() =
-        repository.getProfile()
+        repository.observeProfile()
 }

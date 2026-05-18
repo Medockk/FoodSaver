@@ -4,7 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class AddAddressDto(
-    val name: String,
-    val address: String,
-    val isCurrentAddress: Boolean
+    val latitude: Double,
+    val longitude: Double,
+
+    val city: String,
+    val street: String,
+    val house: String,
+
+    val apartment: String?,
+    val floor: Int?,
+    val entrance: String?,
 )

@@ -36,8 +36,8 @@ import com.foodsaver.app.feature.auth.presentation.login.LoginState
 import com.foodsaver.app.feature.auth.presentation.login.LoginViewModel
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAuth.common.AuthenticationScaffold
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItem
-import com.foodsaver.app.presentation.featureAuth.common.fieldItem.AuthenticationItemState
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItem
+import com.foodsaver.app.common.textField.fieldItem.TextFieldItemState
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.presentation.featureAuth.login.components.AuthenticationCheckbox
 import com.foodsaver.app.presentation.featureAuth.login.components.AuthenticationVariant
@@ -105,8 +105,8 @@ private fun LoginScreen(
     snackbarHostState: SnackbarHostState,
 ) {
 
-    val authenticationItemStates = listOf(
-        AuthenticationItemState(
+    val textFieldItemStates = listOf(
+        TextFieldItemState(
             title = Res.string.auth_email,
             state = PrimaryTextFieldState(
                 value = state.email,
@@ -114,13 +114,15 @@ private fun LoginScreen(
                     onEvent(LoginEvent.OnEmailValueChange(it))
                 },
                 placeholder = stringResource(Res.string.auth_email_example),
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                maxLines = 1
             )
         ),
-        AuthenticationItemState(
+        TextFieldItemState(
             title = Res.string.auth_password,
             state = PrimaryTextFieldState(
                 value = state.password,
+                maxLines = 1,
                 onValueChange = {
                     onEvent(LoginEvent.OnPasswordValueChange(it))
                 },
@@ -157,8 +159,8 @@ private fun LoginScreen(
             modifier = Modifier
         ) {
             // Fields
-            items(authenticationItemStates) { item ->
-                AuthenticationItem(
+            items(textFieldItemStates) { item ->
+                TextFieldItem(
                     state = item,
                     modifier = Modifier
                         .fillMaxWidth()

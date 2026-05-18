@@ -56,7 +56,7 @@ class SignupViewModel(
                     sendError(ApiResult.Error.Local(error))
                     return
                 }
-                if (EmailValidator.validate(currentState.email)) {
+                if (!EmailValidator.validate(currentState.email)) {
                     val error = AuthLocalError.InvalidEmail
                     sendError(ApiResult.Error.Local(error))
                     return
