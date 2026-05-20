@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.foodsaver.app.navigationModule.Route
+import com.foodsaver.app.presentation.featureAdmin.UpsertCategoryScreenRoot
 import com.foodsaver.app.presentation.featureUpsertRestaurant.UpsertRestaurantScreenRoot
 
 
@@ -25,7 +26,9 @@ internal fun NavGraphBuilder.featureAdmin(navController: NavController) {
         }
 
         composable<Route.AdminGraph.UpsertCategoryScreen> {
-
+            UpsertCategoryScreenRoot(
+                onBackClick = { navController.navigateUp() }
+            )
         }
     }
 }

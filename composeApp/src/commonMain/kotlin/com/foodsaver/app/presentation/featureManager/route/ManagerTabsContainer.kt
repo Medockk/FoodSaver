@@ -8,18 +8,15 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -41,7 +38,8 @@ import org.jetbrains.compose.resources.vectorResource
 
 data class Tabs(
     val icon: DrawableResource,
-    val route: Route
+    val route: Route,
+    val label: String
 )
 
 @Composable
@@ -52,9 +50,9 @@ fun ManagerTabsContainer(
 
     val localController = rememberNavController()
     val tabs = listOf(
-        Tabs(Res.drawable.my_food_navigation_icon, Route.ManagerGraph.MyFoodScreen),
-        Tabs(Res.drawable.add_icon, Route.ManagerGraph.AddProductScreen()),
-        Tabs(Res.drawable.restaurant_navigation_icon, Route.ManagerGraph.ViewMyRestaurantScreen),
+        Tabs(Res.drawable.my_food_navigation_icon, Route.ManagerGraph.MyFoodScreen, "My Food"),
+        Tabs(Res.drawable.add_icon, Route.ManagerGraph.AddProductScreen(), ""),
+        Tabs(Res.drawable.restaurant_navigation_icon, Route.ManagerGraph.ViewMyRestaurantScreen, "Restaurant"),
     )
 
     val computedTargetTab = when (targetTabs) {
@@ -66,17 +64,7 @@ fun ManagerTabsContainer(
         contentWindowInsets = WindowInsets.navigationBars,
         bottomBar = {
             NavigationBar(
-                modifier = Modifier
-                    .dropShadow(
-                        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                        shadow = Shadow(
-                            radius = 12.dp,
-                            color = FoodSaverTheme.colorScheme.primaryShadowColor,
-                            alpha = .15f,
-                            offset = DpOffset(x = 12.dp, 12.dp)
-                        )
-                    ).clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                    .background(FoodSaverTheme.colorScheme.background)
+                containerColor = FoodSaverTheme.colorScheme.background
             ) {
 
                 val navBackStackEntry by localController.currentBackStackEntryAsState()
@@ -120,6 +108,11 @@ fun ManagerTabsContainer(
                                     else FoodSaverTheme.colorScheme.placeholderHint,
                                     modifier = Modifier.size(24.dp)
                                 )
+                            }
+                        },
+                        label = {
+                            if (tab.label.isNotBlank()) {
+                                Text(tab.label, color = FoodSaverTheme.colorScheme.onBackground)
                             }
                         }
                     )

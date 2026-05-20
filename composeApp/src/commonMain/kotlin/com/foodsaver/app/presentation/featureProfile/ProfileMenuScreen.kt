@@ -57,6 +57,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ProfileMenuScreenRoot(
     navController: NavController,
+    onBackClick: () -> Unit = { navController.navigateUp() },
     viewModel: ProfileMenuViewModel = koinViewModel()
 ) {
 
@@ -65,7 +66,8 @@ fun ProfileMenuScreenRoot(
     ProfileMenuScreen(
         navController = navController,
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onBackClick = onBackClick
     )
 }
 
@@ -73,7 +75,8 @@ fun ProfileMenuScreenRoot(
 private fun ProfileMenuScreen(
     navController: NavController,
     state: ProfileMenuState,
-    onEvent: (ProfileMenuEvent) -> Unit
+    onEvent: (ProfileMenuEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     val menuItems = listOf(
@@ -164,7 +167,7 @@ private fun ProfileMenuScreen(
         topBar = {
             PrimaryTopBar(
                 title = stringResource(Res.string.profile),
-                onNavigationClick = { navController.navigateUp() },
+                onNavigationClick = onBackClick,
                 actions = {
                     PrimaryFabButton(
                         onClick = {

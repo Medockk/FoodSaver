@@ -1,11 +1,13 @@
 package com.foodsaver.app.presentation.featureAdmin.route
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
-import com.foodsaver.app.presentation.featureAdmin.ViewCategoryScreen
+import com.foodsaver.app.presentation.featureAdmin.ViewCategoryScreenRoot
 import com.foodsaver.app.presentation.featureManager.ViewMyRestaurantScreenRoot
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
@@ -38,16 +40,28 @@ internal fun AdminTabsContainer(navController: NavController) {
 
     val localNavController = rememberNavController()
     val adminTabs = listOf(
-        AdminTab(Res.drawable.restaurant_navigation_icon, Route.AdminGraph.ViewRestaurantScreen, "Restaurants"),
-        AdminTab(Res.drawable.category_navigation_icon, Route.AdminGraph.ViewCategoryScreen, "Categories"),
+        AdminTab(
+            Res.drawable.restaurant_navigation_icon,
+            Route.AdminGraph.ViewRestaurantScreen,
+            "Restaurants"
+        ),
+        AdminTab(
+            Res.drawable.category_navigation_icon,
+            Route.AdminGraph.ViewCategoryScreen,
+            "Categories"
+        ),
     )
 
     Scaffold(
+        contentWindowInsets = WindowInsets(),
         bottomBar = {
             val stackEntry by localNavController.currentBackStackEntryAsState()
             val destination = stackEntry?.destination
 
-            NavigationBar {
+            NavigationBar(
+                containerColor = FoodSaverTheme.colorScheme.background,
+                tonalElevation = 10.dp
+            ) {
                 adminTabs.forEach { tab ->
                     val isSelected = destination?.hasRoute(tab.route::class) == true
 
@@ -70,6 +84,9 @@ internal fun AdminTabsContainer(navController: NavController) {
                                 else FoodSaverTheme.colorScheme.placeholderHint,
                                 modifier = Modifier.size(24.dp)
                             )
+                        },
+                        label = {
+                            Text(tab.label, color = FoodSaverTheme.colorScheme.onBackground)
                         }
                     )
                 }
@@ -84,13 +101,26 @@ internal fun AdminTabsContainer(navController: NavController) {
             composable<Route.AdminGraph.ViewRestaurantScreen> {
                 ViewMyRestaurantScreenRoot(
                     onBackClick = { navController.navigateUp() },
-                    onRestaurantClick = { navController.navigate(Route.AdminGraph.UpsertRestaurantScreen(it)) }
+                    onRestaurantClick = {
+                        navController.navigate(
+                            Route.AdminGraph.UpsertRestaurantScreen(
+                                it
+                            )
+                        )
+                    }
                 )
             }
             composable<Route.AdminGraph.ViewCategoryScreen> {
-                ViewCategoryScreen(
+                ViewCategoryScreenRoot(
                     onBackClick = { navController.navigateUp() },
-                    onUpsertCategoryClick = { navController.navigate(Route.AdminGraph.UpsertCategoryScreen(it)) }
+                    categoryClick = {
+                        navController.navigate(
+                            Route.AdminGraph.UpsertCategoryScreen(
+                                it
+                            )
+                        )
+                    },
+                    onAddCategoryClick = { navController.navigate(Route.AdminGraph.UpsertCategoryScreen()) },
                 )
             }
         }

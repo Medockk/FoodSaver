@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias { libs.plugins.androidMultiplatformLibrary }
+    alias { libs.plugins.jetbrains.kotlin.serialization }
+    alias { libs.plugins.koin.plugin }
 }
 
 kotlin {
@@ -47,8 +49,16 @@ kotlin {
 
         commonMain.dependencies {
             implementation(projects.core.coreDi)
+            implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreDb)
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
+            implementation(projects.core.coreCategory)
+            implementation(projects.core.coreAuth)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(projects.core.coreNavigation)
+            implementation(libs.jetbrains.compose.navigation)
         }
         jvmMain.dependencies {
 
