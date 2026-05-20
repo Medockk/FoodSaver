@@ -5,5 +5,5 @@ import com.foodsaver.app.coreCategory.domain.model.CategoryModel
 
 interface CategoryRepository {
 
-    suspend fun getAllCategories(): ApiResult<List<CategoryModel>>
+    suspend fun fetchAllCategories(): ApiResult<List<CategoryModel>>
 }

@@ -136,6 +136,8 @@ private fun AddProductScreen(
 
     if (state.isGalleryPickerVisible) {
         GalleryPickerLauncher(
+            allowMultiple = true,
+            includeExif = true,
             onPhotosSelected = { photos ->
                 val imageBytes = photos.map { it.loadBytes() }
                 onEvent(AddProductEvent.OnPickImages(imageBytes))
@@ -162,9 +164,6 @@ private fun AddProductScreen(
                 onNavigationClick = {
                     navController.navigateUp()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
                 actions = {
                     PrimaryTextButton(
                         onClick = {

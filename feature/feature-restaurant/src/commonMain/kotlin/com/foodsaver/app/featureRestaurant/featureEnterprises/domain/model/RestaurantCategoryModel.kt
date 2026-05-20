@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.domain.model
+package com.foodsaver.app.featureRestaurant.featureEnterprises.domain.model
 
 data class RestaurantCategoryModel(
     val id: String,

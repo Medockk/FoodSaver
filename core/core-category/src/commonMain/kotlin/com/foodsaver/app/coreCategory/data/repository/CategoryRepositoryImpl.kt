@@ -16,7 +16,7 @@ internal class CategoryRepositoryImpl(
     private val httpClient: HttpClient
 ): CategoryRepository {
 
-    override suspend fun getAllCategories(): ApiResult<List<CategoryModel>> {
+    override suspend fun fetchAllCategories(): ApiResult<List<CategoryModel>> {
         return saveNetworkCall<Page<CategoryDto>> {
             httpClient.get(HttpConstants.CATEGORY_URL + "/all")
         }.map { page ->

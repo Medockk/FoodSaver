@@ -117,7 +117,7 @@ sealed class Route {
         @Serializable
         data class TabsContainer(val tabs: Tabs = Tabs.MyFood): Route() {
             enum class Tabs {
-                MyFood, AddRestaurant
+                MyFood
             }
         }
 
@@ -130,7 +130,7 @@ sealed class Route {
         data object MyFoodScreen: Route()
 
         @Serializable
-        data object AddRestaurantScreen: Route()
+        data object ViewMyRestaurantScreen: Route()
     }
 
     @Serializable
@@ -154,5 +154,12 @@ sealed class Route {
         data class UpsertCategoryScreen(
             val categoryId: String? = null
         ): Route()
+    }
+
+    @Serializable
+    data object UpsertRestaurantGraph: Route() {
+
+        @Serializable
+        data class UpsertRestaurantScreen(val restaurantId: String? = null): Route()
     }
 }

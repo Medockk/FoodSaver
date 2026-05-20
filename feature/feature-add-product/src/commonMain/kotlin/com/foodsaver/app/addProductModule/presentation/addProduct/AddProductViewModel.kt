@@ -70,7 +70,7 @@ class AddProductViewModel(
 
     private fun getAllCategories() {
         viewModelScope.launch(Dispatchers.InputOutput) {
-            categoryRepository.getAllCategories().onSuccess { categories ->
+            categoryRepository.fetchAllCategories().onSuccess { categories ->
                 _state.update {
                     it.copy(
                         allCategories = categories
@@ -162,6 +162,7 @@ class AddProductViewModel(
             is AddProductEvent.OnPickImages -> {
                 event.images.forEach { image ->
                     viewModelScope.launch {
+
                         addProductRepository.uploadImage(image).onSuccess { response  ->
                             _state.update {
                                 it.copy(

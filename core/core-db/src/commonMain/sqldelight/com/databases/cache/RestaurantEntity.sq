@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS restaurantEntity (
 getAllRestaurants:
 SELECT * FROM restaurantEntity;
 
+getRestaurantById:
+SELECT * FROM restaurantEntity
+WHERE serverId = ?;
+
 insertRestaurant:
 INSERT OR REPLACE INTO restaurantEntity (serverId, name, description, photoUris, latitude, longitude, addressName,
  companyId, rating, deliveryCost, averageDeliveryTime)

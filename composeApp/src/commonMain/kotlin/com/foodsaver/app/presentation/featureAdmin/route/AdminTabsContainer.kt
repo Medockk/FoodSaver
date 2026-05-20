@@ -1,6 +1,7 @@
 package com.foodsaver.app.presentation.featureAdmin.route
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -8,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -17,7 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAdmin.ViewCategoryScreen
-import com.foodsaver.app.presentation.featureAdmin.ViewRestaurantScreenRoot
+import com.foodsaver.app.presentation.featureManager.ViewMyRestaurantScreenRoot
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.category_navigation_icon
@@ -37,7 +39,7 @@ internal fun AdminTabsContainer(navController: NavController) {
     val localNavController = rememberNavController()
     val adminTabs = listOf(
         AdminTab(Res.drawable.restaurant_navigation_icon, Route.AdminGraph.ViewRestaurantScreen, "Restaurants"),
-        AdminTab(Res.drawable.category_navigation_icon, Route.AdminGraph.ViewRestaurantScreen, "Categories"),
+        AdminTab(Res.drawable.category_navigation_icon, Route.AdminGraph.ViewCategoryScreen, "Categories"),
     )
 
     Scaffold(
@@ -65,7 +67,8 @@ internal fun AdminTabsContainer(navController: NavController) {
                                 imageVector = vectorResource(tab.icon),
                                 contentDescription = null,
                                 tint = if (isSelected) FoodSaverTheme.colorScheme.primary
-                                else FoodSaverTheme.colorScheme.placeholderHint
+                                else FoodSaverTheme.colorScheme.placeholderHint,
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                     )
@@ -79,9 +82,9 @@ internal fun AdminTabsContainer(navController: NavController) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable<Route.AdminGraph.ViewRestaurantScreen> {
-                ViewRestaurantScreenRoot(
+                ViewMyRestaurantScreenRoot(
                     onBackClick = { navController.navigateUp() },
-                    onUpsertRestaurantClick = { navController.navigate(Route.AdminGraph.UpsertRestaurantScreen(it)) }
+                    onRestaurantClick = { navController.navigate(Route.AdminGraph.UpsertRestaurantScreen(it)) }
                 )
             }
             composable<Route.AdminGraph.ViewCategoryScreen> {

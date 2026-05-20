@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface CartRepository {
 
+    suspend fun fetchCart(): ApiResult<CartResponseModel>
+
     suspend fun observeCart(): Flow<ApiResult<CartResponseModel>>
     suspend fun observeCartItems(cartId: String): Flow<ApiResult<List<CartItemModel>>>
 

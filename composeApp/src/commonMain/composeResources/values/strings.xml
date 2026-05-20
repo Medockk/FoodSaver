@@ -168,4 +168,6 @@ you just place the orer we do the rest</string>
     <string name="restaurant_address_name">Restaurant address</string>
     <string name="restaurant_latitude">Restaurant latitude</string>
     <string name="restaurant_longitude">Restaurant longitude</string>
+
+    <string name="restaurants">Restaurants</string>
 </resources>

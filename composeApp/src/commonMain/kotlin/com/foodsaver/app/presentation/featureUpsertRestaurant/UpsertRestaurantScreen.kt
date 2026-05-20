@@ -27,9 +27,9 @@ import com.foodsaver.app.common.textField.PrimaryTextField
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
 import com.foodsaver.app.common.textField.fieldItem.createLabel.CreateLabel
 import com.foodsaver.app.common.topBar.PrimaryTopBar
-import com.foodsaver.app.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantEvent
-import com.foodsaver.app.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantState
-import com.foodsaver.app.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantViewModel
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantEvent
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantState
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.upsertRestaurant.UpsertRestaurantViewModel
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.create_restaurant
@@ -72,9 +72,11 @@ private fun UpsertRestaurantScreen(
 
     if (state.isGalleryPickerVisible) {
         GalleryPickerLauncher(
+            allowMultiple = true,
+            includeExif = true,
             onPhotosSelected = { photos ->
-                val photosBytes = photos.map { it.loadBytes() }
-                onEvent(UpsertRestaurantEvent.OnPickPhoto(photosBytes))
+                val pickPhotos = photos.map { UpsertRestaurantEvent.OnPickPhoto.PickPhoto(it.loadBytes(), it.exif?.orientation) }
+                onEvent(UpsertRestaurantEvent.OnPickPhoto(pickPhotos))
                 onEvent(UpsertRestaurantEvent.OnChangeGalleryPickerVisibility(false))
             },
             onError = {
@@ -96,10 +98,7 @@ private fun UpsertRestaurantScreen(
             PrimaryTopBar(
                 title = if (state.restaurantModel != null) stringResource(Res.string.edit_restaurant)
                 else stringResource(Res.string.create_restaurant),
-                onNavigationClick = onBackClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                onNavigationClick = onBackClick
             )
         }
     ) { paddingValues ->
@@ -251,6 +250,7 @@ private fun UpsertRestaurantScreen(
                         onValueChange = { onEvent(UpsertRestaurantEvent.OnDescriptionChange(it)) },
                         placeholder = ""
                     ),
+                    minHeight = 100.dp,
                     modifier = Modifier.fillMaxWidth()
                         .padding(horizontal = 24.dp)
                 )

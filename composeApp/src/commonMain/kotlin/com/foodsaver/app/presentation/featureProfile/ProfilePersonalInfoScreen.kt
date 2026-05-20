@@ -110,9 +110,6 @@ private fun ProfilePersonalInfoScreen(
         contentWindowInsets = WindowInsets.navigationBars,
         topBar = {
             PrimaryTopBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
                 title = stringResource(Res.string.personal_info),
                 onNavigationClick = {
                     navController.navigateUp()

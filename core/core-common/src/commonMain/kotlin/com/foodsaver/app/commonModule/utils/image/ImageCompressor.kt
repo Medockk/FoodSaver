@@ -12,4 +12,5 @@ abstract class ImageCompressorUtils {
 expect object ImageCompressor: ImageCompressorUtils {
 
     fun compress(image: ByteArray, quality: Int, exifData: ExifData? = null): ByteArray
+    suspend fun compress(image: ByteArray, exifData: ExifData? = null): ByteArray
 }

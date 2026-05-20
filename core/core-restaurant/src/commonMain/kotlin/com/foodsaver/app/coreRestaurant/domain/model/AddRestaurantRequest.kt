@@ -1,6 +1,6 @@
 package com.foodsaver.app.coreRestaurant.domain.model
 
-data class UpsertRestaurantRequest(
+data class AddRestaurantRequest(
     val companyId: String,
 
     val name: String,

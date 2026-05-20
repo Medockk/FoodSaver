@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -101,192 +102,199 @@ private fun HomeScreen(
         mutableStateOf(value)
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets.navigationBars,
-        containerColor = FoodSaverTheme.colorScheme.background,
-        modifier = Modifier
-            .fillMaxSize(),
-    ) { paddingValues ->
-        LazyColumn(
-            contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding()
-            )
-        ) {
-            // Top bar
-            item {
-                HomeTopBar(
-                    deliverTo = state.deliverTo,
-                    cartItemValue = state.cartSize,
-                    onCartClick = {
-                        navController.navigate(Route.CartGraph.CartScreen(
-                            state.cartId,
-                            state.cartPrice
-                        ))
-                    },
-                    onMenuClick = {
-                        navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
+    PullToRefreshBox(
+        isRefreshing = state.isRefresh,
+        onRefresh = {
+            onEvent(HomeEvent.OnRefresh)
+        }
+    ) {
+        Scaffold(
+            contentWindowInsets = WindowInsets.navigationBars,
+            containerColor = FoodSaverTheme.colorScheme.background,
+            modifier = Modifier
+                .fillMaxSize(),
+        ) { paddingValues ->
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding()
                 )
-            }
-
-            // Hello user text
-            item {
-                Spacer(Modifier.height(25.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                ) {
-                    Text(
-                        text = stringResource(
-                            Res.string.home_hello_user,
-                            state.profile?.fullName ?: ""
-                        ),
-                        color = FoodSaverTheme.colorScheme.onBackgroundSecondary,
-                        style = FoodSaverTheme.typography.bodyRegular
-                    )
-                    Spacer(Modifier.width(5.dp))
-                    Text(
-                        text = stringResource(Res.string.home_good_afternoon),
-                        color = FoodSaverTheme.colorScheme.onBackgroundSecondary,
-                        style = FoodSaverTheme.typography.headerRegularBold
-                    )
-                }
-                Spacer(Modifier.height(15.dp))
-            }
-
-            // search field
-            // TODO make hero animation to search screen!!!
-            item {
-                SearchTextField(
-                    state = SearchTextFieldState(
-                        query = state.searchQuery,
-                        onQueryChange = {
-                            onEvent(HomeEvent.OnSearchQueryChange(it))
+            ) {
+                // Top bar
+                item {
+                    HomeTopBar(
+                        deliverTo = state.deliverTo,
+                        cartItemValue = state.cartSize,
+                        onCartClick = {
+                            navController.navigate(Route.CartGraph.CartScreen(
+                                state.cartId,
+                                state.cartPrice
+                            ))
                         },
-                        suggestion = "Hello World!",
-                        onSearch = {},
-                        enabled = false
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateContentSize()
-                        .padding(horizontal = 24.dp)
-                        .clickable {
-                            navController.navigate(Route.MainGraph.SearchScreen())
-                        }
-                )
-            }
-
-            // category title + the list of categories
-            item {
-                Spacer(Modifier.height(30.dp))
-                TableOfContent(
-                    onSeeAllClick = {
-                        TODO("Navigate to somewhere...")
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    text = Res.string.category_see_all
-                )
-                Spacer(Modifier.height(20.dp))
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(7.dp),
-                    contentPadding = PaddingValues(horizontal = 24.dp)
-                ) {
-                    // all categories chip
-                    item {
-                        if (state.selectedCategoryIds.isEmpty()) {
-                            CategoryChip(
-                                state = CategoryChipState(
-                                    name = stringResource(Res.string.all),
-                                    imageUri = "",
-                                    isMainChip = true,
-                                    onCategoryClick = {
-                                        navController.navigate(Route.MainGraph.SearchScreen())
-                                    }
-                                )
-                            )
-                        }
-                    }
-
-                    if (shouldShowCategorySkeletonCards) {
-                        items(5) {
-                            Box(
-                                Modifier.widthIn(120.dp).heightIn(60.dp).clip(CircleShape)
-                                    .shimmerEffect()
-                            )
-                        }
-                    } else {
-                        items(state.categories) { category ->
-                            CategoryChip(
-                                state = CategoryChipState(
-                                    name = category.categoryName,
-                                    imageUri = "",
-                                    isMainChip = state.selectedCategoryIds.contains(category.categoryId),
-                                    onCategoryClick = {
-                                        navController.navigate(Route.MainGraph.SearchScreen(
-                                            searchCategoryId = category.categoryId,
-                                            categoryName = category.categoryName
-                                        ))
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .heightIn(min = 60.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            // restaurants title
-            item {
-                Spacer(Modifier.height(30.dp))
-                TableOfContent(
-                    onSeeAllClick = {
-                        TODO("Navigate to somewhere...")
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp),
-                    text = Res.string.open_restaurants
-                )
-                Spacer(Modifier.height(20.dp))
-            }
-
-            // TODO add transition animation
-            // restaurants skeleton shimmers
-            if (shouldShowRestaurantSkeletonCards) {
-                items(3) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(170.dp)
-                            .padding(horizontal = 25.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .shimmerEffect()
-                    )
-
-                    Spacer(Modifier.height(25.dp))
-                }
-            } else {
-                items(state.restaurants) { restaurant ->
-                    RestaurantCard(
-                        restaurant = restaurant,
-                        onRestaurantClick = {
-                            navController.navigate(Route.MainGraph.Restaurant(restaurant.id, restaurant.name))
+                        onMenuClick = {
+                            navController.navigate(Route.ProfileGraph.ProfileMenuScreen)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp)
                     )
+                }
+
+                // Hello user text
+                item {
                     Spacer(Modifier.height(25.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                    ) {
+                        Text(
+                            text = stringResource(
+                                Res.string.home_hello_user,
+                                state.profile?.fullName ?: ""
+                            ),
+                            color = FoodSaverTheme.colorScheme.onBackgroundSecondary,
+                            style = FoodSaverTheme.typography.bodyRegular
+                        )
+                        Spacer(Modifier.width(5.dp))
+                        Text(
+                            text = stringResource(Res.string.home_good_afternoon),
+                            color = FoodSaverTheme.colorScheme.onBackgroundSecondary,
+                            style = FoodSaverTheme.typography.headerRegularBold
+                        )
+                    }
+                    Spacer(Modifier.height(15.dp))
+                }
+
+                // search field
+                // TODO make hero animation to search screen!!!
+                item {
+                    SearchTextField(
+                        state = SearchTextFieldState(
+                            query = state.searchQuery,
+                            onQueryChange = {
+                                onEvent(HomeEvent.OnSearchQueryChange(it))
+                            },
+                            suggestion = "Hello World!",
+                            onSearch = {},
+                            enabled = false
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize()
+                            .padding(horizontal = 24.dp)
+                            .clickable {
+                                navController.navigate(Route.MainGraph.SearchScreen())
+                            }
+                    )
+                }
+
+                // category title + the list of categories
+                item {
+                    Spacer(Modifier.height(30.dp))
+                    TableOfContent(
+                        onSeeAllClick = {
+                            TODO("Navigate to somewhere...")
+                        },
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp),
+                        text = Res.string.category_see_all
+                    )
+                    Spacer(Modifier.height(20.dp))
+
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(7.dp),
+                        contentPadding = PaddingValues(horizontal = 24.dp)
+                    ) {
+                        // all categories chip
+                        item {
+                            if (state.selectedCategoryIds.isEmpty()) {
+                                CategoryChip(
+                                    state = CategoryChipState(
+                                        name = stringResource(Res.string.all),
+                                        imageUri = "",
+                                        isMainChip = true,
+                                        onCategoryClick = {
+                                            navController.navigate(Route.MainGraph.SearchScreen())
+                                        }
+                                    )
+                                )
+                            }
+                        }
+
+                        if (shouldShowCategorySkeletonCards) {
+                            items(5) {
+                                Box(
+                                    Modifier.widthIn(120.dp).heightIn(60.dp).clip(CircleShape)
+                                        .shimmerEffect()
+                                )
+                            }
+                        } else {
+                            items(state.categories) { category ->
+                                CategoryChip(
+                                    state = CategoryChipState(
+                                        name = category.categoryName,
+                                        imageUri = "",
+                                        isMainChip = state.selectedCategoryIds.contains(category.categoryId),
+                                        onCategoryClick = {
+                                            navController.navigate(Route.MainGraph.SearchScreen(
+                                                searchCategoryId = category.categoryId,
+                                                categoryName = category.categoryName
+                                            ))
+                                        }
+                                    ),
+                                    modifier = Modifier
+                                        .heightIn(min = 60.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // restaurants title
+                item {
+                    Spacer(Modifier.height(30.dp))
+                    TableOfContent(
+                        onSeeAllClick = {
+                            TODO("Navigate to somewhere...")
+                        },
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp),
+                        text = Res.string.open_restaurants
+                    )
+                    Spacer(Modifier.height(20.dp))
+                }
+
+                // TODO add transition animation
+                // restaurants skeleton shimmers
+                if (shouldShowRestaurantSkeletonCards) {
+                    items(3) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(170.dp)
+                                .padding(horizontal = 25.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .shimmerEffect()
+                        )
+
+                        Spacer(Modifier.height(25.dp))
+                    }
+                } else {
+                    items(state.restaurants) { restaurant ->
+                        RestaurantCard(
+                            restaurant = restaurant,
+                            onRestaurantClick = {
+                                navController.navigate(Route.MainGraph.Restaurant(restaurant.id, restaurant.name))
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp)
+                        )
+                        Spacer(Modifier.height(25.dp))
+                    }
                 }
             }
         }

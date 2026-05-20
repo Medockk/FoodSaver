@@ -96,18 +96,28 @@ class HomeViewModel(
         }
     }
 
+    private fun fetchCart() {
+        viewModelScope.launch {
+            cartRepository.fetchCart()
+        }
+    }
+
     private fun getCurrentAddress() = viewModelScope.launch(Dispatchers.InputOutput) {
         // TODO
     }
 
-    fun onRefresh() {
-        // TODO
+    fun onRefresh(): Job = viewModelScope.launch {
+        loadRestaurants()
+        getAllCategories()
+        getCurrentAddress()
+
+        fetchCart()
     }
 
     private fun getAllCategories(): Job {
         return viewModelScope.launch(Dispatchers.InputOutput) {
             _state.update { it.copy(isCategoriesLoading = true) }
-            categoryRepository.getAllCategories().onSuccess { result ->
+            categoryRepository.fetchAllCategories().onSuccess { result ->
                 _state.update { it.copy(categories = result, isCategoriesLoading = false) }
             }
         }
@@ -140,6 +150,13 @@ class HomeViewModel(
 
             HomeEvent.LoadNextRestaurants -> {
                 loadRestaurants()
+            }
+
+            HomeEvent.OnRefresh -> {
+                _state.update { it.copy(isRefresh = true) }
+                onRefresh().invokeOnCompletion {
+                    _state.update { it.copy(isRefresh = false) }
+                }
             }
         }
     }

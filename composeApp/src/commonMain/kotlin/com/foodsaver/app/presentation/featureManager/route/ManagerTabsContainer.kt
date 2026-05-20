@@ -1,4 +1,4 @@
-package com.foodsaver.app.presentation.featureManager
+package com.foodsaver.app.presentation.featureManager.route
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +29,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.navigationModule.Route
-import com.foodsaver.app.presentation.featureUpsertRestaurant.UpsertRestaurantScreenRoot
+import com.foodsaver.app.presentation.featureManager.MyFoodScreenRoot
+import com.foodsaver.app.presentation.featureManager.ViewMyRestaurantScreenRoot
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_icon
@@ -44,7 +45,7 @@ data class Tabs(
 )
 
 @Composable
-fun TabsContainerScreen(
+fun ManagerTabsContainer(
     rootNavController: NavController,
     targetTabs: Route.ManagerGraph.TabsContainer.Tabs
 ) {
@@ -53,12 +54,11 @@ fun TabsContainerScreen(
     val tabs = listOf(
         Tabs(Res.drawable.my_food_navigation_icon, Route.ManagerGraph.MyFoodScreen),
         Tabs(Res.drawable.add_icon, Route.ManagerGraph.AddProductScreen()),
-        Tabs(Res.drawable.restaurant_navigation_icon, Route.ManagerGraph.AddRestaurantScreen),
+        Tabs(Res.drawable.restaurant_navigation_icon, Route.ManagerGraph.ViewMyRestaurantScreen),
     )
 
     val computedTargetTab = when (targetTabs) {
         Route.ManagerGraph.TabsContainer.Tabs.MyFood -> Route.ManagerGraph.MyFoodScreen
-        Route.ManagerGraph.TabsContainer.Tabs.AddRestaurant -> Route.ManagerGraph.AddRestaurantScreen
     }
 
     Scaffold(
@@ -117,7 +117,8 @@ fun TabsContainerScreen(
                                     imageVector = vectorResource(tab.icon),
                                     contentDescription = null,
                                     tint = if (isSelected) FoodSaverTheme.colorScheme.primary
-                                    else FoodSaverTheme.colorScheme.placeholderHint
+                                    else FoodSaverTheme.colorScheme.placeholderHint,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
@@ -131,6 +132,12 @@ fun TabsContainerScreen(
             startDestination = computedTargetTab,
             modifier = Modifier.padding(paddingValues)
         ) {
+            composable<Route.ManagerGraph.ViewMyRestaurantScreen> {
+                ViewMyRestaurantScreenRoot(
+                    onBackClick = { rootNavController.navigateUp() },
+                    onRestaurantClick = { rootNavController.navigate(Route.UpsertRestaurantGraph.UpsertRestaurantScreen(it)) }
+                )
+            }
             composable<Route.ManagerGraph.MyFoodScreen> {
                 MyFoodScreenRoot(
                     onBackClick = {
@@ -138,11 +145,7 @@ fun TabsContainerScreen(
                     }
                 )
             }
-            composable<Route.ManagerGraph.AddRestaurantScreen> {
-                UpsertRestaurantScreenRoot(
-                    onBackClick = { rootNavController.navigateUp() }
-                )
-            }
+
         }
     }
 }

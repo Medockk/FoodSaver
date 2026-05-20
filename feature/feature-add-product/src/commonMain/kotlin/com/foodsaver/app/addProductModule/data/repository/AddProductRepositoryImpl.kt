@@ -9,6 +9,7 @@ import com.foodsaver.app.addProductModule.domain.repository.AddProductRepository
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.utils.image.ImageCompressor
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreAuth.requireUserId
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
@@ -38,6 +39,7 @@ internal class AddProductRepositoryImpl(
 
     override suspend fun uploadImage(image: ByteArray): ApiResult<UploadImageModel> {
         return withContext(Dispatchers.InputOutput) {
+            val image = ImageCompressor.compress(image)
             saveNetworkCall<UploadImageDto> {
                 httpClient.post(HttpConstants.PRODUCTS_URL + "/uploadImage") {
                     setBody(

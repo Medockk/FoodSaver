@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.presentation.restaurant
+package com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant
 
 import com.foodsaver.app.commonModule.presentation.AppAction
 import com.foodsaver.app.coreRestaurant.domain.model.RestaurantModel

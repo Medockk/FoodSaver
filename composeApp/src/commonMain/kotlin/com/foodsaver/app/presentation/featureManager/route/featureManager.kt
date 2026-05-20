@@ -7,7 +7,6 @@ import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureManager.AddProductScreenRoot
-import com.foodsaver.app.presentation.featureManager.TabsContainerScreen
 
 internal fun NavGraphBuilder.featureManager(navController: NavController) {
 
@@ -17,7 +16,7 @@ internal fun NavGraphBuilder.featureManager(navController: NavController) {
 
         composable<Route.ManagerGraph.TabsContainer> {
             val targetTabs = it.toRoute<Route.ManagerGraph.TabsContainer>()
-            TabsContainerScreen(navController, targetTabs.tabs)
+            ManagerTabsContainer(navController, targetTabs.tabs)
         }
 
         composable<Route.ManagerGraph.AddProductScreen> {

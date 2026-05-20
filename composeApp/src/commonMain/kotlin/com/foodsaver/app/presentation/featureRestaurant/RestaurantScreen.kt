@@ -41,9 +41,9 @@ import com.foodsaver.app.common.restaurant.RestaurantSpecifications
 import com.foodsaver.app.common.scaffold.ActionButtonItem
 import com.foodsaver.app.common.scaffold.PrimaryScaffold
 import com.foodsaver.app.common.modifier.shimmerEffect
-import com.foodsaver.app.featureEnterprises.presentation.restaurant.RestaurantEvent
-import com.foodsaver.app.featureEnterprises.presentation.restaurant.RestaurantState
-import com.foodsaver.app.featureEnterprises.presentation.restaurant.RestaurantViewModel
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantEvent
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantState
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantViewModel
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition

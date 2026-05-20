@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.presentation.upsertRestaurant
+package com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.upsertRestaurant
 
 sealed interface UpsertRestaurantEvent {
 
@@ -6,7 +6,9 @@ sealed interface UpsertRestaurantEvent {
     data class OnDescriptionChange(val value: String): UpsertRestaurantEvent
     data class OnAddressNameChange(val value: String): UpsertRestaurantEvent
 
-    class OnPickPhoto(val photos: List<ByteArray>): UpsertRestaurantEvent
+    class OnPickPhoto(val photos: List<PickPhoto>): UpsertRestaurantEvent {
+        class PickPhoto(val image: ByteArray, val exifOrientation: String? = null)
+    }
     data class OnRatingChange(val value: String): UpsertRestaurantEvent
     data class OnAverageDeliveryTimeChange(val value: String): UpsertRestaurantEvent
     data class OnDeliveryCostChange(val value: String): UpsertRestaurantEvent

@@ -153,10 +153,7 @@ private fun EditProfileScreen(
                 title = stringResource(Res.string.edit_profile),
                 onNavigationClick = {
                     navController.navigateUp()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                }
             )
         },
         modifier = Modifier.imePadding()

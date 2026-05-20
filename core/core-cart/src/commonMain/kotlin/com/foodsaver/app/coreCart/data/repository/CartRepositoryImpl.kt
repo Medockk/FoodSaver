@@ -61,6 +61,25 @@ internal class CartRepositoryImpl(
     private fun requireUserId() =
         authUserManager.getCurrentUid() ?: throw UserNotAuthorizedException()
 
+    override suspend fun fetchCart(): ApiResult<CartResponseModel> {
+        return withContext(Dispatchers.InputOutput) {
+            saveNetworkCall<CartResponseDto> {
+                httpClient.get(HttpConstants.CART_URL + "/my")
+            }.onSuccess { response: CartResponseDto ->
+                // add server response to local database
+                println("Получил ответ от сервера для получения корзины")
+                val userId = requireUserId()
+                db.cartEntityQueries.insertOrUpdateCart(
+                    id = response.id,
+                    userId = userId,
+                    totalQuantity = response.quantity,
+                    price = response.finalPrice
+                )
+            }.map { dto -> dto.mapDtoToModel() }
+
+        }
+    }
+
     override suspend fun observeCart(): Flow<ApiResult<CartResponseModel>> {
         return withContext(Dispatchers.InputOutput) {
             return@withContext channelFlow {

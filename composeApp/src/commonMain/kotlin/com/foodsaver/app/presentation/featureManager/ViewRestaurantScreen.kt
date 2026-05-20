@@ -1,9 +1,8 @@
-package com.foodsaver.app.presentation.featureAdmin
+package com.foodsaver.app.presentation.featureManager
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,32 +13,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.foodsaver.app.common.topBar.PrimaryTopBar
-import com.foodsaver.app.featureAdmin.presentation.viewRrestaurant.ViewRestaurantState
-import com.foodsaver.app.featureAdmin.presentation.viewRrestaurant.ViewRestaurantViewModel
+import com.foodsaver.app.featureRestaurant.viewRestaurant.ViewRestaurantState
+import com.foodsaver.app.featureRestaurant.viewRestaurant.ViewRestaurantViewModel
 import com.foodsaver.app.presentation.featureHome.components.RestaurantCard
 import com.foodsaver.app.ui.FoodSaverTheme
+import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.restaurants
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ViewRestaurantScreenRoot(
+fun ViewMyRestaurantScreenRoot(
     onBackClick: () -> Unit,
-    onUpsertRestaurantClick: (restaurantId: String?) -> Unit,
-    viewModel: ViewRestaurantViewModel = koinViewModel(),
+    onRestaurantClick: (String) -> Unit,
+    viewModel: ViewRestaurantViewModel = koinViewModel()
 ) {
+
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ViewRestaurantScreen(
+    ViewMyRestaurantScreen(
+        onRestaurantClick = onRestaurantClick,
         onBackClick = onBackClick,
-        onUpsertRestaurantClick = onUpsertRestaurantClick,
         state = state
     )
 }
 
 @Composable
-private fun ViewRestaurantScreen(
+private fun ViewMyRestaurantScreen(
+    onRestaurantClick: (String) -> Unit,
     onBackClick: () -> Unit,
-    onUpsertRestaurantClick: (restaurantId: String?) -> Unit,
     state: ViewRestaurantState,
+
 ) {
 
     Scaffold(
@@ -47,27 +51,23 @@ private fun ViewRestaurantScreen(
         contentWindowInsets = WindowInsets(),
         topBar = {
             PrimaryTopBar(
-                title = "Restaurants",
-                onNavigationClick = onBackClick
+                title = stringResource(Res.string.restaurants),
+                onNavigationClick = onBackClick,
             )
         }
     ) { paddingValues ->
         LazyColumn(
             contentPadding = paddingValues,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
             items(state.restaurants) { restaurant ->
                 RestaurantCard(
                     restaurant = restaurant,
-                    onRestaurantClick = {
-                        onUpsertRestaurantClick(restaurant.id)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    onRestaurantClick = { onRestaurantClick(restaurant.id) },
+                    modifier = Modifier.fillMaxWidth()
                         .padding(horizontal = 24.dp)
                 )
-                Spacer(Modifier.height(24.dp))
             }
         }
     }

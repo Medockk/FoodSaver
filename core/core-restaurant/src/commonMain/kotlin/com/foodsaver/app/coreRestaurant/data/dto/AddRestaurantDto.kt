@@ -3,7 +3,7 @@ package com.foodsaver.app.coreRestaurant.data.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class UpsertRestaurantDto(
+internal data class AddRestaurantDto(
     val companyId: String,
 
     val name: String,

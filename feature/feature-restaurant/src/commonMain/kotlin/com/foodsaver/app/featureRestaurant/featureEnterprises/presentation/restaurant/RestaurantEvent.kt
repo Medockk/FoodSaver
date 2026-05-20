@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.presentation.restaurant
+package com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant
 
 sealed interface RestaurantEvent {
 

@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.presentation.restaurant
+package com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -13,7 +13,6 @@ import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
-import com.foodsaver.app.featureEnterprises.presentation.restaurant.RestaurantAction.OnError
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -147,6 +146,6 @@ class RestaurantViewModel(
     }
 
     override fun mapBaseError(message: String): RestaurantAction {
-        return OnError(message)
+        return RestaurantAction.OnError(message)
     }
 }

@@ -90,7 +90,7 @@ private fun ProfileMenuScreen(
                 MenuItemState(
                     icon = Res.drawable.settings_icon,
                     title = "Add restaurant",
-                    onClick = { navController.navigate(Route.ManagerGraph.TabsContainer(tabs = Route.ManagerGraph.TabsContainer.Tabs.AddRestaurant)) }
+                    onClick = { navController.navigate(Route.AdminGraph) }
                 )
             )
         }else {
@@ -165,9 +165,6 @@ private fun ProfileMenuScreen(
             PrimaryTopBar(
                 title = stringResource(Res.string.profile),
                 onNavigationClick = { navController.navigateUp() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
                 actions = {
                     PrimaryFabButton(
                         onClick = {

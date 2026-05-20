@@ -5,6 +5,7 @@ package com.foodsaver.app.common.topBar
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,7 +53,9 @@ fun PrimaryTopBar(
         navigationIcon = {
             PrimaryFabButton(
                 onClick = onNavigationClick,
-                background = navigationIconBackground
+                background = navigationIconBackground,
+                modifier = Modifier
+                    .padding(start = 24.dp)
             ) {
                 Icon(
                     imageVector = vectorResource(navigationIcon),
@@ -61,6 +64,10 @@ fun PrimaryTopBar(
                 )
             }
         },
-        actions = { actions?.invoke(this) }
+        actions = {
+            Row(Modifier.padding(end = 24.dp)) {
+                actions?.invoke(this)
+            }
+        }
     )
 }

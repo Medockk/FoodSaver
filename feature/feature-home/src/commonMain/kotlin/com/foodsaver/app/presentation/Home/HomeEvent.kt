@@ -7,4 +7,6 @@ sealed interface HomeEvent {
     data class OnSearchQueryChange(val value: TextFieldValue): HomeEvent
     data class OnCategoryIndexChange(val value: String): HomeEvent
     data object LoadNextRestaurants: HomeEvent
+
+    data object OnRefresh: HomeEvent
 }

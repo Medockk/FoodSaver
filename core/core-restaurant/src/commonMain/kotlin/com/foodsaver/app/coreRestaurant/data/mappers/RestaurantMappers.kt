@@ -2,9 +2,11 @@ package com.foodsaver.app.coreRestaurant.data.mappers
 
 import com.databases.cache.RestaurantEntity
 import com.foodsaver.app.coreRestaurant.data.dto.RestaurantDto
-import com.foodsaver.app.coreRestaurant.data.dto.UpsertRestaurantDto
+import com.foodsaver.app.coreRestaurant.data.dto.AddRestaurantDto
+import com.foodsaver.app.coreRestaurant.data.dto.UpdateRestaurantDto
 import com.foodsaver.app.coreRestaurant.domain.model.RestaurantModel
-import com.foodsaver.app.coreRestaurant.domain.model.UpsertRestaurantRequest
+import com.foodsaver.app.coreRestaurant.domain.model.AddRestaurantRequest
+import com.foodsaver.app.coreRestaurant.domain.model.UpdateRestaurantRequest
 
 internal fun RestaurantDto.mapToModel() = RestaurantModel(
     id = id,
@@ -36,7 +38,7 @@ internal fun RestaurantEntity.mapEntityToDto() = RestaurantModel(
     name = name
 )
 
-internal fun UpsertRestaurantRequest.mapRequestToDto() = UpsertRestaurantDto(
+internal fun AddRestaurantRequest.mapRequestToDto() = AddRestaurantDto(
     companyId = companyId,
     name = name,
     description = description,
@@ -44,7 +46,22 @@ internal fun UpsertRestaurantRequest.mapRequestToDto() = UpsertRestaurantDto(
     rating = rating,
     averageDeliveryTime = averageDeliveryTime,
     deliveryCost = deliveryCost,
-    address = UpsertRestaurantDto.AddressDto(
+    address = AddRestaurantDto.AddressDto(
+        addressName = addressName,
+        latitude = latitude,
+        longitude = longitude
+    )
+)
+
+internal fun UpdateRestaurantRequest.mapRequestToDto() = UpdateRestaurantDto(
+    restaurantId = restaurantId,
+    name = name,
+    description = description,
+    photoUris = photoUris,
+    rating = rating,
+    averageDeliveryTime = averageDeliveryTime,
+    deliveryCost = deliveryCost,
+    address = UpdateRestaurantDto.Address(
         addressName = addressName,
         latitude = latitude,
         longitude = longitude

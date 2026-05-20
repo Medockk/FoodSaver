@@ -1,4 +1,4 @@
-package com.foodsaver.app.featureEnterprises.presentation.upsertRestaurant
+package com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.upsertRestaurant
 
 import com.foodsaver.app.commonModule.presentation.AppAction
 

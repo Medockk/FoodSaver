@@ -52,6 +52,7 @@ kotlin {
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreNetwork)
+            implementation(projects.core.coreAuth)
 
             implementation(libs.kotlinx.serialization.json)
         }

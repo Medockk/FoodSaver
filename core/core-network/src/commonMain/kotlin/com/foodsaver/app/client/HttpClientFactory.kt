@@ -2,7 +2,6 @@ package com.foodsaver.app.client
 
 import com.foodsaver.app.manager.AuthInterceptor
 import io.ktor.client.HttpClient
-import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -15,6 +14,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.sse.SSE
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -36,8 +36,17 @@ internal class HttpClientFactory(
                     json(json)
                 }
                 install(Logging) {
-                    level = LogLevel.ALL
+                    level = LogLevel.HEADERS
                     logger = Logger.DEFAULT
+
+                    filter { request ->
+                        val isFileSending = request.headers[HttpHeaders.ContentType]?.contains("image") == true
+                        if (isFileSending) {
+                            level = LogLevel.NONE
+                        }
+
+                        true
+                    }
                 }
                 install(HttpCookies) {
                     storage = cookiesStorage

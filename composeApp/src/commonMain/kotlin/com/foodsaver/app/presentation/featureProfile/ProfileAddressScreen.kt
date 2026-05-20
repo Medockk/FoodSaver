@@ -112,9 +112,6 @@ private fun ProfileAddressScreen(
                 onNavigationClick = {
                     navController.navigateUp()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
             )
         }
     ) { paddingValues ->
