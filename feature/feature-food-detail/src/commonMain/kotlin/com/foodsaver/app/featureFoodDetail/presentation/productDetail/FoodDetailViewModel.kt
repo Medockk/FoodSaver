@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
-import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreCart.domain.model.AddProductToCartRequestModel
@@ -15,8 +14,9 @@ import com.foodsaver.app.coreCart.domain.model.DeleteCartItemRequestModel
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCart.domain.usecase.AddProductToCartUseCase
 import com.foodsaver.app.coreCart.domain.usecase.RemoveProductFromCartUseCase
+import com.foodsaver.app.coreIngredients.domain.repository.IngredientRepository
+import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
-import com.foodsaver.app.featureFoodDetail.domain.repository.IngredientsRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -33,7 +33,7 @@ class FoodDetailViewModel(
     private val removeProductFromCartUseCase: RemoveProductFromCartUseCase,
     private val productRepository: ReadProductRepository,
 
-    private val ingredientsRepository: IngredientsRepository,
+    private val ingredientsRepository: IngredientRepository,
 ) : BaseViewModel<FoodDetailActions>() {
 
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.FoodDetailsScreen>()
@@ -58,12 +58,28 @@ class FoodDetailViewModel(
             productRepository.observeProductById(productId)
                 .collectRequest(
                     onSuccess = { product ->
+                        println("Get info about product ${product.productId}\n" +
+                                "ImageUris for this product: ${product.imageUris}")
                         _state.update {
                             it.copy(
                                 product = product
                             )
                         }
+
+                        loadIngredients(product)
                     })
+        }
+    }
+
+    private fun loadIngredients(productModel: ProductModel) {
+        viewModelScope.launch {
+            println("Ingredients ${productModel.ingredientIds}")
+            ingredientsRepository.fetchIngredientsByIds(productModel.ingredientIds)
+                .onSuccess { ingredients ->
+                    _state.update { it.copy(
+                        ingredients = ingredients
+                    ) }
+                }
         }
     }
 
@@ -141,36 +157,7 @@ class FoodDetailViewModel(
             FoodDetailEvents.OnAnalyzeIngredients -> {
                 viewModelScope.launch {
                     _state.update { it.copy(isAiResponseLoading = true) }
-                    ingredientsRepository.analyzeIngredientsByProductId(navArgs.productId)
-                        .collectRequest(
-                            onSuccess = { data ->
-                                if (data == null) {
-                                    _state.update {
-                                        it.copy(
-                                            isAiResponseLoading = false,
-                                            ingredientsAIDescription = "I can't say anything about this ingredients"
-                                        )
-                                    }
-                                } else {
-                                    _state.update {
-                                        it.copy(
-                                            ingredientsAIDescription =
-                                                ((it.ingredientsAIDescription ?: "") + data)
-                                                    .replace("*", ""),
-                                            isAiResponseLoading = false
-                                        )
-                                    }
-                                }
-                            },
-                            onError = { error ->
-                                _state.update {
-                                    it.copy(
-                                        isAiResponseLoading = false
-                                    )
-                                }
-                                sendError(error)
-                            }
-                        )
+                    TODO()
                 }
             }
 

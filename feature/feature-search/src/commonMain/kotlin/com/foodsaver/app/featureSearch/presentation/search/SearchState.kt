@@ -2,8 +2,8 @@ package com.foodsaver.app.featureSearch.presentation.search
 
 import androidx.compose.ui.text.input.TextFieldValue
 import com.foodsaver.app.coreCart.domain.model.ProductInCartResponseModel
-import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
-import com.foodsaver.app.coreModel.model.CategoryModel
+import com.foodsaver.app.coreRestaurant.domain.model.RestaurantModel
+import com.foodsaver.app.coreCategory.domain.model.CategoryModel
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
 import com.foodsaver.app.featureSearch.domain.model.RecentKeywordsModel

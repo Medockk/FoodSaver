@@ -42,6 +42,8 @@ sealed class ApiResult<out T> {
         fun localError(localError: LocalError<*>): ApiResult<Nothing> =
             Error.Local(localError)
 
+        fun <T : Any> error(localError: LocalError<T>): Error = Error.Local(localError)
+
         fun loading(): ApiResult<Nothing> = Loading
     }
 }

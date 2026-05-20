@@ -27,6 +27,7 @@ import com.foodsaver.app.presentation.profileMenu.ProfileMenuState
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuViewModel
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.add_new_product
 import foodsaver.composeapp.generated.resources.addresses_icon
 import foodsaver.composeapp.generated.resources.faqs_icon
 import foodsaver.composeapp.generated.resources.favorite_icon
@@ -76,6 +77,25 @@ private fun ProfileMenuScreen(
 ) {
 
     val menuItems = listOf(
+        if (state.profile?.authorities?.contains("ROLE_MANAGER") == true) {
+            listOf(
+                MenuItemState(
+                    icon = Res.drawable.settings_icon,
+                    title = stringResource(Res.string.add_new_product),
+                    onClick = { navController.navigate(Route.ManagerGraph.TabsContainer(tabs = Route.ManagerGraph.TabsContainer.Tabs.MyFood)) }
+                )
+            )
+        }else if (state.profile?.authorities?.contains("ROLE_ADMIN") == true) {
+            listOf(
+                MenuItemState(
+                    icon = Res.drawable.settings_icon,
+                    title = "Add restaurant",
+                    onClick = { navController.navigate(Route.ManagerGraph.TabsContainer(tabs = Route.ManagerGraph.TabsContainer.Tabs.AddRestaurant)) }
+                )
+            )
+        }else {
+            listOf()
+        },
         listOf(
             MenuItemState(
                 icon = Res.drawable.personal_info_icon,

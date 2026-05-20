@@ -41,7 +41,7 @@ SELECT
     pc.productId,
     pc.name,
     pc.price,
-    pc.imageUri,
+    pc.imageUris,
     pc.currency
 FROM cartItemEntity AS ci
 INNER JOIN productCacheEntity AS pc ON ci.productId = pc.productId

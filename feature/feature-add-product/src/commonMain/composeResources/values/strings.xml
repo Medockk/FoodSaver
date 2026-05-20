@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="empty_name">Name is empty</string>
+    <string name="empty_images">Product must have at least 1 image</string>
+    <string name="empty_price">Product must have the price</string>
+    <string name="empty_unit">Unit must be not empty</string>
+    <string name="low_price">Price can not be less than 1</string>
+    <string name="empty_currency">Product must have the currency</string>
+    <string name="empty_category">Product must have at less than 1 category</string>
+    <string name="empty_ingredient">Product must have at less than 1 ingredient</string>
+    <string name="empty_expires_date">Product must have expires date</string>
+    <string name="expires_date_mismatch">The expires date must not be in the past</string>
+</resources>

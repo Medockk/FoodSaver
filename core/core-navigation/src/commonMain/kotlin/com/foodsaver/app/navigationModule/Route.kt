@@ -115,11 +115,44 @@ sealed class Route {
     data object ManagerGraph: Route() {
 
         @Serializable
+        data class TabsContainer(val tabs: Tabs = Tabs.MyFood): Route() {
+            enum class Tabs {
+                MyFood, AddRestaurant
+            }
+        }
+
+        @Serializable
         data class AddProductScreen(
             val productId: String? = null
         ): Route()
 
         @Serializable
         data object MyFoodScreen: Route()
+
+        @Serializable
+        data object AddRestaurantScreen: Route()
+    }
+
+    @Serializable
+    data object AdminGraph: Route() {
+
+        @Serializable
+        data object AdminTabs: Route()
+
+        @Serializable
+        data object ViewRestaurantScreen: Route()
+
+        @Serializable
+        data class UpsertRestaurantScreen(
+            val restaurantId: String? = null
+        ): Route()
+
+        @Serializable
+        data object ViewCategoryScreen: Route()
+
+        @Serializable
+        data class UpsertCategoryScreen(
+            val categoryId: String? = null
+        ): Route()
     }
 }

@@ -141,4 +141,31 @@ you just place the orer we do the rest</string>
     <string name="reset">Reset</string>
     <string name="save_changes">Save changes</string>
     <string name="details">Details</string>
+    <string name="item_name">Item name</string>
+    <string name="upload_photo_or_video">Upload photo/video</string>
+    <string name="upload_photo_add">Add</string>
+    <string name="price">Price</string>
+    <string name="pick_up">Pick up</string>
+    <string name="delivery">Delivery</string>
+    <string name="add_new_product">Add new product</string>
+    <string name="count">Count</string>
+    <string name="discount">Discount</string>
+    <string name="categories">Categories</string>
+    <string name="expires_date">Expires date</string>
+    <string name="add_product_placeholder_expires_date">dd/mm/yyyy</string>
+    <string name="unit_type">Unit type</string>
+
+    <string name="my_food_list">My Food List</string>
+
+    <string name="create_restaurant">Create restaurant</string>
+    <string name="edit_restaurant">Edit restaurant</string>
+    <string name="restaurant_name">Restaurant name</string>
+    <string name="restaurant_description">Restaurant description</string>
+    <string name="restaurant_photos">Restaurant photos</string>
+    <string name="restaurant_rating">Restaurant rating</string>
+    <string name="restaurant_average_delivery_time">Restaurant average delivery time</string>
+    <string name="restaurant_delivery_cost">Restaurant delivery cost</string>
+    <string name="restaurant_address_name">Restaurant address</string>
+    <string name="restaurant_latitude">Restaurant latitude</string>
+    <string name="restaurant_longitude">Restaurant longitude</string>
 </resources>

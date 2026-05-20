@@ -25,3 +25,7 @@ insertRestaurant:
 INSERT OR REPLACE INTO restaurantEntity (serverId, name, description, photoUris, latitude, longitude, addressName,
  companyId, rating, deliveryCost, averageDeliveryTime)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+upsertRestaurant:
+INSERT OR REPLACE INTO restaurantEntity
+VALUES ?;

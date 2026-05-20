@@ -123,13 +123,14 @@ internal class SearchRepositoryImpl(
         productId = productId,
         name = name,
         description = description,
-        imageUri = imageUris.firstOrNull(),
+        imageUris = imageUris,
         price = price,
         discount = discount,
         currency = currency,
         unit = unit,
         restaurantId = restaurantId,
-        expiresAt = expiresAt
+        expiresAt = expiresAt,
+        ingredientIds = ingredientIds
     )
 
     override suspend fun onRecentKeywordSearch(recentKeywordId: String) {

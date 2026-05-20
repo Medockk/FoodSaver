@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.common.button.InversedPrimaryButton
 import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.featureOrder.domain.model.OrderModel

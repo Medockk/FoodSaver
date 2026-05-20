@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.ProductCounter
+import com.foodsaver.app.common.product.ProductCounter
 import com.foodsaver.app.common.button.PrimaryButton
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res

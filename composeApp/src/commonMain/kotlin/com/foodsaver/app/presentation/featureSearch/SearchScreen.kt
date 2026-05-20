@@ -35,9 +35,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.foodsaver.app.common.product.AddProductCard
 import com.foodsaver.app.common.product.ProductCard
-import com.foodsaver.app.common.searchField.SearchTextField
-import com.foodsaver.app.common.searchField.SearchTextFieldState
-import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
+import com.foodsaver.app.common.textField.searchField.SearchTextField
+import com.foodsaver.app.common.textField.searchField.SearchTextFieldState
+import com.foodsaver.app.coreRestaurant.domain.model.RestaurantModel
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
 import com.foodsaver.app.featureSearch.presentation.search.SearchEvent

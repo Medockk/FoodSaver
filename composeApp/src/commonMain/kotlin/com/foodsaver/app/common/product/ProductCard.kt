@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
 import com.foodsaver.app.ui.FoodSaverTheme
 

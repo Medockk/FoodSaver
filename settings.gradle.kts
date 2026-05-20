@@ -62,6 +62,7 @@ include(":core:core-category")
 include(":core:core-location")
 include(":core:core-fcm")
 include(":core:core-restaurant")
+include(":core:core-ingredients")
 
 include(":feature")
 
@@ -80,3 +81,5 @@ include(":feature:feature-widget")
 include(":feature:feature-search")
 include(":feature:feature-payment-method")
 include(":feature:feature-order")
+include(":feature:feature-my-food")
+include(":feature:feature-admin")

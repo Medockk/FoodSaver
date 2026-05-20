@@ -1,5 +1,6 @@
 package com.foodsaver.app.presentation.featureFoodDetails
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -45,19 +46,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.foodsaver.app.common.ImagePageIndicator
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
+import com.foodsaver.app.common.image.ImagePageIndicator
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.common.button.PrimaryFabButton
-import com.foodsaver.app.common.collapsingToolbar.CollapsingToolbarImage
-import com.foodsaver.app.common.collapsingToolbar.rememberToolbarScrollBehavior
-import com.foodsaver.app.common.collapsingToolbar.rememberToolbarScrollState
+import com.foodsaver.app.common.topBar.collapsingToolbar.CollapsingToolbarImage
+import com.foodsaver.app.common.topBar.collapsingToolbar.rememberToolbarScrollBehavior
+import com.foodsaver.app.common.topBar.collapsingToolbar.rememberToolbarScrollState
+import com.foodsaver.app.common.ingredient.IngredientView
 import com.foodsaver.app.common.restaurant.RestaurantSpecifications
 import com.foodsaver.app.common.shape.interpolate
 import com.foodsaver.app.featureFoodDetail.presentation.productDetail.FoodDetailEvents
 import com.foodsaver.app.featureFoodDetail.presentation.productDetail.FoodDetailState
 import com.foodsaver.app.featureFoodDetail.presentation.productDetail.FoodDetailViewModel
 import com.foodsaver.app.presentation.featureFoodDetails.components.FoodDetailsBottomBar
-import com.foodsaver.app.presentation.featureFoodDetails.components.IngredientView
 import com.foodsaver.app.presentation.featureFoodDetails.components.SizeView
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
@@ -176,7 +177,7 @@ private fun FoodDetailsScreen(
                         }
 
                         state.product?.imageUris?.let { imageUris ->
-                            androidx.compose.animation.AnimatedVisibility(
+                            AnimatedVisibility(
                                 visible = shouldShowImagePageIndicator,
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter),

@@ -32,7 +32,9 @@ internal class DatabaseProviderImpl(
                 syncStatusAdapter = SyncStatusAdapter
             ),
             productCacheEntityAdapter = ProductCacheEntity.Adapter(
-                expiresAtAdapter = InstantAdapter
+                expiresAtAdapter = InstantAdapter,
+                imageUrisAdapter = ListOfStringAdapter,
+                ingredientIdsAdapter = ListOfStringAdapter
             ),
             recentKeywordsEntityAdapter = RecentKeywordsEntity.Adapter(
                 addedAtAdapter = InstantAdapter

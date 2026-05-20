@@ -1,7 +1,6 @@
 package com.foodsaver.app.featureSearch.domain.repository
 
 import com.foodsaver.app.commonModule.apiResult.ApiResult
-import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.featureSearch.domain.model.RecentKeywordsModel
 import kotlinx.coroutines.flow.Flow

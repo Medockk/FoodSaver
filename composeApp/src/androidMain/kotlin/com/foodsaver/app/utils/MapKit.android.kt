@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.foodsaver.app.composeApp.BuildConfig
-import com.foodsaver.app.coreEnterprises.domain.model.CameraPositionModel
+import com.foodsaver.app.coreRestaurant.domain.model.CameraPositionModel
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener

@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.ui.FoodSaverTheme
 
 @Composable

@@ -1,0 +1,4 @@
+import kotlin.String;
+import kotlin.collections.List;
+
+ALTER TABLE productCacheEntity ADD COLUMN ingredientIds TEXT AS List<String> NOT NULL DEFAULT '[]';

@@ -2,6 +2,7 @@ package com.foodsaver.app.commonModule.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KClass
 
 @Serializable
 data class Page <T> (

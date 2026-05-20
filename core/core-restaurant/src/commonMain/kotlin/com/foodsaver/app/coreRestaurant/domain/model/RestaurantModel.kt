@@ -1,0 +1,22 @@
+package com.foodsaver.app.coreRestaurant.domain.model
+
+/**
+ * @param [deliveryCost] if this is null, to delivery is free!
+ */
+data class RestaurantModel(
+    val id: String,
+
+    val name: String,
+    val description: String,
+    val photoUris: List<String> = emptyList(),
+
+    val longitude: Double,
+    val latitude: Double,
+    val addressName: String,
+
+    val rating: Double? = null,
+    val deliveryCost: Double? = null,
+    val averageDeliveryTime: Double? = null,
+
+    val companyId: String
+)

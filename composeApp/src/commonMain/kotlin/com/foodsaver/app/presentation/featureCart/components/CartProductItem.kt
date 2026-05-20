@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -32,12 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.ProductCounter
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
-import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.common.product.ProductCounter
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import foodsaver.composeapp.generated.resources.Res

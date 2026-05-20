@@ -1,13 +1,9 @@
 package com.foodsaver.app.featureFoodDetail.presentation.productDetail
 
-import com.foodsaver.app.coreEnterprises.domain.model.RestaurantModel
-import com.foodsaver.app.coreModel.model.ExpiresDateType
-import com.foodsaver.app.coreModel.model.OrganizationModel
+import com.foodsaver.app.coreRestaurant.domain.model.RestaurantModel
+import com.foodsaver.app.coreIngredients.domain.model.IngredientModel
 import com.foodsaver.app.coreModel.model.ProductModel
-import com.foodsaver.app.coreModel.model.ProductUnitType
-import com.foodsaver.app.featureFoodDetail.domain.model.FoodIngredientModel
 import com.foodsaver.app.featureFoodDetail.domain.model.FoodSizeModel
-import com.foodsaver.app.featureFoodDetail.domain.model.IngredientModel
 
 data class FoodDetailState(
     val product: ProductModel? = null,
@@ -26,7 +22,7 @@ data class FoodDetailState(
     ),
     val selectedSizeIndex: Int = 0,
 
-    val ingredients: List<FoodIngredientModel> = emptyList(),
+    val ingredients: List<IngredientModel> = emptyList(),
 
     val productCount: Long = 1,
     val totalCost: Float? = null,
@@ -39,8 +35,8 @@ data class FoodDetailState(
     val isIngredientMenuExpanded: Boolean = false,
     val isAiResponseLoading: Boolean = false,
     val ingredientsAIDescription: String? = null
-)
-
-class RestaurantDetails(
-    val logoUri: String
-)
+) {
+    class RestaurantDetails(
+        val logoUri: String
+    )
+}

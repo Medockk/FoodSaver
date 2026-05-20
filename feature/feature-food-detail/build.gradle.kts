@@ -61,6 +61,7 @@ kotlin {
             implementation(projects.core.coreModel)
             implementation(projects.core.coreNavigation)
             implementation(projects.core.coreRestaurant)
+            implementation(projects.core.coreIngredients)
 
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.jetbrains.compose.navigation)

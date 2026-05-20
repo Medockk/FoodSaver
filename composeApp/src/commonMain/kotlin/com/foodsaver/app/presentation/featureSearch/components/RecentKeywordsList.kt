@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.shimmerEffect
+import com.foodsaver.app.common.modifier.shimmerEffect
 import com.foodsaver.app.featureSearch.domain.model.RecentKeywordsModel
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition

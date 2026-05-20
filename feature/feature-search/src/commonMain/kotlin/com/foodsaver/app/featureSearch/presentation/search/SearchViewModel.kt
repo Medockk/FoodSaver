@@ -9,7 +9,7 @@ import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.BasePaginator
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
-import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
+import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
 import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
 import com.foodsaver.app.featureSearch.domain.repository.SearchRepository

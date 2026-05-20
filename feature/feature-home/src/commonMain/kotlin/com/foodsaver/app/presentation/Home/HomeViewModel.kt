@@ -9,7 +9,7 @@ import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
-import com.foodsaver.app.coreEnterprises.domain.repository.RestaurantRepository
+import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreProfile.domain.repository.ProfileRepository
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
 import kotlinx.coroutines.Dispatchers

@@ -19,6 +19,7 @@ fun MenuItems(
     modifier: Modifier = Modifier
 ) {
 
+    if (items.isEmpty()) return
     Card(
         colors = CardDefaults.cardColors(
             containerColor = FoodSaverTheme.colorScheme.backgroundSecondary,

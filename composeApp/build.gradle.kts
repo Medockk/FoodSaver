@@ -140,6 +140,7 @@ kotlin {
             implementation(projects.core.coreLocation)
             implementation(projects.core.coreFcm)
             implementation(projects.core.coreRestaurant)
+            implementation(projects.core.coreIngredients)
 
             implementation(projects.feature.featureAuth)
             implementation(projects.feature.featureAuth.di)
@@ -153,6 +154,8 @@ kotlin {
             implementation(projects.feature.featureSearch)
             implementation(projects.feature.featurePaymentMethod)
             implementation(projects.feature.featureOrder)
+            implementation(projects.feature.featureMyFood)
+            implementation(projects.feature.featureAdmin)
 
             implementation(libs.image.picker)
 

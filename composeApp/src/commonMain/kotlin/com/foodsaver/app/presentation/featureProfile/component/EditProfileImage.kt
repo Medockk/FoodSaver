@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.foodsaver.app.common.asyncImage.AsyncImageWithShimmerLoading
+import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.pen_icon

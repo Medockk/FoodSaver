@@ -1,0 +1,24 @@
+import kotlin.String;
+import kotlin.collections.List;
+import kotlin.time.Instant;
+
+CREATE TABLE productCacheNew(
+    productId TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    imageUris TEXT AS List<String>,
+    price REAL NOT NULL,
+    discount REAL NOT NULL,
+    currency TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    restaurantId TEXT NOT NULL,
+    expiresAt INTEGER AS Instant NOT NULL
+);
+
+INSERT INTO productCacheNew(productId, name, description, imageUris, price, discount, currency, unit, restaurantId, expiresAt)
+SELECT productId, name, description, '["' || imageUri || '"]', price, discount, currency, unit, restaurantId, expiresAt
+FROM productCacheEntity;
+
+DROP TABLE productCacheEntity;
+
+ALTER TABLE productCacheNew RENAME TO productCacheEntity;

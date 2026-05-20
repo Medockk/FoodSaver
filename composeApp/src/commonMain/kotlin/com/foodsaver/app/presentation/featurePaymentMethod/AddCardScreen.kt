@@ -34,7 +34,7 @@ import com.foodsaver.app.presentation.featurePaymentMethod.components.AddCardFie
 import com.foodsaver.app.presentation.featurePaymentMethod.components.AddCardTopBar
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
-import com.foodsaver.app.utils.date.DateVisualTransformation
+import com.foodsaver.app.utils.date.ShortDateVisualTransformation
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_and_make_payment
 import foodsaver.composeapp.generated.resources.card_holder_name
@@ -108,7 +108,7 @@ private fun AddCardScreen(
             onValueChange = { onEvent(AddCardEvent.OnExpiresDateChange(it)) },
             placeholder = Res.string.placeholder_expires_date,
             keyboardType = KeyboardType.Number,
-            visualTransformation = DateVisualTransformation()
+            visualTransformation = ShortDateVisualTransformation()
         ),
         AddCardFieldItemState(
             label = Res.string.cvc,

@@ -133,7 +133,7 @@ internal class CartRepositoryImpl(
                                     name = it.name,
                                     price = it.price,
                                     currency = it.currency,
-                                    imageUri = it.imageUri,
+                                    imageUri = it.imageUris?.firstOrNull(),
                                     quantity = it.quantity,
                                     attributes = CartItemAttributes(
                                         size = it.attributes?.size,
@@ -338,7 +338,7 @@ internal class CartRepositoryImpl(
                     name = cachedProduct?.name ?: "",
                     price = cachedProduct?.price ?: 0.0,
                     currency = cachedProduct?.currency ?: "",
-                    imageUri = cachedProduct?.imageUri ?: "",
+                    imageUri = cachedProduct?.imageUris?.firstOrNull() ?: "",
                     quantity = dto.quantity
                 )
             }

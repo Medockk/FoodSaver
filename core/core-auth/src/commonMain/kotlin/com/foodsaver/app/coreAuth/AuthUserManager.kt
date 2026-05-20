@@ -8,3 +8,5 @@ expect class AuthUserManager {
     fun isUserAuthenticated(): Boolean
     fun logout()
 }
+
+fun AuthUserManager.requireUserId() = getCurrentUid() ?: throw UserNotAuthorizedException()

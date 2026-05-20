@@ -20,7 +20,7 @@ sealed interface AddProductEvent {
     data class OnCurrencyChange(val value: String): AddProductEvent
 
     data class OnPickIngredient(val ingredientId: String): AddProductEvent
-    data class OnPickCategory(val ingredientId: String): AddProductEvent
+    data class OnPickCategory(val categoryId: String): AddProductEvent
 
     data object OnSave: AddProductEvent
     data object OnReset: AddProductEvent
