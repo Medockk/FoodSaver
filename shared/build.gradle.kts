@@ -87,6 +87,7 @@ kotlin {
             implementation(projects.feature.featureOrder)
             implementation(projects.feature.featureMyFood)
             implementation(projects.feature.featureAdmin)
+            implementation(projects.feature.featureCategory)
 //            implementation(projects.feature.featureWidget)
         }
         jvmMain.dependencies {
