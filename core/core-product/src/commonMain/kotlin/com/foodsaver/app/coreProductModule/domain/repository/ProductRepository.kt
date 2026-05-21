@@ -22,6 +22,8 @@ interface ReadProductRepository {
 
 
     suspend fun getSuggestedProducts(): ApiResult<List<ProductModel>>
+
+    suspend fun fetchUserProducts(): ApiResult<List<ProductModel>>
 }
 
 /**

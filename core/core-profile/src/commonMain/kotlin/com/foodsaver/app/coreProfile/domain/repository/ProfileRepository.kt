@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface ProfileRepository {
 
     fun observeProfile(): Flow<ApiResult<ProfileModel>>
+    suspend fun fetchProfile(): ApiResult<ProfileModel>
     suspend fun updateProfile(request: UpdateProfileRequest, avatar: ByteArray?)
 }

@@ -13,6 +13,8 @@ internal fun NavGraphBuilder.featureUpsertRestaurant(navController: NavControlle
     ) {
         composable<Route.UpsertRestaurantGraph.UpsertRestaurantScreen> {
             UpsertRestaurantScreenRoot(
+                canEditRestaurants = true,
+                canDeleteRestaurants = false,
                 onBackClick = { navController.navigateUp() }
             )
         }

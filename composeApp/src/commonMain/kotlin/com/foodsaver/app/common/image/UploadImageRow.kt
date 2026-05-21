@@ -32,6 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 fun UploadImageRow(
     uris: List<String>,
     onUploadClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
 
@@ -61,6 +62,7 @@ fun UploadImageRow(
                         off = 4.dp,
                         shape = RoundedCornerShape(20.dp)
                     ).clickable(
+                        enabled = enabled,
                         onClick = onUploadClick
                     ),
                 contentAlignment = Alignment.Center

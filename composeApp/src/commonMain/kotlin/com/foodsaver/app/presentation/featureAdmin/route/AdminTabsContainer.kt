@@ -19,14 +19,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.foodsaver.app.common.button.PrimaryIconButton
+import com.foodsaver.app.common.topBar.PrimaryTopBar
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureAdmin.ViewCategoryScreenRoot
 import com.foodsaver.app.presentation.featureManager.ViewMyRestaurantScreenRoot
 import com.foodsaver.app.ui.FoodSaverTheme
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.add_icon
 import foodsaver.composeapp.generated.resources.category_navigation_icon
 import foodsaver.composeapp.generated.resources.restaurant_navigation_icon
+import foodsaver.composeapp.generated.resources.restaurants
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 private data class AdminTab(
@@ -106,6 +111,17 @@ internal fun AdminTabsContainer(navController: NavController) {
                             Route.AdminGraph.UpsertRestaurantScreen(
                                 it
                             )
+                        )
+                    },
+                    topBar = {
+                        PrimaryTopBar(
+                            title = stringResource(Res.string.restaurants),
+                            onNavigationClick = { navController.navigateUp() },
+                            actions = {
+                                PrimaryIconButton(onClick = {
+                                    navController.navigate(Route.AdminGraph.UpsertRestaurantScreen())
+                                }, Res.drawable.add_icon)
+                            }
                         )
                     }
                 )

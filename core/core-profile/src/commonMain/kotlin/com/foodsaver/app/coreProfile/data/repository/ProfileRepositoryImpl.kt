@@ -6,12 +6,14 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreAuth.UserNotAuthorizedException
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreProfile.data.dto.ProfileDto
 import com.foodsaver.app.coreProfile.data.mappers.mapDtoToEntity
+import com.foodsaver.app.coreProfile.data.mappers.mapDtoToResponse
 import com.foodsaver.app.coreProfile.data.mappers.mapEntityToModel
 import com.foodsaver.app.coreProfile.data.mappers.mapRequestToDto
 import com.foodsaver.app.coreProfile.domain.model.ProfileModel
@@ -40,8 +42,8 @@ internal class ProfileRepositoryImpl(
     private val httpClient: HttpClient,
     private val provider: DatabaseProvider,
     private val authUserManager: AuthUserManager,
-    private val json: Json
-): ProfileRepository {
+    private val json: Json,
+) : ProfileRepository {
 
     private val db by lazy { provider.invoke() }
 
@@ -62,14 +64,18 @@ internal class ProfileRepositoryImpl(
                 }
         }
 
-        saveNetworkCall<ProfileDto> {
-            httpClient.get(HttpConstants.PROFILE_URL + "/me")
-        }.onSuccess { dto ->
-            val entity = dto.mapDtoToEntity()
-            db.userEntityQueries.upsertProfile(entity)
-        }
-
         awaitClose { databaseJob.cancel() }
+    }
+
+    override suspend fun fetchProfile(): ApiResult<ProfileModel> {
+        return withContext(Dispatchers.InputOutput) {
+            saveNetworkCall<ProfileDto> {
+                httpClient.get(HttpConstants.PROFILE_URL + "/me")
+            }.onSuccess { dto ->
+                val entity = dto.mapDtoToEntity()
+                db.userEntityQueries.upsertProfile(entity)
+            }.map { it.mapDtoToResponse() }
+        }
     }
 
     override suspend fun updateProfile(
@@ -86,7 +92,10 @@ internal class ProfileRepositoryImpl(
                                 avatar?.let { avatar ->
                                     append("file", avatar, Headers.build {
                                         append(HttpHeaders.ContentType, "image/png")
-                                        append(HttpHeaders.ContentDisposition, "filename=\"avatar.png\"")
+                                        append(
+                                            HttpHeaders.ContentDisposition,
+                                            "filename=\"avatar.png\""
+                                        )
                                     })
                                 }
                                 append("request", dto, Headers.build {

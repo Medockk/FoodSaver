@@ -210,6 +210,19 @@ class UpsertRestaurantViewModel(
                     }
                 }
             }
+
+            UpsertRestaurantEvent.DeleteRestaurant -> {
+                val id: String = navArgs.restaurantId ?: run {
+                    baseChannel.trySend(UpsertRestaurantAction.OnRestaurantAdded)
+                    return
+                }
+
+                viewModelScope.launch {
+                    editRestaurantRepository.deleteRestaurant(id).onSuccess {
+                        baseChannel.send(UpsertRestaurantAction.OnRestaurantAdded)
+                    }
+                }
+            }
         }
     }
 

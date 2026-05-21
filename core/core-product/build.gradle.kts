@@ -56,6 +56,7 @@ kotlin {
             implementation(projects.core.coreCommon)
             implementation(projects.core.coreModel)
             implementation(projects.core.coreDb)
+            implementation(projects.core.coreAuth)
 
             implementation(libs.kotlinx.datetime)
         }

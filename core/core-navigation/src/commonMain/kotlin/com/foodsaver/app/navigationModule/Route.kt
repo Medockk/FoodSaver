@@ -160,6 +160,9 @@ sealed class Route {
     data object UpsertRestaurantGraph: Route() {
 
         @Serializable
-        data class UpsertRestaurantScreen(val restaurantId: String? = null): Route()
+        data class UpsertRestaurantScreen(
+            val restaurantId: String? = null,
+            val canEditRestaurants: Boolean = false
+        ): Route()
     }
 }

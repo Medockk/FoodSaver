@@ -174,4 +174,5 @@ you just place the orer we do the rest</string>
     <string name="create_category">Create category</string>
     <string name="category_name">Category name</string>
     <string name="category_delete">Delete category</string>
+    <string name="restaurant_delete">Delete restaurant</string>
 </resources>

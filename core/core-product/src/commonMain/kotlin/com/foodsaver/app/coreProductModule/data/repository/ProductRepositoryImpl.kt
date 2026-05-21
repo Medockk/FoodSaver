@@ -9,6 +9,8 @@ import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.dto.Page
+import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreAuth.requireUserId
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.coreModel.dto.ProductDto
 import com.foodsaver.app.coreModel.model.ProductModel
@@ -29,11 +31,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class ProductRepositoryImpl(
+    private val userManager: AuthUserManager,
     private val httpClient: HttpClient,
     databaseProvider: DatabaseProvider,
 ) : ReadProductRepository, EditProductRepository {
 
-    private val db = databaseProvider()
+    private val db by lazy { databaseProvider() }
 
     override suspend fun getProducts(
         page: Int,
@@ -107,6 +110,20 @@ internal class ProductRepositoryImpl(
             return@withContext saveNetworkCall<List<ProductDto>> {
                 httpClient.get(HttpConstants.PRODUCTS_URL + "/suggested")
             }.map { dtos -> dtos.toModel() }
+        }
+    }
+
+    override suspend fun fetchUserProducts(): ApiResult<List<ProductModel>> {
+        return withContext(Dispatchers.InputOutput) {
+            val user = db.userEntityQueries.getUserById(userManager.requireUserId())
+                .executeAsOneOrNull() ?: return@withContext ApiResult.success(emptyList())
+
+            if (user.restaurantId == null) return@withContext ApiResult.success(emptyList())
+            saveNetworkCall<Page<ProductDto>> {
+                httpClient.get(HttpConstants.PRODUCTS_URL + "/restaurant") {
+                    parameter("restaurantId", user.restaurantId)
+                }
+            }.map { dtos -> dtos.content.toModel() }
         }
     }
 

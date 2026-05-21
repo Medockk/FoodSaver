@@ -9,13 +9,16 @@ import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.commonModule.utils.pagination.OfflineFirstPaginator
 import com.foodsaver.app.coreCart.domain.repository.CartRepository
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
-import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreProfile.domain.repository.ProfileRepository
+import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.presentation.Home.HomeAction.OnError
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -76,15 +79,18 @@ class HomeViewModel(
         getCurrentAddress()
 
         observeProfile()
+        fetchProfile()
     }
 
     private fun observeProfile() {
         viewModelScope.launch(Dispatchers.InputOutput) {
             profileRepository.observeProfile().collectRequest(
                 onSuccess = { profile ->
-                    _state.update { it.copy(
-                        profile = profile
-                    ) }
+                    _state.update {
+                        it.copy(
+                            profile = profile
+                        )
+                    }
                 }
             )
         }
@@ -102,15 +108,20 @@ class HomeViewModel(
         }
     }
 
+    private fun fetchProfile() {
+        viewModelScope.launch { profileRepository.fetchProfile() }
+    }
+
     private fun getCurrentAddress() = viewModelScope.launch(Dispatchers.InputOutput) {
         // TODO
     }
 
-    fun onRefresh(): Job = viewModelScope.launch {
+    fun onRefresh(): Deferred<Unit> = viewModelScope.async {
         loadRestaurants()
         getAllCategories()
         getCurrentAddress()
 
+        fetchProfile()
         fetchCart()
     }
 
@@ -154,7 +165,9 @@ class HomeViewModel(
 
             HomeEvent.OnRefresh -> {
                 _state.update { it.copy(isRefresh = true) }
-                onRefresh().invokeOnCompletion {
+                viewModelScope.launch {
+                    onRefresh().await()
+                    delay(1500)
                     _state.update { it.copy(isRefresh = false) }
                 }
             }

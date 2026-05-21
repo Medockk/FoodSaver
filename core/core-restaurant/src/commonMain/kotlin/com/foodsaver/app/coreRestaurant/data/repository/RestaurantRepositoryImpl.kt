@@ -27,6 +27,7 @@ import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
@@ -291,6 +292,16 @@ internal class RestaurantRepositoryImpl(
                     setBody(request.mapRequestToDto())
                 }
             }.upsertRestaurant().map { it.mapToModel() }
+        }
+    }
+
+    override suspend fun deleteRestaurant(restaurantId: String): ApiResult<Unit> {
+        return withContext(Dispatchers.InputOutput) {
+            saveNetworkCall {
+                httpClient.delete(HttpConstants.RESTAURANT_URL + "/delete") {
+                    parameter("id", restaurantId)
+                }
+            }
         }
     }
 

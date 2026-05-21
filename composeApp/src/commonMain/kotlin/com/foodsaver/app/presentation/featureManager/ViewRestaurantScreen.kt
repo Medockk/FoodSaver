@@ -26,7 +26,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ViewMyRestaurantScreenRoot(
     onBackClick: () -> Unit,
     onRestaurantClick: (String) -> Unit,
-    viewModel: ViewRestaurantViewModel = koinViewModel()
+    viewModel: ViewRestaurantViewModel = koinViewModel(),
+    topBar: (@Composable () -> Unit)? = null
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -34,7 +35,8 @@ fun ViewMyRestaurantScreenRoot(
     ViewMyRestaurantScreen(
         onRestaurantClick = onRestaurantClick,
         onBackClick = onBackClick,
-        state = state
+        state = state,
+        topBar = topBar
     )
 }
 
@@ -43,17 +45,21 @@ private fun ViewMyRestaurantScreen(
     onRestaurantClick: (String) -> Unit,
     onBackClick: () -> Unit,
     state: ViewRestaurantState,
-
+    topBar: (@Composable () -> Unit)?
 ) {
 
     Scaffold(
         containerColor = FoodSaverTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(),
         topBar = {
-            PrimaryTopBar(
-                title = stringResource(Res.string.restaurants),
-                onNavigationClick = onBackClick,
-            )
+            if (topBar == null) {
+                PrimaryTopBar(
+                    title = stringResource(Res.string.restaurants),
+                    onNavigationClick = onBackClick,
+                )
+            } else {
+                topBar.invoke()
+            }
         }
     ) { paddingValues ->
         LazyColumn(

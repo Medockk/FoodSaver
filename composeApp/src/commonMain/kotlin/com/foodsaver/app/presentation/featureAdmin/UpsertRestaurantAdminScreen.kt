@@ -1,4 +1,4 @@
-package com.foodsaver.app.presentation.featureUpsertRestaurant
+package com.foodsaver.app.presentation.featureAdmin
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -54,21 +54,19 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun UpsertRestaurantScreenRoot(
+fun UpsertRestaurantAdminScreenRoot(
     onBackClick: () -> Unit,
-    viewModel: UpsertRestaurantViewModel = koinViewModel(),
-    canDeleteRestaurants: Boolean = false,
-    canEditRestaurants: Boolean = false,
+    viewModel: UpsertRestaurantViewModel = koinViewModel()
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    UpsertRestaurantScreen(
+    UpsertRestaurantAdminScreen(
         onBackClick = onBackClick,
         state = state,
         onEvent = viewModel::onEvent,
-        canEditRestaurants = canEditRestaurants,
-        canDeleteRestaurants = canDeleteRestaurants
+        canDeleteRestaurants = true,
+        canEditRestaurants = true,
     )
 
     ObserveActions(viewModel.channel) {
@@ -80,7 +78,7 @@ fun UpsertRestaurantScreenRoot(
 }
 
 @Composable
-private fun UpsertRestaurantScreen(
+private fun UpsertRestaurantAdminScreen(
     onBackClick: () -> Unit,
     state: UpsertRestaurantState,
     onEvent: (UpsertRestaurantEvent) -> Unit,

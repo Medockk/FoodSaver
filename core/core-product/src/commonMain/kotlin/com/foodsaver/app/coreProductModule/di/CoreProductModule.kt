@@ -10,15 +10,11 @@ import com.foodsaver.app.coreProductModule.domain.usecase.GetCachedProductsUseCa
 import com.foodsaver.app.coreProductModule.domain.usecase.GetProductsUseCase
 import com.foodsaver.app.coreProductModule.domain.usecase.SearchProductUseCase
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val coreProductModule = module {
-    single<ProductRepositoryImpl> {
-        ProductRepositoryImpl(
-            httpClient = get(),
-            databaseProvider = get()
-        )
-    }
+    singleOf(::ProductRepositoryImpl)
 
     single<ReadProductRepository> {
         get<ProductRepositoryImpl>()

@@ -18,4 +18,5 @@ sealed interface UpsertRestaurantEvent {
     data class OnChangeGalleryPickerVisibility(val value: Boolean): UpsertRestaurantEvent
 
     data object OnSave: UpsertRestaurantEvent
+    data object DeleteRestaurant: UpsertRestaurantEvent
 }

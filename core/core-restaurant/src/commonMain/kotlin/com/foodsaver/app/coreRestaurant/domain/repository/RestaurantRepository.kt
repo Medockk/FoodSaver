@@ -11,6 +11,8 @@ interface EditRestaurantRepository {
     suspend fun uploadRestaurantImage(image: ByteArray, restaurantId: String?, imageOrientation: String? = null): ApiResult<String>
     suspend fun addRestaurant(request: AddRestaurantRequest): ApiResult<RestaurantModel>
     suspend fun updateRestaurant(request: UpdateRestaurantRequest): ApiResult<RestaurantModel>
+
+    suspend fun deleteRestaurant(restaurantId: String): ApiResult<Unit>
 }
 
 interface RestaurantRepository {

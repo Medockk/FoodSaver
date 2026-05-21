@@ -20,6 +20,20 @@ internal fun ProfileDto.mapDtoToEntity() = UserEntity(
     addressIds = addressIds,
 )
 
+internal fun ProfileDto.mapDtoToResponse() = ProfileModel(
+    id = id,
+    email = email,
+    fullName = fullName,
+    imageUri = imageUri,
+    restaurantId = restaurantId,
+    authorities = authorities,
+    phone = phone,
+    bio = bio,
+    addressIds = addressIds,
+    currentAddressId = currentAddressId,
+    currentPaymentMethodId = currentPaymentMethodId,
+)
+
 internal fun UserEntity.mapEntityToModel() = ProfileModel(
     id = id,
     email = email,
