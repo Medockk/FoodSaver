@@ -1,7 +1,7 @@
 package com.foodsaver.app.utils
 
 import androidx.compose.runtime.Composable
-import com.foodsaver.app.coreEnterprises.domain.model.CameraPositionModel
+import com.foodsaver.app.coreRestaurant.domain.model.CameraPositionModel
 
 actual object MapKit {
     actual val isMapKitSupported: Boolean = false
@@ -13,4 +13,5 @@ actual object MapKit {
         onEvent: (MapKitEvent) -> Unit
     ) {
     }
+
 }

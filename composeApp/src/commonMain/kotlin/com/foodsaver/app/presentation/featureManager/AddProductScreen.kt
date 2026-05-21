@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
@@ -33,6 +34,7 @@ import com.foodsaver.app.addProductModule.presentation.addProduct.AddProductEven
 import com.foodsaver.app.addProductModule.presentation.addProduct.AddProductState
 import com.foodsaver.app.addProductModule.presentation.addProduct.AddProductViewModel
 import com.foodsaver.app.common.button.PrimaryButton
+import com.foodsaver.app.common.button.PrimaryIconButton
 import com.foodsaver.app.common.button.PrimaryTextButton
 import com.foodsaver.app.common.textField.BorderTextField
 import com.foodsaver.app.common.textField.PrimaryTextFieldState
@@ -51,12 +53,14 @@ import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_new_items
 import foodsaver.composeapp.generated.resources.categories
+import foodsaver.composeapp.generated.resources.delete_icon
 import foodsaver.composeapp.generated.resources.details
 import foodsaver.composeapp.generated.resources.expires_date
 import foodsaver.composeapp.generated.resources.ingredients
 import foodsaver.composeapp.generated.resources.item_name
 import foodsaver.composeapp.generated.resources.price
 import foodsaver.composeapp.generated.resources.reset
+import foodsaver.composeapp.generated.resources.reset_changes_icon
 import foodsaver.composeapp.generated.resources.save_changes
 import foodsaver.composeapp.generated.resources.upload_photo_or_video
 import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
@@ -67,6 +71,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AddProductScreenRoot(
     navController: NavController,
+    canDeleteProduct: Boolean = true,
     viewModel: AddProductViewModel = koinViewModel(),
 ) {
 
@@ -85,6 +90,8 @@ fun AddProductScreenRoot(
             is AddProductAction.OnError -> {
                 snackbarHost.showSnackbar(it.message, withDismissAction = true)
             }
+
+            AddProductAction.OnSuccessUpsert -> { navController.navigateUp() }
         }
     }
 }
@@ -165,15 +172,16 @@ private fun AddProductScreen(
                     navController.navigateUp()
                 },
                 actions = {
-                    PrimaryTextButton(
-                        onClick = {
-                            onEvent(AddProductEvent.OnReset)
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.reset).uppercase(),
-                            color = FoodSaverTheme.colorScheme.primary,
-                            style = FoodSaverTheme.typography.bodySmall
+                    PrimaryIconButton(
+                        onClick = { onEvent(AddProductEvent.OnReset) },
+                        icon = Res.drawable.reset_changes_icon,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    if (state.product != null) {
+                        PrimaryIconButton(
+                            onClick = { onEvent(AddProductEvent.OnDelete) },
+                            icon = Res.drawable.delete_icon,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
@@ -199,7 +207,7 @@ private fun AddProductScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 BorderTextField(
-                    value = state.name,
+                    value = state.product?.name ?: state.name,
                     onValueChange = { onEvent(AddProductEvent.OnNameChange(it)) },
                     modifier = Modifier.fillMaxWidth()
                         .padding(horizontal = 24.dp),
@@ -222,7 +230,7 @@ private fun AddProductScreen(
                 )
                 Spacer(Modifier.height(16.dp))
                 UploadImageRow(
-                    uris = state.productImageUris.map { it.absoluteUri },
+                    uris = state.product?.imageUris ?: state.productImageUris.map { it.absoluteUri },
                     onUploadClick = {
                         onEvent(AddProductEvent.OnChangeGalleryPickerVisibility(true))
                     },
@@ -248,9 +256,9 @@ private fun AddProductScreen(
                     modifier = Modifier.horizontalScroll(rememberScrollState())
                 ) {
                     PriceField(
-                        value = state.price?.toString() ?: "",
+                        value = state.product?.price?.toString() ?: state.price?.toString() ?: "",
                         onValueChange = { onEvent(AddProductEvent.OnPriceChange(it)) },
-                        selectedCurrency = state.currency,
+                        selectedCurrency = state.product?.currency ?: state.currency,
                         currencies = state.currencies,
                         onCurrencyClick = { onEvent(AddProductEvent.OnCurrencyChange(it)) },
                         modifier = Modifier
@@ -271,15 +279,15 @@ private fun AddProductScreen(
                 Spacer(Modifier.height(20.dp))
                 CountDiscountFields(
                     countState = PrimaryTextFieldState(
-                        value = state.count.toString(),
+                        value = state.product?.count?.toString() ?: state.count.toString(),
                         onValueChange = { onEvent(AddProductEvent.OnCountChange(it)) },
                         placeholder = "",
                         maxLines = 1,
                         keyboardType = KeyboardType.Number
                     ),
                     discountState = PrimaryTextFieldState(
-                        value = state.discount?.toString() ?: "",
-                        onValueChange = { onEvent(AddProductEvent.OnCountChange(it)) },
+                        value = state.product?.discount?.toString() ?: state.discount?.toString() ?: "",
+                        onValueChange = { onEvent(AddProductEvent.OnDiscountChange(it)) },
                         placeholder = "%",
                         maxLines = 1,
                         keyboardType = KeyboardType.Number
@@ -305,7 +313,7 @@ private fun AddProductScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                    expiresDate = state.expiresDate,
+                    expiresDate = state.product?.expiresAt?.toString() ?: state.expiresDate,
                     onExpiresDateChange = {
                         onEvent(AddProductEvent.OnExpiresDateChange(it))
                     },
@@ -330,7 +338,7 @@ private fun AddProductScreen(
                 Spacer(Modifier.height(16.dp))
                 CategoryPicker(
                     allCategories = state.allCategories,
-                    selectedCategoryIds = state.selectedCategoryIds,
+                    selectedCategoryIds = state.product?.categoryIds ?: state.selectedCategoryIds,
                     onPickCategory = { onEvent(AddProductEvent.OnPickCategory(it.categoryId)) }
                 )
             }
@@ -367,7 +375,7 @@ private fun AddProductScreen(
                 )
                 Spacer(Modifier.height(7.dp))
                 BorderTextField(
-                    value = state.details,
+                    value = state.product?.description ?: state.details,
                     onValueChange = {
                         onEvent(AddProductEvent.OnDetailsChange(it))
                     },

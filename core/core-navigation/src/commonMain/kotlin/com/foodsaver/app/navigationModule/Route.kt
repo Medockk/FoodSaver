@@ -115,11 +115,7 @@ sealed class Route {
     data object ManagerGraph: Route() {
 
         @Serializable
-        data class TabsContainer(val tabs: Tabs = Tabs.MyFood): Route() {
-            enum class Tabs {
-                MyFood
-            }
-        }
+        data class TabsContainer(val tab: String = "my_food"): Route()
 
         @Serializable
         data class AddProductScreen(

@@ -11,6 +11,10 @@ import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
 import com.foodsaver.app.coreIngredients.domain.repository.IngredientRepository
+import com.foodsaver.app.coreModel.model.ProductModel
+import com.foodsaver.app.coreProductModule.domain.model.UpdateProductRequest
+import com.foodsaver.app.coreProductModule.domain.repository.EditProductRepository
+import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
 import com.foodsaver.app.coreProductModule.domain.usecase.AddProductUseCase
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
@@ -25,11 +29,12 @@ import kotlin.time.Instant
 
 class AddProductViewModel(
     savedStateHandle: SavedStateHandle,
-    private val addProductUseCase: AddProductUseCase,
     private val categoryRepository: CategoryRepository,
     private val ingredientRepository: IngredientRepository,
     private val addProductRepository: AddProductRepository,
-) : BaseViewModel<AddProductAction>() {
+    private val productRepository: ReadProductRepository,
+    private val editProductRepository: EditProductRepository
+    ) : BaseViewModel<AddProductAction>() {
 
     override val baseChannel: Channel<AddProductAction> = Channel()
     override val channel: Flow<AddProductAction> = baseChannel.receiveAsFlow()
@@ -40,18 +45,40 @@ class AddProductViewModel(
     val state = _state
         .asStateFlow()
 
+    private var initialProduct: ProductModel? = null
+
     init {
+
+        navArgs.productId?.let { productId ->
+            getProduct(productId)
+        }
+
         getAllCategories()
         getAllIngredients()
         getCurrencies()
     }
 
+    private fun getProduct(productId: String) {
+        viewModelScope.launch {
+            productRepository.fetchProductById(productId).onSuccess { product ->
+                _state.update {
+                    it.copy(
+                        product = product
+                    )
+                }
+                initialProduct = product
+            }
+        }
+    }
+
     private fun getCurrencies() {
         viewModelScope.launch {
             addProductRepository.fetchCurrencies().onSuccess { currencies ->
-                _state.update { it.copy(
-                    currencies = currencies
-                ) }
+                _state.update {
+                    it.copy(
+                        currencies = currencies
+                    )
+                }
             }
         }
     }
@@ -92,12 +119,18 @@ class AddProductViewModel(
 
             is AddProductEvent.OnCountChange -> {
                 val count = event.value.toLongOrNull() ?: return
-                _state.update { it.copy(count = count) }
+                _state.update {
+                    it.copy(
+                        product = it.product?.copy(count = count),
+                        count = count
+                    )
+                }
             }
 
             is AddProductEvent.OnCurrencyChange -> {
                 _state.update {
                     it.copy(
+                        product = it.product?.copy(currency = event.value),
                         currency = event.value
                     )
                 }
@@ -106,20 +139,33 @@ class AddProductViewModel(
             is AddProductEvent.OnDetailsChange -> {
                 _state.update {
                     it.copy(
+                        product = it.product?.copy(description = event.value),
                         details = event.value
                     )
                 }
             }
 
             is AddProductEvent.OnDiscountChange -> {
-                val discount = event.value.toDoubleOrNull()
-                _state.update { it.copy(discount = discount) }
+                val discount = event.value.toDoubleOrNull() ?: return
+                _state.update {
+                    it.copy(
+                        product = it.product?.copy(discount = discount),
+                        discount = discount
+                    )
+                }
             }
 
             is AddProductEvent.OnExpiresDateChange -> {
                 val digitsOnly = event.value.filter { it.isDigit() }
+                val expiresDate = parseExpiresDateToInstant(digitsOnly)
                 if (digitsOnly.length <= 8) {
-                    _state.update { it.copy(expiresDate = digitsOnly) }
+                    _state.update {
+                        it.copy(
+                            product = if (expiresDate != null) it.product?.copy(expiresAt = expiresDate)
+                            else it.product,
+                            expiresDate = digitsOnly
+                        )
+                    }
                 }
             }
 
@@ -142,6 +188,7 @@ class AddProductViewModel(
             is AddProductEvent.OnNameChange -> {
                 _state.update {
                     it.copy(
+                        product = it.product?.copy(name = event.value),
                         name = event.value
                     )
                 }
@@ -155,17 +202,20 @@ class AddProductViewModel(
                         } else {
                             currentState.selectedCategoryIds + event.categoryId
                         }
-                    currentState.copy(selectedCategoryIds = updatedCategories)
+                    currentState.copy(
+                        product = currentState.product?.copy(categoryIds = updatedCategories),
+                        selectedCategoryIds = updatedCategories
+                    )
                 }
             }
 
             is AddProductEvent.OnPickImages -> {
                 event.images.forEach { image ->
                     viewModelScope.launch {
-
-                        addProductRepository.uploadImage(image).onSuccess { response  ->
+                        addProductRepository.uploadImage(image, _state.value.product?.productId).onSuccess { response ->
                             _state.update {
                                 it.copy(
+                                    product = it.product?.copy(imageUris = it.product.imageUris + response.absoluteUri),
                                     productImageUris = it.productImageUris + response
                                 )
                             }
@@ -182,13 +232,21 @@ class AddProductViewModel(
                         } else {
                             currentState.selectedIngredientIds + event.ingredientId
                         }
-                    currentState.copy(selectedIngredientIds = updatedIngredients)
+                    currentState.copy(
+                        product = currentState.product?.copy(ingredientIds = updatedIngredients),
+                        selectedIngredientIds = updatedIngredients
+                    )
                 }
             }
 
             is AddProductEvent.OnPriceChange -> {
-                val price = event.value.toDoubleOrNull()
-                _state.update { it.copy(price = price) }
+                val price = event.value.toDoubleOrNull() ?: return
+                _state.update {
+                    it.copy(
+                        product = it.product?.copy(price = price),
+                        price = price
+                    )
+                }
             }
 
             AddProductEvent.OnReset -> {
@@ -208,88 +266,142 @@ class AddProductViewModel(
                         currency = null,
                         selectedIngredientIds = emptyList(),
                         selectedCategoryIds = emptyList(),
+
+                        product = initialProduct
                     )
                 }
             }
 
             AddProductEvent.OnSave -> {
                 val currentState = _state.value
-                with(currentState) {
-                    if (name.isBlank()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyName))
-                        return
-                    }
+                val product = currentState.product
 
-                    if (productImageUris.isEmpty()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyImages))
-                        return
+                if (product != null) {
+                    // update existing product
+                    val request = with(product) {
+                        UpdateProductRequest(
+                            productId = productId,
+                            name = name,
+                            description = description,
+                            imageUris = imageUris,
+                            price = price,
+                            discount = discount,
+                            count = count,
+                            unit = unit,
+                            currency = currency,
+                            isAvailable = isAvailable,
+                            isDeleted = isDeleted,
+                            ingredientIds = ingredientIds,
+                            categoryIds = categoryIds
+                        )
                     }
-
-                    if (price == null) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyPrice))
-                        return
-                    }
-                    if (price <= 0.0) {
-                        sendError(ApiResult.error(AddProductLocalError.LowPrice))
-                        return
-                    }
-
-                    if (currency.isNullOrBlank()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyCurrency))
-                        return
-                    }
-
-                    if (expiresDate.isBlank()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyExpiresDate))
-                        return
-                    }
-
-                    if (!isValidDate(expiresDate)) {
-                        sendError(ApiResult.error(AddProductLocalError.ExpiresDateMismatch))
-                        return
-                    }
-
-                    if (unit == null) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyUnit))
-                        return
-                    }
-
-                    if (selectedCategoryIds.isEmpty()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyCategory))
-                        return
-                    }
-                    if (selectedIngredientIds.isEmpty()) {
-                        sendError(ApiResult.error(AddProductLocalError.EmptyIngredients))
-                        return
-                    }
-
-                    val request = AddProductRequest(
-                        name = name,
-                        description = details,
-                        imageUris = productImageUris.map { it.relativeUri },
-                        expiresAt = parseExpiresDateToInstant(expiresDate),
-                        price = price,
-                        count = count,
-                        unit = unit.name,
-                        discount = discount ?: 0.0,
-                        currency = currency,
-                        isAvailable = true,
-                        ingredientIds = selectedIngredientIds,
-                        categoryIds = selectedCategoryIds
-                    )
 
                     viewModelScope.launch {
-                        addProductRepository.addProduct(request)
+                        editProductRepository.updateProduct(request).onSuccess {
+                            baseChannel.send(AddProductAction.OnSuccessUpsert)
+                        }
+                    }
+                } else {
+                    // create new product
+                    with(currentState) {
+                        if (name.isBlank()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyName))
+                            return
+                        }
+
+                        if (productImageUris.isEmpty()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyImages))
+                            return
+                        }
+
+                        if (price == null) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyPrice))
+                            return
+                        }
+                        if (price <= 0.0) {
+                            sendError(ApiResult.error(AddProductLocalError.LowPrice))
+                            return
+                        }
+
+                        if (currency.isNullOrBlank()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyCurrency))
+                            return
+                        }
+
+                        if (expiresDate.isBlank()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyExpiresDate))
+                            return
+                        }
+
+                        if (!isValidDate(expiresDate)) {
+                            sendError(ApiResult.error(AddProductLocalError.ExpiresDateMismatch))
+                            return
+                        }
+
+                        if (unit == null) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyUnit))
+                            return
+                        }
+
+                        if (selectedCategoryIds.isEmpty()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyCategory))
+                            return
+                        }
+                        if (selectedIngredientIds.isEmpty()) {
+                            sendError(ApiResult.error(AddProductLocalError.EmptyIngredients))
+                            return
+                        }
+
+                        val expiresDateInstant = parseExpiresDateToInstant(expiresDate) ?: run {
+                            sendError(ApiResult.error(AddProductLocalError.ExpiresDateMismatch))
+                            return
+                        }
+
+                        val request = AddProductRequest(
+                            name = name,
+                            description = details,
+                            imageUris = productImageUris.map { it.relativeUri },
+                            expiresAt = expiresDateInstant,
+                            price = price,
+                            count = count,
+                            unit = unit.name,
+                            discount = discount ?: 0.0,
+                            currency = currency,
+                            isAvailable = true,
+                            ingredientIds = selectedIngredientIds,
+                            categoryIds = selectedCategoryIds
+                        )
+
+                        viewModelScope.launch {
+                            addProductRepository.addProduct(request).onSuccess {
+                                baseChannel.send(AddProductAction.OnSuccessUpsert)
+                            }
+                        }
                     }
                 }
+
 
             }
 
             is AddProductEvent.OnUnitChange -> {
                 _state.update {
                     it.copy(
+                        product = it.product?.copy(unit = event.value.name),
                         unit = event.value
                     )
+                }
+            }
+
+            AddProductEvent.OnDelete -> {
+                val productId = navArgs.productId ?: run {
+                    baseChannel.trySend(AddProductAction.OnSuccessUpsert)
+                    return
+                }
+
+                viewModelScope.launch {
+                    editProductRepository.deleteProduct(productId).onSuccess {
+                        baseChannel.send(AddProductAction.OnSuccessUpsert)
+                    }
                 }
             }
         }
@@ -318,17 +430,22 @@ class AddProductViewModel(
         return day <= daysInMonth
     }
 
-    private fun parseExpiresDateToInstant(expiresDate: String): Instant {
+    private fun parseExpiresDateToInstant(expiresDate: String): Instant? {
         // 1. Извлекаем компоненты из строки "ДДММГГГГ" (например, "19052026")
-        val day = expiresDate.substring(0, 2)
-        val month = expiresDate.substring(2, 4)
-        val year = expiresDate.substring(4, 8)
+        try {
+            val day = expiresDate.substring(0, 2)
+            val month = expiresDate.substring(2, 4)
+            val year = expiresDate.substring(4, 8)
 
-        // 2. Собираем валидную ISO-8601 строку с UTC смещением (Z)
-        // Результат: "2026-05-19T00:00:00Z"
-        val isoDateTimeString = "${year}-${month}-${day}T00:00:00Z"
+            // 2. Собираем валидную ISO-8601 строку с UTC смещением (Z)
+            // Результат: "2026-05-19T00:00:00Z"
+            val isoDateTimeString = "${year}-${month}-${day}T00:00:00Z"
 
-        // 3. Используем новый метод из stdlib Kotlin 2.3
-        return Instant.parse(isoDateTimeString)
+            // 3. Используем новый метод из stdlib Kotlin 2.3
+            return Instant.parse(isoDateTimeString)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
     }
 }

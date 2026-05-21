@@ -7,12 +7,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -304,7 +307,6 @@ private fun SearchScreen(
         containerColor = FoodSaverTheme.colorScheme.background,
         topBar = {
             Column {
-                Spacer(Modifier.height(15.dp))
                 SearchTopBar(
                     navController = navController,
                     isFirstSearchingScreen = state.isFirstSearchingScreen,
@@ -321,17 +323,17 @@ private fun SearchScreen(
                     },
                     onFilterClick = {
                         onEvent(SearchEvent.OnFilterClick)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
+                    }
                 )
             }
         },
     ) { paddingValues ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(columnValues),
-            contentPadding = paddingValues,
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            ),
             modifier = Modifier
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(20.dp)

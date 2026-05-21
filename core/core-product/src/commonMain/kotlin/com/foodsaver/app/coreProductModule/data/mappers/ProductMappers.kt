@@ -1,15 +1,10 @@
 package com.foodsaver.app.coreProductModule.data.mappers
 
 import com.databases.cache.ProductCacheEntity
-import com.foodsaver.app.coreModel.dto.OrganizationDto
 import com.foodsaver.app.coreModel.dto.ProductDto
-import com.foodsaver.app.coreModel.model.OrganizationModel
 import com.foodsaver.app.coreModel.model.ProductModel
-import com.foodsaver.app.coreModel.utils.ProductUtils
-import com.foodsaver.app.coreProductModule.data.dto.AddProductDto
-import com.foodsaver.app.coreProductModule.domain.model.AddProductModel
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
+import com.foodsaver.app.coreProductModule.data.dto.UpdateProductDto
+import com.foodsaver.app.coreProductModule.domain.model.UpdateProductRequest
 
 internal fun ProductDto.toModel(): ProductModel {
 
@@ -65,4 +60,20 @@ internal fun ProductDto.mapDtoToEntity() = ProductCacheEntity(
     restaurantId = restaurantId,
     expiresAt = expiresAt,
     ingredientIds = ingredientIds
+)
+
+internal fun UpdateProductRequest.mapRequestToDto() = UpdateProductDto(
+    id = productId,
+    name = name,
+    description = description,
+    imageUris = imageUris,
+    price = price,
+    discount = discount,
+    count = count,
+    unit = unit,
+    currency = currency,
+    isAvailable = isAvailable,
+    isDeleted = isDeleted,
+    ingredientIds = ingredientIds,
+    categoryIds = categoryIds
 )

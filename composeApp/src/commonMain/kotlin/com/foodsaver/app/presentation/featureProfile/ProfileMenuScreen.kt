@@ -85,7 +85,7 @@ private fun ProfileMenuScreen(
                 MenuItemState(
                     icon = Res.drawable.settings_icon,
                     title = stringResource(Res.string.add_new_product),
-                    onClick = { navController.navigate(Route.ManagerGraph.TabsContainer(tabs = Route.ManagerGraph.TabsContainer.Tabs.MyFood)) }
+                    onClick = { navController.navigate(Route.ManagerGraph.TabsContainer()) }
                 )
             )
         }else if (state.profile?.authorities?.contains("ROLE_ADMIN") == true) {

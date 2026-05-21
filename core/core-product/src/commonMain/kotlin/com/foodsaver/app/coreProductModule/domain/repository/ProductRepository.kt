@@ -3,6 +3,7 @@ package com.foodsaver.app.coreProductModule.domain.repository
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.model.AddProductModel
+import com.foodsaver.app.coreProductModule.domain.model.UpdateProductRequest
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -24,6 +25,7 @@ interface ReadProductRepository {
     suspend fun getSuggestedProducts(): ApiResult<List<ProductModel>>
 
     suspend fun fetchUserProducts(): ApiResult<List<ProductModel>>
+    fun observeUserProducts(): Flow<ApiResult<List<ProductModel>>>
 }
 
 /**
@@ -32,5 +34,7 @@ interface ReadProductRepository {
 interface EditProductRepository: ReadProductRepository {
     suspend fun addProduct(addProductModel: AddProductModel): ApiResult<Unit>
     suspend fun deleteProduct(productId: String): ApiResult<Unit>
+
+    suspend fun updateProduct(request: UpdateProductRequest): ApiResult<ProductModel>
 
 }

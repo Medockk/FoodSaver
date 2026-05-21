@@ -11,6 +11,6 @@ data class CartState(
     val products: List<CartItemModel> = emptyList(),
     val currency: String = "",
 
-
+    val isRefreshing: Boolean = false,
     val isLoading: Boolean = false,
 )

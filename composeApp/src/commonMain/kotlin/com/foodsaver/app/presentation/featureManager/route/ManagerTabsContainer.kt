@@ -44,8 +44,7 @@ data class Tabs(
 
 @Composable
 fun ManagerTabsContainer(
-    rootNavController: NavController,
-    targetTabs: Route.ManagerGraph.TabsContainer.Tabs
+    rootNavController: NavController
 ) {
 
     val localController = rememberNavController()
@@ -54,10 +53,6 @@ fun ManagerTabsContainer(
         Tabs(Res.drawable.add_icon, Route.ManagerGraph.AddProductScreen(), ""),
         Tabs(Res.drawable.restaurant_navigation_icon, Route.ManagerGraph.ViewMyRestaurantScreen, "Restaurant"),
     )
-
-    val computedTargetTab = when (targetTabs) {
-        Route.ManagerGraph.TabsContainer.Tabs.MyFood -> Route.ManagerGraph.MyFoodScreen
-    }
 
     Scaffold(
         containerColor = FoodSaverTheme.colorScheme.background,
@@ -122,7 +117,7 @@ fun ManagerTabsContainer(
     ) { paddingValues ->
         NavHost(
             navController = localController,
-            startDestination = computedTargetTab,
+            startDestination = Route.ManagerGraph.MyFoodScreen,
             modifier = Modifier.padding(paddingValues)
         ) {
             composable<Route.ManagerGraph.ViewMyRestaurantScreen> {
@@ -133,9 +128,8 @@ fun ManagerTabsContainer(
             }
             composable<Route.ManagerGraph.MyFoodScreen> {
                 MyFoodScreenRoot(
-                    onBackClick = {
-                        rootNavController.navigateUp()
-                    }
+                    onBackClick = { rootNavController.navigateUp() },
+                    onProductClick = { rootNavController.navigate(Route.ManagerGraph.AddProductScreen(it)) }
                 )
             }
 

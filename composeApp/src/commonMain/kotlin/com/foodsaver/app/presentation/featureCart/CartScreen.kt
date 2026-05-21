@@ -17,8 +17,12 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,6 +73,8 @@ private fun CartScreen(
     state: CartState,
     onEvent: (CartEvent) -> Unit
 ) {
+
+    val pullToRefreshState = rememberPullToRefreshState()
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars,
         modifier = Modifier
@@ -115,30 +121,45 @@ private fun CartScreen(
             }
         }
     ) { paddingValues ->
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            contentPadding = paddingValues,
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            items(state.products) { product ->
-                CartProductItem(
-                    state = CartProductItemState(
-                        productName = product.name,
-                        productPrice = product.price,
-                        productSize = "14 ''",
-                        productImageUri = product.imageUri,
-                        isProductEditing = state.isItemsEditing,
-                        productCount = product.quantity,
-                        onIncreaseClick = { onEvent(CartEvent.IncreaseProductClick(product)) },
-                        onDecreaseClick = { onEvent(CartEvent.DecreaseProductClick(product)) },
-                        onRemoveClick = {
-                            onEvent(CartEvent.OnDeleteItem(product))
-                        }
-                    )
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onEvent(CartEvent.OnRefresh) },
+            state = pullToRefreshState,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isRefreshing,
+                    color = FoodSaverTheme.colorScheme.primary,
+                    containerColor = FoodSaverTheme.colorScheme.placeholderBackground,
+                    modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
+                        .align(Alignment.TopCenter)
                 )
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                contentPadding = paddingValues,
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                items(state.products) { product ->
+                    CartProductItem(
+                        state = CartProductItemState(
+                            productName = product.name,
+                            productPrice = product.price,
+                            productSize = "14 ''",
+                            productImageUri = product.imageUri,
+                            isProductEditing = state.isItemsEditing,
+                            productCount = product.quantity,
+                            onIncreaseClick = { onEvent(CartEvent.IncreaseProductClick(product)) },
+                            onDecreaseClick = { onEvent(CartEvent.DecreaseProductClick(product)) },
+                            onRemoveClick = {
+                                onEvent(CartEvent.OnDeleteItem(product))
+                            }
+                        )
+                    )
+                }
             }
         }
     }

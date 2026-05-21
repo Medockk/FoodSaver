@@ -26,9 +26,23 @@ SELECT * FROM restaurantEntity
 WHERE serverId = ?;
 
 insertRestaurant:
-INSERT OR REPLACE INTO restaurantEntity (serverId, name, description, photoUris, latitude, longitude, addressName,
- companyId, rating, deliveryCost, averageDeliveryTime)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO restaurantEntity (serverId, name, description, photoUris, latitude, longitude, addressName, companyId, rating, deliveryCost, averageDeliveryTime)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON CONFLICT(serverId) DO UPDATE SET
+    name = excluded.name,
+    description = excluded.description,
+    photoUris = excluded.photoUris,
+    latitude = excluded.latitude,
+    longitude = excluded.longitude,
+    addressName = excluded.addressName,
+    companyId = excluded.companyId,
+    rating = excluded.rating,
+    deliveryCost = excluded.deliveryCost,
+    averageDeliveryTime = excluded.averageDeliveryTime;
+
+deleteRestaurantByServerId:
+DELETE FROM restaurantEntity
+WHERE serverId = ?;
 
 upsertRestaurant:
 INSERT OR REPLACE INTO restaurantEntity

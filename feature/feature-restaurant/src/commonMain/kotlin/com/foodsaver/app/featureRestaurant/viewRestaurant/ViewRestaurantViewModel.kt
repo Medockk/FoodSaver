@@ -40,11 +40,7 @@ class ViewRestaurantViewModel(
 
     private fun fetchRestaurants() {
         viewModelScope.launch {
-            restaurantRepository.fetchUserRestaurant().onSuccess { restaurants ->
-                _state.update { it.copy(
-                    restaurants = restaurants
-                ) }
-            }
+            restaurantRepository.fetchUserRestaurant()
         }
     }
 

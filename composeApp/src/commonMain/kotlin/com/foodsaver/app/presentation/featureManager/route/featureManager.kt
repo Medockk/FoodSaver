@@ -15,8 +15,7 @@ internal fun NavGraphBuilder.featureManager(navController: NavController) {
     ) {
 
         composable<Route.ManagerGraph.TabsContainer> {
-            val targetTabs = it.toRoute<Route.ManagerGraph.TabsContainer>()
-            ManagerTabsContainer(navController, targetTabs.tabs)
+            ManagerTabsContainer(navController)
         }
 
         composable<Route.ManagerGraph.AddProductScreen> {

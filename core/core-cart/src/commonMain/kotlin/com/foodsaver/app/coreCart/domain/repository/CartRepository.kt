@@ -16,6 +16,8 @@ interface CartRepository {
     suspend fun observeCart(): Flow<ApiResult<CartResponseModel>>
     suspend fun observeCartItems(cartId: String): Flow<ApiResult<List<CartItemModel>>>
 
+    fun observeTotalPrice(): Flow<Double>
+
     suspend fun syncPendingProducts()
     suspend fun observeCartProductIds(): Flow<ApiResult<List<ProductInCartResponseModel>>>
 

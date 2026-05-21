@@ -250,6 +250,7 @@ private fun RestaurantScreen(
                             .padding(
                                 start = if (isLeftColumn) 24.dp else 0.dp,
                                 end = if (isLeftColumn) 0.dp else 24.dp,
+                                bottom = 15.dp
                             )
                     ) {
                         val productInCartResponseModel = state.productInCartIds

@@ -37,9 +37,7 @@ class RestaurantViewModel(
     private val restaurantId = navArgs.restaurantId
 
     private val _state = MutableStateFlow(
-        RestaurantState(
-            restaurantName = navArgs.restaurantName
-        )
+        RestaurantState(restaurantName = navArgs.restaurantName)
     )
     val state = _state.asStateFlow()
 

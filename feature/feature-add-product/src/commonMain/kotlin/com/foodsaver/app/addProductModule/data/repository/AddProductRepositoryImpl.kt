@@ -1,5 +1,6 @@
 package com.foodsaver.app.addProductModule.data.repository
 
+import com.databases.cache.ProductCacheEntity
 import com.foodsaver.app.addProductModule.data.dto.UploadImageDto
 import com.foodsaver.app.addProductModule.data.mappers.mapDtoToModel
 import com.foodsaver.app.addProductModule.data.mappers.mapRequestToDto
@@ -9,6 +10,7 @@ import com.foodsaver.app.addProductModule.domain.repository.AddProductRepository
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.commonModule.apiResult.map
+import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.utils.image.ImageCompressor
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreAuth.requireUserId
@@ -33,11 +35,14 @@ internal class AddProductRepositoryImpl(
     private val httpClient: HttpClient,
     private val authUserManager: AuthUserManager,
     private val provider: DatabaseProvider
-): AddProductRepository {
+) : AddProductRepository {
 
     private val db by lazy { provider() }
 
-    override suspend fun uploadImage(image: ByteArray): ApiResult<UploadImageModel> {
+    override suspend fun uploadImage(
+        image: ByteArray,
+        productId: String?
+    ): ApiResult<UploadImageModel> {
         return withContext(Dispatchers.InputOutput) {
             val image = ImageCompressor.compress(image)
             saveNetworkCall<UploadImageDto> {
@@ -47,8 +52,12 @@ internal class AddProductRepositoryImpl(
                             parts = formData {
                                 append("image", image, Headers.build {
                                     append(HttpHeaders.ContentType, "image/png")
-                                    append(HttpHeaders.ContentDisposition, "filename=\"productImage.png\"")
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=\"productImage.png\""
+                                    )
                                 })
+                                productId?.let { append("productId", productId) }
                             }
                         )
                     )
@@ -69,6 +78,24 @@ internal class AddProductRepositoryImpl(
                 httpClient.post(HttpConstants.PRODUCTS_URL + "/add") {
                     setBody(request.mapRequestToDto(user.restaurantId!!))
                 }
+            }.onSuccess {
+                db.productEntityQueries.upsertProduct(
+                    with(it) {
+                        ProductCacheEntity(
+                            productId = productId,
+                            name = name,
+                            description = description,
+                            imageUris = imageUris,
+                            price = price,
+                            discount = discount,
+                            currency = currency,
+                            unit = unit,
+                            restaurantId = restaurantId,
+                            ingredientIds = ingredientIds,
+                            expiresAt = expiresAt
+                        )
+                    }
+                )
             }.map { it.toModel() }
         }
     }

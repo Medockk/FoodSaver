@@ -1,4 +1,4 @@
-package com.foodsaver.app.common.product
+package com.foodsaver.app.presentation.featureManager.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,16 +25,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
-import com.foodsaver.app.featureSearch.domain.model.ProductCardModel
+import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.ui.FoodSaverTheme
+import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.remained
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ProductCard(
-    state: ProductCardModel,
-    onProductClick: () -> Unit,
+fun MyFoodProductCard(
+    product: ProductModel,
+    onProductClick: ()-> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Box(
         modifier = modifier
             .clickable(
@@ -69,13 +71,13 @@ fun ProductCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = state.name,
+                    text = product.name,
                     style = FoodSaverTheme.typography.bodyRegularBold,
                     color = FoodSaverTheme.colorScheme.onBackgroundSubtitle
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
-                    text = state.restaurantName,
+                    text = stringResource(Res.string.remained) + " ${product.count}",
                     style = FoodSaverTheme.typography.bodySmall,
                     color = FoodSaverTheme.colorScheme.onBackgroundThin
                 )
@@ -83,10 +85,10 @@ fun ProductCard(
         }
 
         AsyncImageWithShimmerLoading(
-            model = state.imageUri,
+            model = product.imageUris,
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .heightIn(min = 80.dp)
+                .height(80.dp)
                 .clip(RoundedCornerShape(15.dp))
                 .align(Alignment.TopCenter),
             contentScale = ContentScale.Fit

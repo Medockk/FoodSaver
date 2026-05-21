@@ -28,6 +28,12 @@ SELECT * FROM cartItemEntity
 WHERE userId = ?
 AND isDeleted = 0;
 
+getCartTotalPriceByUserId:
+SELECT SUM((P.price - P.discount) * C.quantity) AS totalPrice
+FROM cartItemEntity AS C
+JOIN productCacheEntity AS P ON C.productId = P.productId
+WHERE C.userId = :userId AND (C.isDeleted IS NOT 1 OR C.isDeleted IS NULL);
+
 getCartItemByServerId:
 SELECT * FROM cartItemEntity
 WHERE serverId = ?;

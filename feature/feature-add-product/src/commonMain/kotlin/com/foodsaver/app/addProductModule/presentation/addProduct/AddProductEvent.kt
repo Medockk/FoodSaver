@@ -24,4 +24,5 @@ sealed interface AddProductEvent {
 
     data object OnSave: AddProductEvent
     data object OnReset: AddProductEvent
+    data object OnDelete: AddProductEvent
 }

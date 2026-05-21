@@ -26,6 +26,8 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -110,6 +112,8 @@ private fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
+    val pullToRefreshState = rememberPullToRefreshState()
+
     ModalNavigationDrawer(
         drawerContent = {
             ProfileMenuScreenRoot(navController, onBackClick = {
@@ -119,19 +123,28 @@ private fun HomeScreen(
             })
         },
         drawerState = drawerState
-    ){
-        PullToRefreshBox(
-            isRefreshing = state.isRefresh,
-            onRefresh = {
-                onEvent(HomeEvent.OnRefresh)
-            }
-        ) {
-            Scaffold(
-                contentWindowInsets = WindowInsets.navigationBars,
-                containerColor = FoodSaverTheme.colorScheme.background,
-                modifier = Modifier
-                    .fillMaxSize(),
-            ) { paddingValues ->
+    ) {
+
+        Scaffold(
+            contentWindowInsets = WindowInsets.navigationBars,
+            containerColor = FoodSaverTheme.colorScheme.background,
+            modifier = Modifier
+                .fillMaxSize(),
+        ) { paddingValues ->
+            PullToRefreshBox(
+                state = pullToRefreshState,
+                isRefreshing = state.isRefresh,
+                onRefresh = { onEvent(HomeEvent.OnRefresh) },
+                indicator = {
+                    PullToRefreshDefaults.Indicator(
+                        state = pullToRefreshState,
+                        isRefreshing = state.isRefresh,
+                        modifier = Modifier.padding(paddingValues).align(Alignment.TopCenter),
+                        color = FoodSaverTheme.colorScheme.primary,
+                        containerColor = FoodSaverTheme.colorScheme.placeholderBackground
+                    )
+                }
+            ) {
                 LazyColumn(
                     contentPadding = PaddingValues(
                         top = paddingValues.calculateTopPadding(),
@@ -144,10 +157,12 @@ private fun HomeScreen(
                             deliverTo = state.deliverTo,
                             cartItemValue = state.cartSize,
                             onCartClick = {
-                                navController.navigate(Route.CartGraph.CartScreen(
-                                    state.cartId,
-                                    state.cartPrice
-                                ))
+                                navController.navigate(
+                                    Route.CartGraph.CartScreen(
+                                        state.cartId,
+                                        state.cartPrice
+                                    )
+                                )
                             },
                             onMenuClick = {
                                 coroutineScope.launch {
@@ -259,10 +274,12 @@ private fun HomeScreen(
                                             imageUri = "",
                                             isMainChip = state.selectedCategoryIds.contains(category.categoryId),
                                             onCategoryClick = {
-                                                navController.navigate(Route.MainGraph.SearchScreen(
-                                                    searchCategoryId = category.categoryId,
-                                                    categoryName = category.categoryName
-                                                ))
+                                                navController.navigate(
+                                                    Route.MainGraph.SearchScreen(
+                                                        searchCategoryId = category.categoryId,
+                                                        categoryName = category.categoryName
+                                                    )
+                                                )
                                             }
                                         ),
                                         modifier = Modifier
@@ -307,7 +324,12 @@ private fun HomeScreen(
                             RestaurantCard(
                                 restaurant = restaurant,
                                 onRestaurantClick = {
-                                    navController.navigate(Route.MainGraph.Restaurant(restaurant.id, restaurant.name))
+                                    navController.navigate(
+                                        Route.MainGraph.Restaurant(
+                                            restaurant.id,
+                                            restaurant.name
+                                        )
+                                    )
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()

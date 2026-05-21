@@ -69,7 +69,7 @@ internal class SearchRepositoryImpl(
             }.onSuccess { page ->
                 db.productEntityQueries.transaction {
                     page.content.forEach { product ->
-                        db.productEntityQueries.insertProduct(product.mapToEntity())
+                        db.productEntityQueries.upsertProduct(product.mapToEntity())
                     }
                 }
             }.map { page ->
@@ -86,6 +86,7 @@ internal class SearchRepositoryImpl(
         return withContext(Dispatchers.InputOutput) {
             // todo: make search into local database
 
+            println("Начинаю оптравку запроса на поиск продуктов по категориям. Категория - $categoryId")
             return@withContext saveNetworkCall<Page<ProductDto>> {
                 httpClient.get(HttpConstants.PRODUCTS_URL + "/search/category") {
                     parameter("categoryId", categoryId)
@@ -93,9 +94,10 @@ internal class SearchRepositoryImpl(
                     parameter("size", size)
                 }
             }.onSuccess { page ->
+                println("Получил ответ от сервера на поиск продуктов по категориям\nОтвет: $page")
                 db.productEntityQueries.transaction {
                     page.content.forEach { dto ->
-                        db.productEntityQueries.insertProduct(dto.mapToEntity())
+                        db.productEntityQueries.upsertProduct(dto.mapToEntity())
                     }
                 }
             }.map { page ->

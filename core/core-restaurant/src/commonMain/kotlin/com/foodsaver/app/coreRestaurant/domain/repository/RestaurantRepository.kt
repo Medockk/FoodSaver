@@ -23,6 +23,7 @@ interface RestaurantRepository {
     suspend fun fetchUserRestaurant(): ApiResult<List<RestaurantModel>>
     fun observeUserRestaurant(): Flow<ApiResult<List<RestaurantModel>>>
 
+    suspend fun getRestaurantsByIds(ids: List<String>): ApiResult<List<RestaurantModel>>
 
     suspend fun getCachedRestaurants(): ApiResult<List<RestaurantModel>>
 

@@ -40,6 +40,7 @@ class SearchViewModel(
             initialKey = 0,
             onRequest = { searchRepository.search(query, it, pageSize) },
             onSuccess = { _, result ->
+                getOpenRestaurants(result.map { it.restaurantId })
                 _state.update {
                     it.copy(
                         searchedProducts = it.searchedProducts + result
@@ -57,6 +58,7 @@ class SearchViewModel(
             initialKey = 0,
             onRequest = { searchRepository.searchByCategoryId(id, it, pageSize) },
             onSuccess = { _, result ->
+                getOpenRestaurants(result.map { it.restaurantId })
                 _state.update {
                     it.copy(
                         searchedProducts = it.searchedProducts + result
@@ -103,6 +105,14 @@ class SearchViewModel(
         }
     }
 
+    private fun getOpenRestaurants(restaurantIds: List<String>) {
+        viewModelScope.launch {
+            restaurantRepository.getRestaurantsByIds(restaurantIds).onSuccess { restaurants ->
+                _state.update { it.copy(openRestaurants = restaurants) }
+            }
+        }
+    }
+
     private fun getSuggestedProducts() {
         viewModelScope.launch {
             productRepository.getSuggestedProducts().onSuccess { products ->
@@ -138,9 +148,9 @@ class SearchViewModel(
             val searchCategoryId = navArgs.searchCategoryId
             val searchQuery = navArgs.query
             if (searchCategoryId != null) {
-                searchByCategoryIdPaginator(searchCategoryId)
+                searchByCategoryIdPaginator(searchCategoryId).loadPage()
             } else if (searchQuery != null) {
-                searchByQueryPaginator.invoke(searchQuery)
+                searchByQueryPaginator.invoke(searchQuery).loadPage()
             }
         }
     }

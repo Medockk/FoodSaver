@@ -13,4 +13,6 @@ sealed interface CartEvent {
 
     data object OnEditDeliveryAddressClick: CartEvent
     data class OnAddressValueChange(val value: String): CartEvent
+
+    data object OnRefresh: CartEvent
 }

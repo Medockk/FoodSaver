@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,29 +85,34 @@ fun SearchTopBar(
             }
         },
         navigationIcon = {
-            PrimaryFabButton(
-                onClick = {
-                    if (isFirstSearchingScreen) {
-                        navController.navigateUp()
-                    } else {
-                        onSearchIconClick()
+            Row {
+                Spacer(Modifier.width(24.dp))
+                PrimaryFabButton(
+                    onClick = {
+                        if (isFirstSearchingScreen) {
+                            navController.navigateUp()
+                        } else {
+                            onSearchIconClick()
+                        }
                     }
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.back_icon),
+                        contentDescription = null
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.back_icon),
-                    contentDescription = null
-                )
             }
         },
         actions = {
             if (isFirstSearchingScreen) {
                 CartTopBarIcon(
+                    modifier = Modifier.padding(end = 24.dp),
                     cartItemValue = cartItemValue,
                     onCartClick = onCartIconClick
                 )
             } else {
                 Row(
+                    modifier = Modifier.padding(end = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     IconButton(
@@ -124,7 +130,7 @@ fun SearchTopBar(
                         )
                     }
                     IconButton(
-                        onClick = onSearchIconClick,
+                        onClick = onFilterClick,
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = FoodSaverTheme.colorScheme.fabBackground
                         ),

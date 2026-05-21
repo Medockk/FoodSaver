@@ -51,6 +51,24 @@ internal class RestaurantRepositoryImpl(
 
     private val db by lazy { databaseProvider.invoke() }
 
+    private suspend fun RestaurantDto.upsertRestaurantToDb() {
+        with(this) {
+            db.restaurantEntityQueries.insertRestaurant(
+                serverId = id,
+                name = name,
+                description = description,
+                photoUris = photoUris,
+                latitude = latitude,
+                longitude = longitude,
+                addressName = addressName,
+                companyId = companyId,
+                rating = rating,
+                deliveryCost = deliveryCost,
+                averageDeliveryTime = averageDeliveryTime
+            )
+        }
+    }
+
     override fun observeRestaurants(): Flow<ApiResult<List<RestaurantModel>>> {
         return db.restaurantEntityQueries.getAllRestaurants()
             .asFlow()
@@ -71,21 +89,7 @@ internal class RestaurantRepositoryImpl(
             }.onSuccess { page ->
                 db.restaurantEntityQueries.transaction {
                     page.content.forEach { dto ->
-                        with(dto) {
-                            db.restaurantEntityQueries.insertRestaurant(
-                                serverId = id,
-                                name = name,
-                                description = description,
-                                photoUris = photoUris,
-                                latitude = latitude,
-                                longitude = longitude,
-                                addressName = addressName,
-                                companyId = companyId,
-                                rating = rating,
-                                deliveryCost = deliveryCost,
-                                averageDeliveryTime = averageDeliveryTime
-                            )
-                        }
+                        dto.upsertRestaurantToDb()
                     }
                 }
             }.map { p -> p.content.map { it.mapToModel() } }
@@ -109,7 +113,10 @@ internal class RestaurantRepositoryImpl(
                     httpClient.get(HttpConstants.RESTAURANT_URL + "/id") {
                         parameter("restaurantId", userRestaurantId)
                     }
-                }.onSuccess { println("Restaurant for Manager from network is $it") }.map { listOf(it.mapToModel()) }
+                }.onSuccess { dto ->
+                    println("Restaurant for Manager from network is $dto")
+                    dto.upsertRestaurantToDb()
+                }.map { listOf(it.mapToModel()) }
             } else {
                 println("USer role isn't Manager and Admin.")
                 ApiResult.success(emptyList())
@@ -149,6 +156,20 @@ internal class RestaurantRepositoryImpl(
                         }
                 }
             }
+        }
+    }
+
+    override suspend fun getRestaurantsByIds(ids: List<String>): ApiResult<List<RestaurantModel>> {
+        return withContext(Dispatchers.InputOutput) {
+            saveNetworkCall<List<RestaurantDto>> {
+                httpClient.get(HttpConstants.RESTAURANT_URL + "/ids") {
+                    ids.forEach { parameter("ids", it) }
+                }
+            }.onSuccess { dtos ->
+                db.restaurantEntityQueries.transaction {
+                    dtos.forEach { it.upsertRestaurantToDb() }
+                }
+            }.map { it.map { r -> r.mapToModel() } }
         }
     }
 
@@ -193,11 +214,11 @@ internal class RestaurantRepositoryImpl(
 
     override suspend fun getRestaurantById(restaurantId: String): ApiResult<RestaurantModel> =
         withContext(Dispatchers.InputOutput) {
-            val response: ApiResult<RestaurantDto> = saveNetworkCall {
+            val response: ApiResult<RestaurantDto> = saveNetworkCall<RestaurantDto> {
                 httpClient.get(HttpConstants.RESTAURANT_URL + "/id") {
                     parameter("restaurantId", restaurantId)
                 }
-            }
+            }.onSuccess { it.upsertRestaurantToDb() }
             return@withContext response.map { it.mapToModel() }
         }
 
@@ -214,21 +235,7 @@ internal class RestaurantRepositoryImpl(
             val restaurantQueries = databaseProvider.invoke().restaurantEntityQueries
             restaurantQueries.transaction {
                 page.content.forEach {
-                    with(it) {
-                        restaurantQueries.insertRestaurant(
-                            serverId = id,
-                            name = name,
-                            description = description,
-                            photoUris = photoUris,
-                            latitude = latitude,
-                            longitude = longitude,
-                            addressName = addressName,
-                            companyId = companyId,
-                            rating = rating,
-                            deliveryCost = deliveryCost,
-                            averageDeliveryTime = averageDeliveryTime
-                        )
-                    }
+                    it.upsertRestaurantToDb()
                 }
             }
 
@@ -239,7 +246,7 @@ internal class RestaurantRepositoryImpl(
         return withContext(Dispatchers.InputOutput) {
             return@withContext saveNetworkCall<List<RestaurantDto>> {
                 httpClient.get(HttpConstants.RESTAURANT_URL + "/suggested")
-            }.map { restaurants ->
+            }.onSuccess { it.forEach { r -> r.upsertRestaurantToDb() } }.map { restaurants ->
                 restaurants.map { it.mapToModel() }
             }
         }
@@ -297,11 +304,11 @@ internal class RestaurantRepositoryImpl(
 
     override suspend fun deleteRestaurant(restaurantId: String): ApiResult<Unit> {
         return withContext(Dispatchers.InputOutput) {
-            saveNetworkCall {
+            saveNetworkCall<Unit> {
                 httpClient.delete(HttpConstants.RESTAURANT_URL + "/delete") {
                     parameter("id", restaurantId)
                 }
-            }
+            }.onSuccess { db.restaurantEntityQueries.deleteRestaurantByServerId(restaurantId) }
         }
     }
 

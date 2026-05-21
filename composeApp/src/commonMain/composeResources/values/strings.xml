@@ -175,4 +175,7 @@ you just place the orer we do the rest</string>
     <string name="category_name">Category name</string>
     <string name="category_delete">Delete category</string>
     <string name="restaurant_delete">Delete restaurant</string>
+
+    <string name="remained">Remained</string>
+    <string name="add_product">Add product</string>
 </resources>

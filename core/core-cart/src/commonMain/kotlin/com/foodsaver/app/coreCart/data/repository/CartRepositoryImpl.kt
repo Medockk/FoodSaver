@@ -44,8 +44,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.collections.emptyList
 import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -122,56 +124,54 @@ internal class CartRepositoryImpl(
     }
 
     override suspend fun observeCartItems(cartId: String): Flow<ApiResult<List<CartItemModel>>> {
-        return withContext(Dispatchers.InputOutput) {
-            return@withContext channelFlow {
-                val userId = requireUserId()
+        return channelFlow {
+            val userId = requireUserId()
 
-                // launch sync task
-                launch {
-                    syncPendingProducts()
-                }
+            // launch sync task
+            launch {
+                syncPendingProducts()
+            }
 
-                // parallel subscribe to database
-                val databaseJob = launch {
-                    db.cartItemEntityQueries
-                        .getCartWithProductDetails(userId)
-                        .asFlow()
-                        .mapToList(Dispatchers.InputOutput)
-                        .collect { products ->
-                            println("Получил новые значения из локальной базы")
-                            println("Новые значения для ${products.map { it.serverId }}")
-                            db.cartEntityQueries.updateCount(
-                                totalQuantity = products.size.toLong(),
-                                userId = userId
-                            )
-                            val cartItems = products.map {
-                                CartItemModel(
-                                    localId = it.localId,
-                                    serverId = it.serverId,
-                                    productId = it.productId,
-                                    name = it.name,
-                                    price = it.price,
-                                    currency = it.currency,
-                                    imageUri = it.imageUris?.firstOrNull(),
-                                    quantity = it.quantity,
-                                    attributes = CartItemAttributes(
-                                        size = it.attributes?.size,
-                                        additions = it.attributes?.additions ?: emptyList()
-                                    )
+            // parallel subscribe to database
+            val databaseJob = launch {
+                db.cartItemEntityQueries
+                    .getCartWithProductDetails(userId)
+                    .asFlow()
+                    .mapToList(Dispatchers.InputOutput)
+                    .collect { products ->
+                        println("Получил новые значения из локальной базы")
+                        println("Новые значения для ${products.map { it.serverId }}")
+                        db.cartEntityQueries.updateCount(
+                            totalQuantity = products.size.toLong(),
+                            userId = userId
+                        )
+                        val cartItems = products.map {
+                            CartItemModel(
+                                localId = it.localId,
+                                serverId = it.serverId,
+                                productId = it.productId,
+                                name = it.name,
+                                price = it.price,
+                                currency = it.currency,
+                                imageUri = it.imageUris?.firstOrNull(),
+                                quantity = it.quantity,
+                                attributes = CartItemAttributes(
+                                    size = it.attributes?.size,
+                                    additions = it.attributes?.additions ?: emptyList()
                                 )
-                            }
-
-                            send(ApiResult.success(cartItems))
+                            )
                         }
-                }
 
-                // parallel send HTTP request to server
-                println("Отправляю запрос на сервер для получение элементов корзины")
-                saveNetworkCall<List<CartItemDto>> {
-                    httpClient.get(HttpConstants.CART_URL + "/items") {
-                        parameter("cartId", cartId)
+                        send(ApiResult.success(cartItems))
                     }
-                }.onSuccess { items ->
+            }
+
+            println("Отправляю запрос на сервер для получение элементов корзины")
+            saveNetworkCall<List<CartItemDto>> {
+                httpClient.get(HttpConstants.CART_URL + "/items") {
+                    parameter("cartId", cartId)
+                }
+            }.onSuccess { items ->
                     println(
                         "Получил ответ от сервера на получение элементов корзины\n" +
                                 "Результат: ${items.map { it.productId }}"
@@ -212,7 +212,7 @@ internal class CartRepositoryImpl(
                             println("Успешно получил пропущенные продукты $missingProductIds с сервера")
                             db.productEntityQueries.transaction {
                                 productDtos.forEach { dto ->
-                                    db.productEntityQueries.insertProduct(dto.mapDtoToEntity())
+                                    db.productEntityQueries.upsertProduct(dto.mapDtoToEntity())
                                 }
                                 println("Сохранил пропущенные продукты $missingProductIds в локальную БД")
                             }
@@ -252,10 +252,27 @@ internal class CartRepositoryImpl(
                     send(it)
                 }
 
-                awaitClose {
-                    databaseJob.cancel()
-                }
+            awaitClose {
+                databaseJob.cancel()
             }
+        }
+    }
+
+    override fun observeTotalPrice(): Flow<Double> {
+        return channelFlow {
+            val userId = requireUserId()
+
+            launch {
+                db.cartItemEntityQueries.getCartTotalPriceByUserId(userId)
+                    .asFlow()
+                    .mapToOneOrNull(Dispatchers.InputOutput)
+                    .collect {
+                        val price = it?.totalPrice ?: 0.0
+                        send(price)
+                    }
+            }
+
+            // todo make http request
         }
     }
 
@@ -330,7 +347,7 @@ internal class CartRepositoryImpl(
                             parameter("productId", dto.productId)
                         }
                     }.onSuccess {
-                        db.productEntityQueries.insertProduct(it.mapDtoToEntity())
+                        db.productEntityQueries.upsertProduct(it.mapDtoToEntity())
                         cachedProduct = db.productEntityQueries.getProduct(it.productId)
                             .executeAsOneOrNull()
                         println("Сохранил продукт в локальную БД")

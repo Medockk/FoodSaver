@@ -16,15 +16,22 @@ CREATE TABLE productCacheEntity (
     expiresAt INTEGER AS Instant NOT NULL
 );
 
-insertProduct:
+upsertProduct:
 INSERT OR REPLACE INTO productCacheEntity VALUES ?;
 
 getProduct:
 SELECT * FROM productCacheEntity WHERE productId = ?;
 
+getAllProducts:
+SELECT * FROM productCacheEntity;
+
 getProductsByIds:
 SELECT * FROM productCacheEntity
 WHERE productId IN ?;
+
+deleteProductById:
+DELETE FROM productCacheEntity
+WHERE productId = ?;
 
 getExistingIds:
 SELECT productId FROM productCacheEntity
@@ -32,4 +39,8 @@ WHERE productId IN ?;
 
 getProductByRestaurantId:
 SELECT * FROM productCacheEntity
+WHERE restaurantId = ?;
+
+deleteProductsByRestaurantId:
+DELETE FROM productCacheEntity
 WHERE restaurantId = ?;
