@@ -71,7 +71,7 @@ private fun EditProfileScreenPreview() {
                 EditProfileScreen(
                     navController = rememberNavController(),
                     state = ProfileEditProfileState(),
-                    onEvent = { TODO() }
+                    onEvent = { /*TODO()*/ }
                 )
             }
         }

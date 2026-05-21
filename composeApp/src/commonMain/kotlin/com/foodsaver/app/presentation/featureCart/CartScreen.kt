@@ -88,7 +88,7 @@ private fun CartScreen(
                 deliveryAddressValue = state.deliveryAddress,
                 onDeliveryAddressValueChange = { onEvent(CartEvent.OnAddressValueChange(it)) },
                 totalPrice = state.totalCost,
-                onBreakdownClick = { TODO() },
+                onBreakdownClick = { /*TODO()*/ },
                 onPlaceOrderClick = {
                     navController.navigate(Route.PaymentMethodGraph.PaymentMethodScreen(
                         state.totalCost,

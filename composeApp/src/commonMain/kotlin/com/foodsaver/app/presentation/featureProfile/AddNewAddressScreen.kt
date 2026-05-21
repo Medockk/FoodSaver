@@ -87,7 +87,7 @@ private fun AddNewAddressScreenPreview() {
                 AddNewAddressScreen(
                     navController = rememberNavController(),
                     state = ProfileAddAddressState(),
-                    onEvent = { TODO() }
+                    onEvent = { /*TODO()*/ }
                 )
             }
         }

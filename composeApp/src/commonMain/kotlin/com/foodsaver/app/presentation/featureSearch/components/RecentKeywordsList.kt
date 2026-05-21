@@ -39,7 +39,7 @@ private fun RecentKeywordsListPreview() {
             Box(Modifier.padding(padding)) {
                 RecentKeywordsList(
                     keywords = listOf(),
-                    onKeyworkClick = { TODO() }
+                    onKeyworkClick = { /*TODO()*/ }
                 )
             }
         }

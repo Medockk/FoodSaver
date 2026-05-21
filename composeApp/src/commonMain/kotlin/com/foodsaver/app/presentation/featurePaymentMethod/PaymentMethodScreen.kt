@@ -119,7 +119,7 @@ private fun PaymentMethodScreenPreview() {
                             )
                         )
                     ),
-                    onEvent = { TODO() }
+                    onEvent = { /*TODO()*/ }
                 )
             }
         }
@@ -227,9 +227,7 @@ private fun PaymentMethodScreen(
                     ) {
                         PaymentMethodCard(
                             card = card,
-                            onExpandClick = {
-                                TODO()
-                            },
+                            onExpandClick = { /*TODO()*/ },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp)

@@ -64,8 +64,8 @@ private fun CartBottomBarPreview() {
                 deliveryAddressValue = text,
                 onDeliveryAddressValueChange = { text = it },
                 totalPrice = 95.0,
-                onBreakdownClick = { TODO() },
-                onPlaceOrderClick = { TODO() },
+                onBreakdownClick = { /*TODO()*/ },
+                onPlaceOrderClick = { /*TODO()*/ },
                 modifier = Modifier
                     .fillMaxWidth(),
                 currency = "$"

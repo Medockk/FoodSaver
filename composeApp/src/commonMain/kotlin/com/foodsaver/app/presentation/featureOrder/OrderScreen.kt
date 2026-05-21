@@ -78,9 +78,7 @@ private fun OrderScreen(
                 onBackClick = {
                     navController.navigateUp()
                 },
-                onMoreClick = {
-                    TODO()
-                },
+                onMoreClick = { /*TODO() */},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)

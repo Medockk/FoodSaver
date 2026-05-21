@@ -23,9 +23,9 @@ private fun CartProductItemPreview() {
             productSize = "14''",
             productImageUri = "",
             productCount = 2,
-            onIncreaseClick = { TODO() },
-            onDecreaseClick = { TODO() },
-            onRemoveClick = { TODO() },
+            onIncreaseClick = { /*TODO()*/ },
+            onDecreaseClick = { /*TODO()*/ },
+            onRemoveClick = { /*TODO()*/ },
             isProductEditing = false
         )
 

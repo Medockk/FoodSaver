@@ -72,7 +72,7 @@ private fun AddCardScreenPreview() {
                 AddCardScreen(
                     navController = rememberNavController(),
                     state = AddCardState(),
-                    onEvent = { TODO() }
+                    onEvent = { /*TODO()*/ }
                 )
             }
         }

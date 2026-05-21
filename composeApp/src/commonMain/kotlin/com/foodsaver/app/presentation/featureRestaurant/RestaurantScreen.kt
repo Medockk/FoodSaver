@@ -77,7 +77,7 @@ private fun RestaurantScreenPreview() {
                 selectedCategoryId = "1",
             ),
 
-            onEvent = { TODO() },
+            onEvent = { /*TODO()*/ },
             navController = rememberNavController()
         )
     }
@@ -99,7 +99,7 @@ private fun RestaurantScreen(
     PrimaryScaffold(
         actionButton = ActionButtonItem(
             onClick = {
-                TODO()
+                /*TODO()*/
             },
             icon = Res.drawable.more_icon
         ),
@@ -200,7 +200,7 @@ private fun RestaurantScreen(
                         PrimaryChip(
                             text = category.name,
                             isSelected = state.selectedCategoryId == category.id,
-                            onClick = { TODO() }
+                            onClick = { /*TODO()*/ }
                         )
                     }
                 }

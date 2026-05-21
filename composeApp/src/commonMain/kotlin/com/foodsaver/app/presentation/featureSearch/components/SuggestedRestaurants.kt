@@ -62,7 +62,7 @@ private fun SuggestedRestaurantsPreview() {
                             rating = 4.5
                         ),
                     ),
-                    onRestaurantClick = { TODO() }
+                    onRestaurantClick = { /*TODO()*/ }
                 )
             }
         }

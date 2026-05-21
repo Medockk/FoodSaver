@@ -228,9 +228,7 @@ private fun HomeScreen(
                     item {
                         Spacer(Modifier.height(30.dp))
                         TableOfContent(
-                            onSeeAllClick = {
-                                TODO("Navigate to somewhere...")
-                            },
+                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */},
                             modifier = Modifier
                                 .padding(horizontal = 24.dp),
                             text = Res.string.category_see_all
@@ -294,9 +292,7 @@ private fun HomeScreen(
                     item {
                         Spacer(Modifier.height(30.dp))
                         TableOfContent(
-                            onSeeAllClick = {
-                                TODO("Navigate to somewhere...")
-                            },
+                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */},
                             modifier = Modifier
                                 .padding(horizontal = 24.dp),
                             text = Res.string.open_restaurants

@@ -125,7 +125,7 @@ private fun AddProductScreenPreview() {
                         ),
                         selectedCategoryIds = listOf("1", "3")
                     ),
-                    onEvent = { TODO() },
+                    onEvent = { /*TODO()*/ },
                     snackbarHost = SnackbarHostState()
                 )
             }

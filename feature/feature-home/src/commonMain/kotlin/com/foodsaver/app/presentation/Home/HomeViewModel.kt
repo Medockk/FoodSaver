@@ -151,7 +151,7 @@ class HomeViewModel(
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnCategoryIndexChange -> {
-                TODO("navigate to search screen!")
+//                TODO("navigate to search screen!")
             }
 
             is HomeEvent.OnSearchQueryChange -> {

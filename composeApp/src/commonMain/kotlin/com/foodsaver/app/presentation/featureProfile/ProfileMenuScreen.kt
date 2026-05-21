@@ -120,34 +120,34 @@ private fun ProfileMenuScreen(
             MenuItemState(
                 icon = Res.drawable.favorite_icon,
                 title = stringResource(Res.string.profile_menu_favorite),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
             MenuItemState(
                 icon = Res.drawable.notifications_icon,
                 title = stringResource(Res.string.profile_menu_notifications),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
             MenuItemState(
                 icon = Res.drawable.payment_method_icon,
                 title = stringResource(Res.string.profile_menu_payment_method),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
         ),
         listOf(
             MenuItemState(
                 icon = Res.drawable.faqs_icon,
                 title = stringResource(Res.string.profile_menu_faqs),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
             MenuItemState(
                 icon = Res.drawable.user_reviews_icon,
                 title = stringResource(Res.string.profile_menu_user_reviews),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
             MenuItemState(
                 icon = Res.drawable.settings_icon,
                 title = stringResource(Res.string.profile_menu_settings),
-                onClick = { TODO() }
+                onClick = { /*TODO()*/ }
             ),
         ),
         listOf(
@@ -170,9 +170,7 @@ private fun ProfileMenuScreen(
                 onNavigationClick = onBackClick,
                 actions = {
                     PrimaryFabButton(
-                        onClick = {
-                            TODO()
-                        }
+                        onClick = { /*TODO()*/ }
                     ) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.more_icon),

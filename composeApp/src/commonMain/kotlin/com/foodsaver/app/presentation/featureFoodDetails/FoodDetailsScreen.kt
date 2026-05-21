@@ -127,9 +127,7 @@ private fun FoodDetailsScreen(
                 },
                 actions = {
                     PrimaryFabButton(
-                        onClick = {
-                            TODO()
-                        }
+                        onClick = {/*TODO()*/}
                     ) {
                         Icon(
                             imageVector = if (state.isFavoriteProduct) vectorResource(Res.drawable.selected_favorite_icon)
@@ -308,9 +306,7 @@ private fun FoodDetailsScreen(
                                 SizeView(
                                     size = size.size,
                                     isSelected = index == state.selectedSizeIndex,
-                                    onClick = {
-                                        TODO()
-                                    }
+                                    onClick = { /*TODO()*/ }
                                 )
                             }
                         }

@@ -265,7 +265,7 @@ private fun SearchScreenPreview() {
                 query = TextFieldValue("Burger")
             ),
             onEvent = {
-                TODO()
+                /*TODO()*/
             }
         )
     }
@@ -316,7 +316,7 @@ private fun SearchScreen(
                     },
                     searchQuery = state.query.text,
                     onShowMoreSearchVariantsClick = {
-                        TODO()
+                        /*TODO()*/
                     },
                     onSearchIconClick = {
                         onEvent(SearchEvent.OnSearchIconClick)

@@ -272,9 +272,7 @@ private fun LoginScreen(
                 val authenticationVariants = listOf(
                     AuthenticationVariantState(
                         imageRes = Res.drawable.facebook_logo,
-                        onClick = {
-                            TODO()
-                        }
+                        onClick = {/*TODO*/}
                     ),
                     AuthenticationVariantState(
                         imageRes = Res.drawable.google_logo,
@@ -284,9 +282,7 @@ private fun LoginScreen(
                     ),
                     AuthenticationVariantState(
                         imageRes = Res.drawable.apple_logo,
-                        onClick = {
-                            TODO()
-                        }
+                        onClick = {/*TODO*/}
                     ),
                 )
 
