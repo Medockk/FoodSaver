@@ -7,6 +7,7 @@ import com.foodsaver.app.addProductModule.domain.model.AddProductRequest
 import com.foodsaver.app.addProductModule.domain.repository.AddProductRepository
 import com.foodsaver.app.commonModule.InputOutput
 import com.foodsaver.app.commonModule.apiResult.ApiResult
+import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreCategory.domain.repository.CategoryRepository
@@ -219,6 +220,8 @@ class AddProductViewModel(
                                     productImageUris = it.productImageUris + response
                                 )
                             }
+                        }.onFailure {
+                            sendError(it)
                         }
                     }
                 }

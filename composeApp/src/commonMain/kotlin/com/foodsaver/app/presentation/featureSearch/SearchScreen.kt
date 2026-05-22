@@ -54,6 +54,7 @@ import com.foodsaver.app.presentation.featureSearch.components.SuggestedRestaura
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
 import foodsaver.composeapp.generated.resources.Res
+import foodsaver.composeapp.generated.resources.nothing_not_found
 import foodsaver.composeapp.generated.resources.open_restaurants
 import foodsaver.composeapp.generated.resources.popular_food
 import foodsaver.composeapp.generated.resources.popular_item
@@ -261,7 +262,7 @@ private fun SearchScreenPreview() {
                         rating = 4.7
                     ),
                 ),
-                isFirstSearchingScreen = true,
+                isFirstSearchingScreen = false,
                 query = TextFieldValue("Burger")
             ),
             onEvent = {
@@ -477,78 +478,98 @@ private fun SearchScreen(
             }
             // second searching screen
             else {
-                item(span = fullSpan) {
-                    Column {
-                        Spacer(Modifier.height(25.dp))
-                        val formatArgs = state.selectedCategory?.categoryName
-                            ?: stringResource(Res.string.products)
-                        Text(
-                            text = stringResource(
-                                Res.string.popular_item,
-                                formatArgs
-                            ),
-                            style = FoodSaverTheme.typography.bodyMedium,
-                            color = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp)
-                        )
-                        Spacer(Modifier.height(25.dp))
+                if (state.searchedProducts.isNotEmpty() && !state.isSearchedProductsLoading) {
+                    item(span = fullSpan) {
+                        Column {
+                            Spacer(Modifier.height(25.dp))
+                            val formatArgs = state.selectedCategory?.categoryName
+                                ?: stringResource(Res.string.products)
+                            Text(
+                                text = stringResource(
+                                    Res.string.popular_item,
+                                    formatArgs
+                                ),
+                                style = FoodSaverTheme.typography.bodyMedium,
+                                color = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
+                                modifier = Modifier
+                                    .padding(horizontal = 24.dp)
+                            )
+                            Spacer(Modifier.height(25.dp))
+                        }
                     }
                 }
 
-                itemsIndexed(state.searchedProducts) { index, product ->
-                    val isLeftItem = index % 2 == 0
-                    val cartItem =
-                        state.searchedProductCartItemIds.find { it.productId == product.productId }
-                    AddProductCard(
-                        product = product,
-                        onProductClick = {
-                            navController.navigate(
-                                Route.MainGraph.FoodDetailsScreen(
-                                    productId = product.productId,
-                                    productName = product.name,
-                                    productCartItemId = cartItem?.cartItemId
+                if (state.searchedProducts.isEmpty() && !state.isSearchedProductsLoading) {
+                    // nothing not found and request already not loading
+                    item(span = {GridItemSpan(2)}) {
+                        Text(
+                            text = stringResource(Res.string.nothing_not_found),
+                            color = FoodSaverTheme.colorScheme.onBackground,
+                            style = FoodSaverTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(start = 24.dp)
+                        )
+                    }
+                } else {
+
+                    itemsIndexed(state.searchedProducts) { index, product ->
+                        val isLeftItem = index % 2 == 0
+                        val cartItem =
+                            state.searchedProductCartItemIds.find { it.productId == product.productId }
+                        AddProductCard(
+                            product = product,
+                            onProductClick = {
+                                navController.navigate(
+                                    Route.MainGraph.FoodDetailsScreen(
+                                        productId = product.productId,
+                                        productName = product.name,
+                                        productCartItemId = cartItem?.cartItemId
+                                    )
                                 )
-                            )
-                        },
-                        isProductInCart = false,
-                        onAddClick = {},
-                        onRemoveClick = {},
-                        modifier = Modifier
-                            .padding(
-                                start = if (isLeftItem) 24.dp else 0.dp,
-                                end = if (isLeftItem) 0.dp else 24.dp,
-                                bottom = 15.dp
-                            )
-                    )
+                            },
+                            isProductInCart = false,
+                            onAddClick = {},
+                            onRemoveClick = {},
+                            modifier = Modifier
+                                .padding(
+                                    start = if (isLeftItem) 24.dp else 0.dp,
+                                    end = if (isLeftItem) 0.dp else 24.dp,
+                                    bottom = 15.dp
+                                )
+                        )
+                    }
                 }
 
-                item(span = fullSpan) {
-                    Column {
-                        Spacer(Modifier.height(30.dp))
-                        Text(
-                            text = stringResource(Res.string.open_restaurants),
-                            style = FoodSaverTheme.typography.bodyMedium,
-                            color = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
+
+                if (state.openRestaurants.isEmpty() && !state.isOpenRestaurantsLoading) {
+                    // nothing not found!
+                } else {
+                    item(span = fullSpan) {
+                        Column {
+                            Spacer(Modifier.height(30.dp))
+                            Text(
+                                text = stringResource(Res.string.open_restaurants),
+                                style = FoodSaverTheme.typography.bodyMedium,
+                                color = FoodSaverTheme.colorScheme.onBackgroundSubtitle,
+                                modifier = Modifier
+                                    .padding(horizontal = 24.dp)
+                            )
+                            Spacer(Modifier.height(15.dp))
+                        }
+                    }
+                    items(
+                        items = state.openRestaurants,
+                        span = {
+                            fullSpan()
+                        }
+                    ) { restaurant ->
+                        RestaurantCard(
+                            restaurant = restaurant,
+                            onRestaurantClick = {},
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(horizontal = 24.dp)
                         )
-                        Spacer(Modifier.height(15.dp))
                     }
-                }
-                items(
-                    items = state.openRestaurants,
-                    span = {
-                        fullSpan()
-                    }
-                ) { restaurant ->
-                    RestaurantCard(
-                        restaurant = restaurant,
-                        onRestaurantClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                    )
                 }
             }
         }

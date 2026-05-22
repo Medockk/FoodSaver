@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS cartItemEntity (
     UNIQUE(productId, attributes, userId)
 );
 
+clearCartItems:
+DELETE FROM cartItemEntity
+WHERE userId = ?;
+
+clearCart:
+DELETE FROM cartEntity
+WHERE userId = ?;
+
 getCartItemsByUserId:
 SELECT * FROM cartItemEntity
 WHERE userId = ?

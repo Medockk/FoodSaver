@@ -75,7 +75,7 @@ fun InversedPrimaryButton(
         Text(
             text = text,
             style = textStyle,
-            color = FoodSaverTheme.colorScheme.onButtonContent
+            color = FoodSaverTheme.colorScheme.primary
         )
     }
 }

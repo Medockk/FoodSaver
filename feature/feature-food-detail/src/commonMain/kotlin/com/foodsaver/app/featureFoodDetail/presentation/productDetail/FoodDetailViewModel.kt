@@ -17,12 +17,19 @@ import com.foodsaver.app.coreCart.domain.usecase.RemoveProductFromCartUseCase
 import com.foodsaver.app.coreIngredients.domain.repository.IngredientRepository
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
+import com.foodsaver.app.featureFoodDetail.domain.model.IngredientAnalyzeResponse
+import com.foodsaver.app.featureFoodDetail.domain.repository.AiIngredientsRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -34,6 +41,7 @@ class FoodDetailViewModel(
     private val productRepository: ReadProductRepository,
 
     private val ingredientsRepository: IngredientRepository,
+    private val aiIngredientsRepository: AiIngredientsRepository,
 ) : BaseViewModel<FoodDetailActions>() {
 
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.FoodDetailsScreen>()
@@ -46,6 +54,10 @@ class FoodDetailViewModel(
     )
     val state = _state.asStateFlow()
 
+    private val _aiIngredientsResponse =
+        MutableStateFlow<List<IngredientAnalyzeResponse>>(emptyList())
+    val aiIngredientsResponse = _aiIngredientsResponse.asStateFlow()
+
     override val baseChannel: Channel<FoodDetailActions> = Channel()
     override val channel = baseChannel.receiveAsFlow()
 
@@ -53,13 +65,15 @@ class FoodDetailViewModel(
         loadProduct(productId = navArgs.productId)
     }
 
-    private fun loadProduct(productId: String) {
-        viewModelScope.launch {
+    private fun loadProduct(productId: String): Job {
+        return viewModelScope.launch {
             productRepository.observeProductById(productId)
                 .collectRequest(
                     onSuccess = { product ->
-                        println("Get info about product ${product.productId}\n" +
-                                "ImageUris for this product: ${product.imageUris}")
+                        println(
+                            "Get info about product ${product.productId}\n" +
+                                    "ImageUris for this product: ${product.imageUris}"
+                        )
                         _state.update {
                             it.copy(
                                 product = product
@@ -71,20 +85,27 @@ class FoodDetailViewModel(
         }
     }
 
-    private fun loadIngredients(productModel: ProductModel) {
-        viewModelScope.launch {
+    private fun loadIngredients(productModel: ProductModel): Job {
+        return viewModelScope.launch {
             println("Ingredients ${productModel.ingredientIds}")
             ingredientsRepository.fetchIngredientsByIds(productModel.ingredientIds)
                 .onSuccess { ingredients ->
-                    _state.update { it.copy(
-                        ingredients = ingredients
-                    ) }
+                    _state.update {
+                        it.copy(
+                            ingredients = ingredients
+                        )
+                    }
                 }
         }
     }
 
     fun onRefresh() {
-
+        _state.update { it.copy(isRefresh = true) }
+        loadProduct(navArgs.productId)
+        viewModelScope.launch(Dispatchers.InputOutput) {
+            delay(1500)
+            _state.update { it.copy(isRefresh = false) }
+        }
     }
 
     fun onEvent(events: FoodDetailEvents) {
@@ -146,18 +167,35 @@ class FoodDetailViewModel(
                             cartItemId = cartItemId
                         )
                         cartRepository.removeProductFromCart(request).onSuccess {
-                            _state.update { it.copy(
-                                isProductInCart = false
-                            ) }
+                            _state.update {
+                                it.copy(
+                                    isProductInCart = false
+                                )
+                            }
                         }
                     }
                 }
             }
 
             FoodDetailEvents.OnAnalyzeIngredients -> {
-                viewModelScope.launch {
-                    _state.update { it.copy(isAiResponseLoading = true) }
-                    TODO()
+                _state.update { it.copy(isAiResponseLoading = true) }
+                _aiIngredientsResponse.update { emptyList() }
+                viewModelScope.launch(Dispatchers.InputOutput) {
+                    aiIngredientsRepository.analyzeIngredientsByProductId(navArgs.productId)
+                        .onEach { response ->
+                            if (response == null) {
+                                sendError("Something went wrong")
+                            } else {
+                                _aiIngredientsResponse.update { it + response }
+                            }
+                        }.onCompletion {
+                            _state.update {
+                                it.copy(
+                                    isAiResponseLoading = false,
+                                    isAiResponseCompleted = true
+                                )
+                            }
+                        }.stateIn(viewModelScope)
                 }
             }
 

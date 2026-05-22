@@ -38,6 +38,7 @@ suspend inline fun<reified T> saveNetworkCall(
             ApiResult.success(body)
         } else {
             val errorBodyText = result.bodyAsText()
+            println("Ответ от сервера не успешный.\nТело ответа - $errorBodyText")
 
             val errorResult = runCatching {
                 val decodedBody = Json.decodeFromString<GlobalErrorResponse>(errorBodyText)

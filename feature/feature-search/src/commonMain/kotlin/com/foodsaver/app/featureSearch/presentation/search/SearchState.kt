@@ -21,8 +21,10 @@ data class SearchState(
 
     val selectedCategory: CategoryModel? = null,
     val searchedProducts: List<ProductModel> = emptyList(),
+    val isSearchedProductsLoading: Boolean = false,
     val searchedProductCartItemIds: Set<ProductInCartResponseModel> = emptySet(),
     val openRestaurants: List<RestaurantModel> = emptyList(),
+    val isOpenRestaurantsLoading: Boolean = false,
 
     val cartId: String? = null,
     val suggestedProducts: List<ProductCardModel> = emptyList(),

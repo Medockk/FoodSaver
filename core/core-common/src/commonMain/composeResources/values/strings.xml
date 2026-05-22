@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
-    <string name="error_unknown">Unknown error occurred</string>
 
     <string name="error_auth_username_occupied">Username is already taken</string>
     <string name="error_auth_invalid_email">Invalid email format</string>
@@ -12,19 +11,36 @@
     <string name="error_auth_password_mismatch">Passwords do not match</string>
     <string name="error_auth_google_verify_failed">Google authentication failed</string>
 
-    <string name="error_user_not_found">User not found</string>
     <string name="error_user_empty_email">Email cannot be empty</string>
     <string name="error_user_file_too_large">File is too large</string>
-
-    <string name="error_product_not_found">Product not found</string>
-    <string name="error_product_not_fresh">Product not fresh</string>
-    <string name="error_cart_not_found">Cart not found</string>
 
     <string name="error_org_not_found">Organization not found</string>
     <string name="error_category_not_found">Category not found</string>
 
     <string name="error_payment_method_not_found">Payment method not found</string>
-    <string name="error_address_not_found">Address not found</string>
 
     <string name="error_uuid_parse_failed">Invalid data format (UUID error)</string>
+
+    <string name="error_unknown">An unexpected error occurred. Please try again.</string>
+    <string name="error_file_too_large">The selected file is too large. Max size exceeded.</string>
+
+    <string name="error_unauthorized_jwt">Session expired or invalid. Please log in again.</string>
+    <string name="error_unauthorized_csrf">Security validation failed (CSRF error).</string>
+    <string name="error_user_not_found">User account not found.</string>
+    <string name="error_user_already_registered">An account with this email is already registered.</string>
+    <string name="error_invalid_google_token">Google authentication failed. Invalid token.</string>
+    <string name="error_jwt_not_expired">Current session is still active.</string>
+    <string name="error_refresh_token_expired">Your session has expired. Please sign in again.</string>
+
+    <string name="error_product_not_found">Product not found.</string>
+    <string name="error_product_not_fresh">This product is no longer fresh or has expired.</string>
+    <string name="error_ingredient_not_found">Ingredient not found.</string>
+
+    <string name="error_profile_not_found">Profile information not found.</string>
+
+    <string name="error_cart_not_found">Your shopping cart was not found.</string>
+    <string name="error_cart_item_not_found">Selected item is no longer in the cart.</string>
+    <string name="error_quantity_out_of_bounds">Requested quantity is unavailable or exceeds limits.</string>
+
+    <string name="error_address_not_found">Specified delivery or restaurant address not found.</string>
 </resources>

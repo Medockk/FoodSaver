@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.koin.plugin) apply false
     id("com.github.gmazzo.buildconfig") version "3.1.0" apply false
 //    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.cocoapods) apply false
 }
 
 subprojects {

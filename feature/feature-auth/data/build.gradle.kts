@@ -11,6 +11,7 @@ plugins {
 
     alias { libs.plugins.jetbrains.kotlin.serialization }
     id("com.github.gmazzo.buildconfig")
+    id("org.jetbrains.kotlin.native.cocoapods") apply false // отключаем чтобы на винде оно нне ломало сборку
 }
 
 val localProperties = Properties()
@@ -45,6 +46,37 @@ buildConfig {
 
 kotlin {
 
+    val isMac = System.getProperty("os.name").startsWith("Mac", ignoreCase = true)
+
+    if (isMac) {
+        // применяем плагин на Маке
+        plugins.apply("org.jetbrains.kotlin.native.cocoapods")
+
+        // Объявляем iOS таргеты
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+
+        // Конфигурируем cocoapods динамически, чтобы обойти ошибку компиляции .kts
+        configure<org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension> {
+            summary = "Authentication data module for FoodSaver"
+            homepage = "https://github.com/Medockk/FoodSaver"
+            version = "1.0"
+            ios.deploymentTarget = "14.1" // версия таргета для ios УЗКАТЬ ИЗ XCODE КАКОЙ МИНИМАЛЬНЫЙ ТАРГЕТ]!!!!
+
+//            url("https://github.com/CocoaPods/Specs.git")
+
+            framework {
+                baseName = "FeatureAuthData"
+                isStatic = true
+            }
+
+            pod("GoogleSignIn") {
+                version = "7.1.0"
+            }
+        }
+    }
+
     androidLibrary {
         namespace = "com.foodsaver.app.feature.auth.data"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -55,16 +87,16 @@ kotlin {
         }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "FeatureAuthData"
-            isStatic = true
-        }
-    }
+//    listOf(
+//        iosX64(),
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//            baseName = "FeatureAuthData"
+//            isStatic = true
+//        }
+//    }
 
     jvm()
 
@@ -95,18 +127,6 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.server.core)
             implementation(libs.ktor.server.netty)
-        }
-        nativeMain.dependencies {
-
-        }
-        webMain.dependencies {
-
-        }
-        wasmJsMain.dependencies {
-
-        }
-        jsMain.dependencies {
-
         }
     }
 }

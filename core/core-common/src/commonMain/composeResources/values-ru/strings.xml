@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="error_unknown">Произошла неизвестная ошибка</string>
 
     <string name="error_auth_username_occupied">Имя пользователя уже занято</string>
     <string name="error_auth_invalid_email">Некорректный формат почты</string>
@@ -12,19 +11,36 @@
     <string name="error_auth_password_mismatch">Пароли не совпадают</string>
     <string name="error_auth_google_verify_failed">Ошибка проверки Google аккаунта</string>
 
-    <string name="error_user_not_found">Пользователь не найден</string>
     <string name="error_user_empty_email">Email не может быть пустым</string>
     <string name="error_user_file_too_large">Файл слишком большой</string>
-
-    <string name="error_product_not_found">Товар не найден</string>
-    <string name="error_product_not_fresh">Товар не свежий</string>
-    <string name="error_cart_not_found">Корзина не найдена</string>
 
     <string name="error_org_not_found">Организация не найдена</string>
     <string name="error_category_not_found">Категория не найдена</string>
 
     <string name="error_payment_method_not_found">Способ оплаты не найден</string>
-    <string name="error_address_not_found">Адрес не найден</string>
 
     <string name="error_uuid_parse_failed">Ошибка формата данных (UUID)</string>
+
+    <string name="error_unknown">Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже.</string>
+    <string name="error_file_too_large">Выбранный файл слишком большой. Превышен максимальный размер.</string>
+
+    <string name="error_unauthorized_jwt">Сессия недействительна. Пожалуйста, войдите в аккаунт заново.</string>
+    <string name="error_unauthorized_csrf">Ошибка проверки безопасности (CSRF токен невалиден).</string>
+    <string name="error_user_not_found">Пользователь с такими данными не найден.</string>
+    <string name="error_user_already_registered">Пользователь с таким email уже зарегистрирован.</string>
+    <string name="error_invalid_google_token">Ошибка проверки Google аккаунта. Неверный токен.</string>
+    <string name="error_jwt_not_expired">Текущая сессия всё еще активна.</string>
+    <string name="error_refresh_token_expired">Срок действия сессии истёк. Пожалуйста, авторизуйтесь снова.</string>
+
+    <string name="error_product_not_found">Продукт не найден.</string>
+    <string name="error_product_not_fresh">Этот продукт больше не свежий или его срок годности истёк.</string>
+    <string name="error_ingredient_not_found">Ингредиент не найден.</string>
+
+    <string name="error_profile_not_found">Профиль пользователя не найден.</string>
+
+    <string name="error_cart_not_found">Ваша корзина не найдена.</string>
+    <string name="error_cart_item_not_found">Этот товар больше не находится в корзине.</string>
+    <string name="error_quantity_out_of_bounds">Запрошенное количество недоступно или превышает лимит.</string>
+
+    <string name="error_address_not_found">Указанный адрес не найден.</string>
 </resources>

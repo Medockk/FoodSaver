@@ -38,16 +38,20 @@ class SearchViewModel(
     private val searchByQueryPaginator = { query: String ->
         BasePaginator(
             initialKey = 0,
-            onRequest = { searchRepository.search(query, it, pageSize) },
+            onRequest = { currentPage ->
+                _state.update { it.copy(isSearchedProductsLoading = true) }
+                searchRepository.search(query, currentPage, pageSize)
+            },
             onSuccess = { _, result ->
                 getOpenRestaurants(result.map { it.restaurantId })
                 _state.update {
                     it.copy(
-                        searchedProducts = it.searchedProducts + result
+                        searchedProducts = it.searchedProducts + result,
+                        isSearchedProductsLoading = false
                     )
                 }
             },
-            onError = { },
+            onError = { _state.update { it.copy(isSearchedProductsLoading = false) } },
             onNextKey = { key, _ -> key + 1 },
             onLoadUpdated = { },
             onEndReaching = { _, result -> result.size < pageSize }
@@ -56,16 +60,20 @@ class SearchViewModel(
     private val searchByCategoryIdPaginator = { id: String ->
         BasePaginator(
             initialKey = 0,
-            onRequest = { searchRepository.searchByCategoryId(id, it, pageSize) },
+            onRequest = { currentPage ->
+                _state.update { it.copy(isSearchedProductsLoading = true) }
+                searchRepository.searchByCategoryId(id, currentPage, pageSize)
+            },
             onSuccess = { _, result ->
                 getOpenRestaurants(result.map { it.restaurantId })
                 _state.update {
                     it.copy(
-                        searchedProducts = it.searchedProducts + result
+                        searchedProducts = it.searchedProducts + result,
+                        isSearchedProductsLoading = false
                     )
                 }
             },
-            onError = { },
+            onError = { _state.update { it.copy(isSearchedProductsLoading = false) } },
             onNextKey = { key, _ -> key + 1 },
             onLoadUpdated = { },
             onEndReaching = { _, result -> result.size < pageSize }
@@ -96,10 +104,12 @@ class SearchViewModel(
         viewModelScope.launch {
             cartRepository.observeCart().collect { result ->
                 result.onSuccess { cart ->
-                    _state.update { it.copy(
-                        cartId = cart.cartId,
-                        cartItems = cart.quantity
-                    ) }
+                    _state.update {
+                        it.copy(
+                            cartId = cart.cartId,
+                            cartItems = cart.quantity
+                        )
+                    }
                 }
             }
         }
@@ -124,9 +134,11 @@ class SearchViewModel(
                         imageUri = product.imageUris.firstOrNull()
                     )
                 }
-                _state.update { it.copy(
-                    suggestedProducts = productCardModels
-                ) }
+                _state.update {
+                    it.copy(
+                        suggestedProducts = productCardModels
+                    )
+                }
             }
         }
     }
@@ -189,9 +201,11 @@ class SearchViewModel(
                 }
                 viewModelScope.launch {
                     val paginator = searchByQueryPaginator.invoke(event.query)
-                    _state.update { it.copy(
-                        searchedProducts = emptyList()
-                    ) }
+                    _state.update {
+                        it.copy(
+                            searchedProducts = emptyList()
+                        )
+                    }
                     paginator.reset()
                     paginator.loadPage()
                 }
@@ -200,9 +214,11 @@ class SearchViewModel(
             is SearchEvent.OnRecentKeywordsClick -> {
                 viewModelScope.launch {
                     val paginator = searchByQueryPaginator.invoke(event.word.value)
-                    _state.update { it.copy(
-                        searchedProducts = emptyList()
-                    ) }
+                    _state.update {
+                        it.copy(
+                            searchedProducts = emptyList()
+                        )
+                    }
                     paginator.reset()
                     paginator.loadPage()
                 }

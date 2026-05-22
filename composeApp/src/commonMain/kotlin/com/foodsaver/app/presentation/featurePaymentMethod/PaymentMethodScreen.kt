@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,17 +48,19 @@ fun PaymentMethodScreenRoot(
     viewModel: PaymentMethodViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     PaymentMethodScreen(
         navController = navController,
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        snackbarHostState = snackbarHostState
     )
 
     ObserveActions(viewModel.channel) {
         when (it) {
             is PaymentMethodAction.OnError -> {
-                // TODO
+                snackbarHostState.showSnackbar(it.message, withDismissAction = true)
             }
 
             PaymentMethodAction.OnSuccessfulPay -> {
@@ -69,68 +74,12 @@ fun PaymentMethodScreenRoot(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PaymentMethodScreenPreview() {
-    LocalFoodSaverThemeComposition {
-        Scaffold { padding ->
-            Box(modifier = Modifier.padding(padding)) {
-                PaymentMethodScreen(
-                    navController = rememberNavController(),
-                    state = PaymentMethodState(
-                        currentPaymentMethodType = PaymentMethodTypesModel(
-                            id = "VisaID",
-                            name = "Mastercard",
-                            iconUri = ""
-                        ),
-                        paymentMethodsByType = listOf(
-                            PaymentMethodCardModel(
-                                localId = "",
-                                serverId = "",
-                                type = PaymentMethodTypesModel("MastercardID", "Mastercard", ""),
-                                isSelected = true,
-                                cardHolderName = "Android Holder",
-                                lastFourSymbols = "1234",
-                                expiresDate = Clock.System.now()
-                            ),
-                            PaymentMethodCardModel(
-                                localId = "",
-                                serverId = "",
-                                type = PaymentMethodTypesModel("VisaID", "Visa", ""),
-                                isSelected = false,
-                                cardHolderName = "Android Holder",
-                                lastFourSymbols = "8463",
-                                expiresDate = Clock.System.now()
-                            ),
-                        ),
-                        paymentMethodTypes = listOf(
-                            PaymentMethodTypesModel(
-                                id = "TODO()",
-                                name = "Visa",
-                                iconUri = ""
-                            ), PaymentMethodTypesModel(
-                                id = "TODO()",
-                                name = "Mastercard",
-                                iconUri = ""
-                            ), PaymentMethodTypesModel(
-                                id = "TODO()",
-                                name = "PayPal",
-                                iconUri = ""
-                            )
-                        )
-                    ),
-                    onEvent = { /*TODO()*/ }
-                )
-            }
-        }
-    }
-}
-
 @Composable
 private fun PaymentMethodScreen(
     navController: NavController,
     state: PaymentMethodState,
-    onEvent: (PaymentMethodEvent) -> Unit
+    onEvent: (PaymentMethodEvent) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
 
     Scaffold(
@@ -138,6 +87,9 @@ private fun PaymentMethodScreen(
             .fillMaxSize(),
         contentWindowInsets = WindowInsets.navigationBars,
         containerColor = FoodSaverTheme.colorScheme.background,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
         topBar = {
             PaymentMethodTopBar(
                 onBackClick = {

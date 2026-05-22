@@ -202,7 +202,6 @@ private fun HomeScreen(
                     }
 
                     // search field
-                    // TODO make hero animation to search screen!!!
                     item {
                         SearchTextField(
                             state = SearchTextFieldState(
@@ -228,7 +227,7 @@ private fun HomeScreen(
                     item {
                         Spacer(Modifier.height(30.dp))
                         TableOfContent(
-                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */},
+                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */ },
                             modifier = Modifier
                                 .padding(horizontal = 24.dp),
                             text = Res.string.category_see_all
@@ -247,12 +246,13 @@ private fun HomeScreen(
                                     CategoryChip(
                                         state = CategoryChipState(
                                             name = stringResource(Res.string.all),
-                                            imageUri = "",
                                             isMainChip = true,
                                             onCategoryClick = {
                                                 navController.navigate(Route.MainGraph.SearchScreen())
                                             }
-                                        )
+                                        ),
+                                        modifier = Modifier
+                                            .heightIn(min = 60.dp)
                                     )
                                 }
                             }
@@ -269,7 +269,6 @@ private fun HomeScreen(
                                     CategoryChip(
                                         state = CategoryChipState(
                                             name = category.categoryName,
-                                            imageUri = "",
                                             isMainChip = state.selectedCategoryIds.contains(category.categoryId),
                                             onCategoryClick = {
                                                 navController.navigate(
@@ -292,7 +291,7 @@ private fun HomeScreen(
                     item {
                         Spacer(Modifier.height(30.dp))
                         TableOfContent(
-                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */},
+                            onSeeAllClick = { /*TODO("Navigate to somewhere...") */ },
                             modifier = Modifier
                                 .padding(horizontal = 24.dp),
                             text = Res.string.open_restaurants

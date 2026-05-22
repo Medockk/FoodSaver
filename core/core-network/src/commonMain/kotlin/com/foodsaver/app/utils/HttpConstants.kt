@@ -26,4 +26,6 @@ object HttpConstants {
     const val INGREDIENTS_URL = "${BASE_URL}ingredients"
     const val PAYMENT_METHOD_URL = "${BASE_URL}paymentMethod"
     const val ORDER_URL = "${BASE_URL}order"
+
+    const val AI_URL = "${BASE_URL}ai"
 }

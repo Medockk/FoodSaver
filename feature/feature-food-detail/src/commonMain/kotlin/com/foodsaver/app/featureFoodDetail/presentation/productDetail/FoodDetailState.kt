@@ -34,7 +34,7 @@ data class FoodDetailState(
 //    val ingredients: IngredientModel? = null,
     val isIngredientMenuExpanded: Boolean = false,
     val isAiResponseLoading: Boolean = false,
-    val ingredientsAIDescription: String? = null
+    val isAiResponseCompleted: Boolean = false,
 ) {
     class RestaurantDetails(
         val logoUri: String

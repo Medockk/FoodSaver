@@ -4,10 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.foodsaver.app.commonModule.InputOutput
+import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.corePaymentMethod.domain.repository.EditPaymentMethodRepository
 import com.foodsaver.app.corePaymentMethod.domain.repository.ReadPaymentMethodRepository
+import com.foodsaver.app.featurePaymentMethod.domain.OrderRepository
 import com.foodsaver.app.navigationModule.Route
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,9 @@ import kotlinx.coroutines.launch
 class PaymentMethodViewModel(
     savedStateHandle: SavedStateHandle,
     private val readPaymentMethodRepository: ReadPaymentMethodRepository,
-    private val editPaymentMethodRepository: EditPaymentMethodRepository
+    private val editPaymentMethodRepository: EditPaymentMethodRepository,
+
+    private val orderRepository: OrderRepository
 ): BaseViewModel<PaymentMethodAction>() {
 
     private val navArgs = savedStateHandle.toRoute<Route.PaymentMethodGraph.PaymentMethodScreen>()
@@ -74,9 +78,12 @@ class PaymentMethodViewModel(
             }
             PaymentMethodEvent.OnPayClick -> {
                 viewModelScope.launch {
-                    // TODO
+                    orderRepository.makeOrder().onSuccess {
+                        baseChannel.send(PaymentMethodAction.OnSuccessfulPay)
+                    }.onFailure {
+                        sendError(it)
+                    }
 
-                    baseChannel.send(PaymentMethodAction.OnSuccessfulPay)
                 }
             }
         }

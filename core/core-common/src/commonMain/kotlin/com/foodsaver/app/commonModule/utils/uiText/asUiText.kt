@@ -2,34 +2,13 @@ package com.foodsaver.app.commonModule.utils.uiText
 
 import com.foodsaver.app.commonModule.dto.GlobalErrorResponse
 import com.foodsaver.app.core.common.resources.Res
-import com.foodsaver.app.core.common.resources.error_address_not_found
-import com.foodsaver.app.core.common.resources.error_auth_failed_authorize
-import com.foodsaver.app.core.common.resources.error_auth_failed_register
-import com.foodsaver.app.core.common.resources.error_auth_google_verify_failed
-import com.foodsaver.app.core.common.resources.error_auth_invalid_email
-import com.foodsaver.app.core.common.resources.error_auth_jwt_expired
-import com.foodsaver.app.core.common.resources.error_auth_password_mismatch
-import com.foodsaver.app.core.common.resources.error_auth_refresh_expired
-import com.foodsaver.app.core.common.resources.error_auth_username_occupied
-import com.foodsaver.app.core.common.resources.error_auth_weak_password
-import com.foodsaver.app.core.common.resources.error_cart_not_found
-import com.foodsaver.app.core.common.resources.error_category_not_found
-import com.foodsaver.app.core.common.resources.error_org_not_found
-import com.foodsaver.app.core.common.resources.error_payment_method_not_found
-import com.foodsaver.app.core.common.resources.error_product_not_found
-import com.foodsaver.app.core.common.resources.error_product_not_fresh
-import com.foodsaver.app.core.common.resources.error_unknown
-import com.foodsaver.app.core.common.resources.error_user_empty_email
-import com.foodsaver.app.core.common.resources.error_user_file_too_large
-import com.foodsaver.app.core.common.resources.error_user_not_found
-import com.foodsaver.app.core.common.resources.error_uuid_parse_failed
 import org.jetbrains.compose.resources.StringResource
+import com.foodsaver.app.core.common.resources.*
 
 fun GlobalErrorResponse.asUiText(): UiText {
     println("asUiText globalErrorResponse is $this")
     return when (this.serverErrorCode) {
         // Authentication (1000-1999)
-        1001 -> UiText.StringRes(Res.string.error_auth_username_occupied)
         1002 -> UiText.StringRes(Res.string.error_auth_invalid_email)
         1003 -> UiText.StringRes(Res.string.error_auth_weak_password)
         1004 -> UiText.StringRes(Res.string.error_auth_failed_register)
@@ -41,8 +20,6 @@ fun GlobalErrorResponse.asUiText(): UiText {
         1999 -> UiText.StringRes(Res.string.error_uuid_parse_failed)
 
         // User (2000-2999)
-        2001 -> UiText.StringRes(Res.string.error_user_not_found)
-        2002 -> UiText.StringRes(Res.string.error_user_empty_email)
         2004 -> UiText.StringRes(Res.string.error_user_file_too_large)
 
         // Product (3000-3999)
@@ -63,6 +40,40 @@ fun GlobalErrorResponse.asUiText(): UiText {
 
         // Address (9000-9999)
         9001 -> UiText.StringRes(Res.string.error_address_not_found)
+
+        1001 -> UiText.StringRes(Res.string.error_file_too_large)
+
+        // Security (2000-2999)
+        2001 -> UiText.StringRes(Res.string.error_unauthorized_jwt)
+        2002 -> UiText.StringRes(Res.string.error_unauthorized_csrf)
+
+        // Authentication & Users (11000-11999)
+        11001 -> UiText.StringRes(Res.string.error_user_not_found)
+        11002 -> UiText.StringRes(Res.string.error_user_already_registered)
+        11003 -> UiText.StringRes(Res.string.error_invalid_google_token)
+        11011 -> UiText.StringRes(Res.string.error_jwt_not_expired)
+        11012 -> UiText.StringRes(Res.string.error_refresh_token_expired)
+
+        // Product (12000-12999)
+        12001 -> UiText.StringRes(Res.string.error_product_not_found)
+        12002 -> UiText.StringRes(Res.string.error_product_not_fresh)
+
+        // Profile (13000-13999)
+        13001 -> UiText.StringRes(Res.string.error_profile_not_found)
+
+        // Cart (14000-14999)
+        14001 -> UiText.StringRes(Res.string.error_cart_not_found)
+        14002 -> UiText.StringRes(Res.string.error_cart_item_not_found)
+
+        // Address & Ingredients share code 15001
+        15001 -> {
+            // Если в GlobalErrorResponse есть поле сообщения или контекста,
+            // можно разделить точнее, но пока возвращаем общую ошибку ресурса/адреса
+            UiText.StringRes(Res.string.error_address_not_found)
+        }
+
+        // Order (20000-20999)
+        20001 -> UiText.StringRes(Res.string.error_quantity_out_of_bounds)
 
         // Default
         else -> UiText.StringRes(Res.string.error_unknown)

@@ -204,3 +204,6 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 
 #koin
 koin-plugin = { id = "io.insert-koin.compiler.plugin", version.ref = "koinPlugin" }
+
+#iOS plugins
+kotlin-cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
