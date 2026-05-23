@@ -188,11 +188,11 @@ class FoodDetailViewModel(
                             } else {
                                 _aiIngredientsResponse.update { it + response }
                             }
-                        }.onCompletion {
+                        }.onCompletion {error ->
                             _state.update {
                                 it.copy(
                                     isAiResponseLoading = false,
-                                    isAiResponseCompleted = true
+                                    isAiResponseCompleted = error != null
                                 )
                             }
                         }.stateIn(viewModelScope)

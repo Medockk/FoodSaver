@@ -564,7 +564,9 @@ private fun SearchScreen(
                     ) { restaurant ->
                         RestaurantCard(
                             restaurant = restaurant,
-                            onRestaurantClick = {},
+                            onRestaurantClick = {
+                                navController.navigate(Route.MainGraph.Restaurant(restaurant.id, restaurant.name))
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp)

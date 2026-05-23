@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.foodsaver.app.featureFoodDetail.domain.model.IngredientAnalyzeResponse
 import com.foodsaver.app.ui.FoodSaverTheme
@@ -25,7 +26,10 @@ fun LazyListScope.ingredientClassificationView(
     modifier: Modifier = Modifier
 ) {
     items(classifications) { classification ->
-        val dangerColor = when (classification.dangerLevel) {
+        val dangerColor = when (classification.dangerLevel.lowercase()) {
+            "высокий" -> FoodSaverTheme.colorScheme.deleteColor
+            "средний" -> FoodSaverTheme.colorScheme.mainCategoryClipColor
+            "низкий" -> FoodSaverTheme.colorScheme.completeColor
             else -> FoodSaverTheme.colorScheme.placeholderBackground
         }
 

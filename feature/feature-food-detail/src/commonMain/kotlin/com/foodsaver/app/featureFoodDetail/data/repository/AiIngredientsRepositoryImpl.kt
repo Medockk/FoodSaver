@@ -1,25 +1,21 @@
 package com.foodsaver.app.featureFoodDetail.data.repository
 
-import com.foodsaver.app.commonModule.apiResult.saveApiCall
-import com.foodsaver.app.commonModule.apiResult.saveCall
 import com.foodsaver.app.featureFoodDetail.data.dto.IngredientAnalyzeDto
 import com.foodsaver.app.featureFoodDetail.data.mappers.mapDtoToResponse
 import com.foodsaver.app.featureFoodDetail.domain.model.IngredientAnalyzeResponse
 import com.foodsaver.app.featureFoodDetail.domain.repository.AiIngredientsRepository
 import com.foodsaver.app.utils.HttpConstants
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.sse.serverSentEvents
 import io.ktor.client.request.accept
 import io.ktor.client.request.parameter
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.utils.io.readLine
-import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
@@ -30,79 +26,92 @@ internal class AiIngredientsRepositoryImpl(
 ) : AiIngredientsRepository {
 
     override fun analyzeIngredientsByProductId(productId: String): Flow<IngredientAnalyzeResponse?> =
-        flow<IngredientAnalyzeResponse?> {
+        channelFlow<IngredientAnalyzeResponse?> {
+
+            var emittedAtLeastOnce = false
+            val jsonAccumulator = StringBuilder()
+
             try {
                 httpClient.prepareGet(urlString = HttpConstants.AI_URL + "/ingredients/analyze/json") {
                     this.accept(ContentType("application", "x-ndjson"))
                     parameter("productId", productId)
-                }.execute {
+                }.execute { response ->
 
-                    if (!it.status.isSuccess()) {
-                        println("Сервер вернул ошибку: ${it.status}")
-                        emit(null)
+                    println("LOG: Статус ответа сервера = ${response.status.value}")
+
+                    if (!response.status.isSuccess()) {
+                        println("Сервер вернул ошибку: ${response.status}")
                         return@execute
                     }
 
-                    val channel = it.bodyAsChannel()
-                    val jsonAccumulator = StringBuilder()
+                    val channel = response.bodyAsChannel()
 
                     while (!channel.isClosedForRead) {
                         val line = channel.readLine() ?: break
+                        val trimmedLine = line.trim()
 
-                        if (line.isNotBlank()) {
-                            // Очищаем строку от маркдаун-мусора, если он прилетел
-                            val cleanLine = line
-                                .replace("```json", "")
-                                .replace("```", "")
-                                .trim()
+                        // Игнорируем маркдаун-теги
+                        if (trimmedLine.startsWith("```")) {
+                            continue
+                        }
 
-                            if (cleanLine.isNotEmpty()) {
-                                jsonAccumulator.append(cleanLine)
+                        if (trimmedLine.isNotEmpty()) {
+                            jsonAccumulator.append(trimmedLine)
 
-                                // Пытаемся распарсить то, что накопили на данный момент
-                                try {
-                                    val currentString = jsonAccumulator.toString().trim()
+                            var currentBuffer = jsonAccumulator.toString().trim()
 
-                                    // Если строка выглядит как законченный JSON-объект
-                                    if (currentString.startsWith("{") && currentString.endsWith("}")) {
-                                        val dto: IngredientAnalyzeDto =
-                                            json.decodeFromString(currentString)
-                                        emit(dto.mapDtoToResponse())
-                                        println("Получил DTO с классификацией ингредиентов $dto")
+                            // Если бэкенд склеил объекты вида  }{
+                            // то временно заменяем их на разделитель, чтобы распарсить по отдельности
+                            if (currentBuffer.contains("}{")) {
+                                currentBuffer = currentBuffer.replace("}{", "}\n{")
+                            }
 
-                                        // Очищаем буфер для следующего ингредиента
-                                        jsonAccumulator.clear()
+                            // Разделяем буфер по переносам строк (которые мы сами добавили или они были)
+                            val parts = currentBuffer.split("\n")
+
+                            // Пробуем обработать все части, кроме, возможно, последней (если она не дописалась)
+                            val itemsToProcess = if (currentBuffer.endsWith("}")) parts else parts.dropLast(1)
+
+                            val processedSuccessfully = mutableListOf<String>()
+
+                            for (part in itemsToProcess) {
+                                val cleanPart = part.trim()
+                                if (cleanPart.startsWith("{") && cleanPart.endsWith("}")) {
+                                    try {
+                                        val dto: IngredientAnalyzeDto = json.decodeFromString(cleanPart)
+
+                                        send(dto.mapDtoToResponse())
+                                        emittedAtLeastOnce = true
+                                        println("УСПЕХ: Распарсен ингредиент: ${dto.name}")
+
+                                        processedSuccessfully.add(part)
+                                    } catch (e: Exception) {
+                                        // Ошибка парсинга конкретной части, возможно она не полная
+                                        println("Ошибка парсинга ${e.message}")
                                     }
-                                    // Если сервер вернул массив объектов
-                                    // и прилетел очередной законченный объект внутри массива
-                                    else if (currentString.endsWith("}")) {
-                                        // Ищем последний открытый объект
-                                        val lastStartIndex = currentString.lastIndexOf('{')
-                                        if (lastStartIndex != -1) {
-                                            val potentialJson =
-                                                currentString.substring(lastStartIndex)
-                                            val dto: IngredientAnalyzeDto =
-                                                json.decodeFromString(potentialJson)
-                                            emit(dto.mapDtoToResponse())
-
-                                            // Удаляем успешно распарсенный кусок из буфера
-                                            jsonAccumulator.deleteRange(
-                                                lastStartIndex,
-                                                currentString.length
-                                            )
-                                        }
-                                    }
-                                } catch (e: Exception) {
-
                                 }
+                            }
+
+                            // Удаляем из аккумулятора те части, которые мы успешно распарсили
+                            if (processedSuccessfully.isNotEmpty()) {
+                                var updatedBuffer = jsonAccumulator.toString()
+                                processedSuccessfully.forEach {
+                                    updatedBuffer = updatedBuffer.replace(it, "")
+                                }
+                                jsonAccumulator.setLength(0)
+                                jsonAccumulator.append(updatedBuffer.trim())
                             }
                         }
                     }
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
-                emit(null)
+            } finally {
+                // Если ничего не отправили за весь сеанс — шлем null для безопасности
+                if (!emittedAtLeastOnce) {
+                    println("Стрим пустой или оборвался, отправляем null")
+                    send(null)
+                }
             }
         }.flowOn(Dispatchers.Default)
 }
