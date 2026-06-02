@@ -12,6 +12,9 @@ import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.isSuccess
+import io.ktor.utils.io.charsets.Charsets
+import io.ktor.utils.io.core.String
+import io.ktor.utils.io.readAvailable
 import io.ktor.utils.io.readLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -46,68 +49,69 @@ internal class AiIngredientsRepositoryImpl(
 
                     val channel = response.bodyAsChannel()
 
-                    while (!channel.isClosedForRead) {
-                        val line = channel.readLine() ?: break
+                    while (true) {
+                        val line = channel.readLine()
+
+                        if (line == null) {
+                            println("LOG: Сетевой стрим полностью завершен сервером (получен EOF).")
+                            break
+                        }
+
                         val trimmedLine = line.trim()
 
-                        // Игнорируем маркдаун-теги
+                        // Игнорируем чистый маркдаун
                         if (trimmedLine.startsWith("```")) {
                             continue
                         }
 
                         if (trimmedLine.isNotEmpty()) {
+                            // Накапливаем абсолютно всё, убирая лишние пробелы по краям строки
                             jsonAccumulator.append(trimmedLine)
 
-                            var currentBuffer = jsonAccumulator.toString().trim()
+                            // Запускаем цикл парсинга объектов из накопленного буфера
+                            while (true) {
+                                val currentBuffer = jsonAccumulator.toString().trim()
 
-                            // Если бэкенд склеил объекты вида  }{
-                            // то временно заменяем их на разделитель, чтобы распарсить по отдельности
-                            if (currentBuffer.contains("}{")) {
-                                currentBuffer = currentBuffer.replace("}{", "}\n{")
-                            }
+                                // Ищем координаты первого валидного JSON-объекта в буфере
+                                val startIndex = currentBuffer.indexOf('{')
+                                val endIndex = currentBuffer.indexOf('}')
 
-                            // Разделяем буфер по переносам строк (которые мы сами добавили или они были)
-                            val parts = currentBuffer.split("\n")
+                                // Если нашли и начало, и конец, и они стоят в правильном порядке
+                                if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+                                    // Вырезаем чистый JSON-объект от { до } включительно
+                                    val potentialJson = currentBuffer.substring(startIndex, endIndex + 1)
 
-                            // Пробуем обработать все части, кроме, возможно, последней (если она не дописалась)
-                            val itemsToProcess = if (currentBuffer.endsWith("}")) parts else parts.dropLast(1)
-
-                            val processedSuccessfully = mutableListOf<String>()
-
-                            for (part in itemsToProcess) {
-                                val cleanPart = part.trim()
-                                if (cleanPart.startsWith("{") && cleanPart.endsWith("}")) {
                                     try {
-                                        val dto: IngredientAnalyzeDto = json.decodeFromString(cleanPart)
+                                        val dto: IngredientAnalyzeDto = json.decodeFromString(potentialJson)
 
+                                        // Поэтапно отправляем в UI
                                         send(dto.mapDtoToResponse())
                                         emittedAtLeastOnce = true
-                                        println("УСПЕХ: Распарсен ингредиент: ${dto.name}")
-
-                                        processedSuccessfully.add(part)
+                                        println("УСПЕХ ПОЭТАПНО: Распарсен ингредиент: ${dto.name}")
                                     } catch (e: Exception) {
-                                        // Ошибка парсинга конкретной части, возможно она не полная
-                                        println("Ошибка парсинга ${e.message}")
+                                        // Если внутри {} оказался невалидный или неполный кусок текста,
+                                        // выведем лог, чтобы точно знать, что прилетело
+                                        println("ОШИБКА СЕРИАЛИЗАЦИИ: ${e.message} | Текст: $potentialJson")
                                     }
-                                }
-                            }
 
-                            // Удаляем из аккумулятора те части, которые мы успешно распарсили
-                            if (processedSuccessfully.isNotEmpty()) {
-                                var updatedBuffer = jsonAccumulator.toString()
-                                processedSuccessfully.forEach {
-                                    updatedBuffer = updatedBuffer.replace(it, "")
+                                    // Важно: Удаляем этот обработанный кусок (вместе со скобкой '}') из основного аккумулятора
+                                    // Чтобы на следующей итерации внутреннего цикла while парсить то, что идет следом
+                                    val remainingText = currentBuffer.substring(endIndex + 1).trim()
+                                    jsonAccumulator.setLength(0)
+                                    jsonAccumulator.append(remainingText)
+                                } else {
+                                    // Если цельного объекта { ... } в буфере больше нет,
+                                    // выходим из внутреннего цикла и ждем следующую строку из сети через readLine()
+                                    break
                                 }
-                                jsonAccumulator.setLength(0)
-                                jsonAccumulator.append(updatedBuffer.trim())
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
+                println("КРИТИЧЕСКОЕ ИСКЛЮЧЕНИЕ СТРИМА: ${e.message}")
                 e.printStackTrace()
             } finally {
-                // Если ничего не отправили за весь сеанс — шлем null для безопасности
                 if (!emittedAtLeastOnce) {
                     println("Стрим пустой или оборвался, отправляем null")
                     send(null)

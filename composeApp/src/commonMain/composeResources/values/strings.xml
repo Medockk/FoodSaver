@@ -114,7 +114,7 @@ you just place the orer we do the rest</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="my_address">My Address</string>
     <string name="profile_menu_addresses">Addresses</string>
-    <string name="profile_menu_cart">Cart</string>
+    <string name="profile_menu_cart">My orders</string>
     <string name="profile_menu_favorite">Favourite</string>
     <string name="profile_menu_notifications">Notifications</string>
     <string name="profile_menu_payment_method">Payment Method</string>

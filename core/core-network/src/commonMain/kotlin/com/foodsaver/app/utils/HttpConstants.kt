@@ -4,7 +4,7 @@ object HttpConstants {
 
     private const val VERSION = "v1"
 
-    internal const val ROOT_URL = "http://10.16.240.227:8088"
+    internal const val ROOT_URL = "http://10.177.145.227:8088"
     const val BASE_URL = "$ROOT_URL/api/$VERSION/"
 
     internal const val REFRESH_URL = "${BASE_URL}refreshToken"

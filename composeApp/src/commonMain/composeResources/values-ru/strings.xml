@@ -1,18 +1,178 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="app_name">FoodSaver</string>
 
-    <string name="onboarding_title_1">All your favorites</string>
-    <string name="onboarding_title_2">All your favorites</string>
-    <string name="onboarding_title_3">Order from choosen chef</string>
-    <string name="onboarding_title_4">Free delivery offers</string>
-    <string name="onboarding_subtitle_1">Get all your loved foods in one once place,
-you just place the orer we do the rest</string>
-    <string name="onboarding_subtitle_2">Get all your loved foods in one once place,
-you just place the orer we do the rest</string>
-    <string name="onboarding_subtitle_3">Get all your loved foods in one once place,
-you just place the orer we do the rest</string>
-    <string name="onboarding_subtitle_4">Get all your loved foods in one once place,
-you just place the orer we do the rest</string>
-    <string name="onboarding_button_next">Next</string>
+    <string name="onboarding_title_1">Все ваши любимые блюда</string>
+    <string name="onboarding_title_2">Все ваши любимые блюда</string>
+    <string name="onboarding_title_3">Заказ от выбранного шеф-повара</string>
+    <string name="onboarding_title_4">Предложения с бесплатной доставкой</string>
+    <string name="onboarding_subtitle_1">Соберите всю любимую еду в одном месте. Вы просто делаете заказ, а мы берем на себя всё остальное</string>
+    <string name="onboarding_subtitle_2">Соберите всю любимую еду в одном месте. Вы просто делаете заказ, а мы берем на себя всё остальное</string>
+    <string name="onboarding_subtitle_3">Соберите всю любимую еду в одном месте. Вы просто делаете заказ, а мы берем на себя всё остальное</string>
+    <string name="onboarding_subtitle_4">Соберите всю любимую еду в одном месте. Вы просто делаете заказ, а мы берем на себя всё остальное</string>
+    <string name="onboarding_button_next">Далее</string>
+    <string name="onboarding_button_end">Начать</string>
+    <string name="onboarding_button_skip">Пропустить</string>
+
+    <string name="auth_login_title">Вход в профиль</string>
+    <string name="auth_login_subtitle">Пожалуйста, войдите в свой аккаунт</string>
+    <string name="auth_email">EMAIL</string>
+    <string name="auth_email_example">example@gmail.com</string>
+    <string name="auth_password_example">**********</string>
+    <string name="auth_password">ПАРОЛЬ</string>
+    <string name="auth_remember_me">Запомнить меня</string>
+    <string name="auth_forgot_password">Забыли пароль?</string>
+    <string name="auth_forgot_password_send_code">ОТПРАВИТЬ КОД</string>
+    <string name="auth_dont_have_account">Нет аккаунта?</string>
+    <string name="auth_signup_title">Регистрация</string>
+    <string name="auth_or">Или</string>
+    <string name="auth_verification_title">Верификация</string>
+    <string name="auth_verification-subtitle">Мы отправили код на вашу электронную почту</string>
+    <string name="auth_verification_code">Код</string>
+    <string name="auth_verification_resend">Отправить повторно</string>
+    <string name="auth_verification_secound">сек</string>
+    <string name="auth_verification_in">через</string>
+    <string name="auth_verification_verify">Подтвердить</string>
+    <string name="auth_signup_subtitle">Пожалуйста, зарегистрируйтесь, чтобы начать</string>
+    <string name="auth_signup_name">ИМЯ</string>
+    <string name="auth_signup_name_example">Иван Иванов</string>
+    <string name="auth_signup_retype_password">Повторите пароль</string>
+
+    <string name="home_topbar_deliver_to">Доставка в</string>
+    <string name="home_hello_user">Привет, %1$s</string>
+    <string name="home_good_afternoon">Добрый день!</string>
+
+    <string name="search_field_placeholder">Поиск блюд, ресторанов</string>
+
+    <string name="category_all_categories">Все категории</string>
+    <string name="category_see_all">Смотреть все</string>
+
+    <string name="all">Все</string>
+
+    <string name="open_restaurants">Открытые рестораны</string>
+    <string name="delivery_free">Бесплатно</string>
+
+    <string name="add_to_cart">В корзину</string>
+    <string name="remove_from_cart">Удалить из корзины</string>
+    <string name="size">Размер</string>
+    <string name="ingredients">Ингредиенты</string>
+    <string name="ingredients_allergy">Аллергия</string>
+    <string name="analyze_ingredients">Анализ ингредиентов</string>
+
+    <string name="cart">Корзина</string>
+    <string name="edit_items">ИЗМЕНИТЬ позиции</string>
+    <string name="edit">ИЗМЕНИТЬ</string>
+    <string name="done">Готово</string>
+    <string name="delivery_address">Адрес доставки</string>
+    <string name="your_delivery_address">Ваш адрес доставки</string>
+    <string name="total">Итого</string>
+    <string name="breakdown">Детализация чека</string>
+    <string name="place_order">Оформить заказ</string>
+
+    <string name="search">Поиск</string>
+    <string name="recent_keywords">История поиска</string>
+    <string name="suggested_restaurants">Рекомендуемые рестораны</string>
+    <string name="popular_food">Популярная еда</string>
+    <string name="popular_item">Популярные %1$s</string>
+    <string name="products">продукты</string>
+    <string name="nothing_not_found">Ничего не найдено</string>
+
+    <string name="add_card">Добавить карту</string>
+    <string name="add_and_make_payment"><![CDATA[Добавить и оплатить]]></string>
+    <string name="card_holder_name">имя владельца карты</string>
+    <string name="card_number">Номер карты</string>
+    <string name="expire_date">срок действия</string>
+    <string name="cvc">cvc</string>
+    <string name="placeholder_card_holder_name">Имя Фамилия</string>
+    <string name="placeholder_card_number">1234 5678 9012 3456</string>
+    <string name="placeholder_expires_date">мм/гггг</string>
+    <string name="placeholder_cvc">***</string>
+
+    <string name="payment">Оплата</string>
+    <string name="pay_and_confirm"><![CDATA[Оплатить и подтвердить]]></string>
+    <string name="no_card_added">Карта %1$s не добавлена</string>
+    <string name="you_can_add_card">Вы можете добавить карту %1$s и сохранить её для будущих заказов</string>
+    <string name="add_new">Добавить новую</string>
+    <string name="payment_method_cash">Наличные</string>
+    <string name="track_order">Отследить заказ</string>
+    <string name="congratulations">Поздравляем!</string>
+    <string name="successful_maked_payment">Вы успешно совершили оплату, приятного пользования нашим сервисом!</string>
+
+    <string name="my_orders">Мои заказы</string>
+    <string name="ongoing">Активные</string>
+    <string name="history">История</string>
+    <string name="order_items">Позиции</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="profile">Профиль</string>
+    <string name="personal_info">Личные данные</string>
+    <string name="edit_profile">Редактировать профиль</string>
+    <string name="my_address">Мои адреса</string>
+    <string name="profile_menu_addresses">Адреса</string>
+    <string name="profile_menu_cart">Мои заказы</string>
+    <string name="profile_menu_favorite">Избранное</string>
+    <string name="profile_menu_notifications">Уведомления</string>
+    <string name="profile_menu_payment_method">Способ оплаты</string>
+    <string name="profile_menu_faqs">Вопросы и ответы</string>
+    <string name="profile_menu_user_reviews">Мои отзывы</string>
+    <string name="profile_menu_settings">Настройки</string>
+    <string name="profile_menu_logout">Выйти из профиля</string>
+    <string name="profile_full_name">Имя и фамилия</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_phone_number">Номер телефона</string>
+    <string name="profile_bio">О себе</string>
+    <string name="save">Сохранить</string>
+    <string name="add_new_address">Добавить новый адрес</string>
+
+    <string name="add_address_text_field_label">АДРЕС</string>
+    <string name="add_address_street_text_field_label">УЛИЦА</string>
+    <string name="add_address_post_code_text_field_label">ПОЧТОВЫЙ ИНДЕКС</string>
+    <string name="add_address_appartment_text_field_label">КВАРТИРА/ОФИС</string>
+    <string name="add_address_label_as">ТИП АДРЕСА</string>
+    <string name="add_address_label_home">Дом</string>
+    <string name="add_address_label_work">Работа</string>
+    <string name="add_address_label_other">Другое</string>
+    <string name="add_address_save_location">СОХРАНИТЬ АДРЕС</string>
+
+    <string name="add_new_items">Добавить новые позиции</string>
+    <string name="reset">Сбросить</string>
+    <string name="save_changes">Сохранить изменения</string>
+    <string name="details">Детали</string>
+    <string name="item_name">Название позиции</string>
+    <string name="upload_photo_or_video">Загрузить фото/видео</string>
+    <string name="upload_photo_add">Добавить</string>
+    <string name="price">Цена</string>
+    <string name="pick_up">Самовывоз</string>
+    <string name="delivery">Доставка</string>
+    <string name="add_new_product">Добавить новый продукт</string>
+    <string name="count">Количество</string>
+    <string name="discount">Скидка</string>
+    <string name="categories">Категории</string>
+    <string name="expires_date">Срок годности</string>
+    <string name="add_product_placeholder_expires_date">дд/мм/гггг</string>
+    <string name="unit_type">Единица измерения</string>
+
+    <string name="my_food_list">Мой список еды</string>
+
+    <string name="create_restaurant">Создать ресторан</string>
+    <string name="edit_restaurant">Редактировать ресторан</string>
+    <string name="restaurant_name">Название ресторана</string>
+    <string name="restaurant_description">Описание ресторана</string>
+    <string name="restaurant_photos">Фотографии ресторана</string>
+    <string name="restaurant_rating">Рейтинг ресторана</string>
+    <string name="restaurant_average_delivery_time">Среднее время доставки</string>
+    <string name="restaurant_delivery_cost">Стоимость доставки</string>
+    <string name="restaurant_address_name">Адрес ресторана</string>
+    <string name="restaurant_latitude">Широта ресторана</string>
+    <string name="restaurant_longitude">Долгота ресторана</string>
+
+    <string name="restaurants">Рестораны</string>
+    <string name="edit_category">Редактировать категорию</string>
+    <string name="create_category">Создать категорию</string>
+    <string name="category_name">Название категории</string>
+    <string name="category_delete">Удалить категорию</string>
+    <string name="restaurant_delete">Удалить ресторан</string>
+
+    <string name="remained">Осталось</string>
+    <string name="add_product">Добавить продукт</string>
 </resources>

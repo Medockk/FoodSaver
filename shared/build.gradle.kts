@@ -13,6 +13,8 @@ plugins {
 
 kotlin {
 
+    val isMac = System.getProperty("os.name").startsWith("Mac", ignoreCase = true)
+
     androidLibrary {
         namespace = "com.foodsaver.app.shared"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -23,14 +25,16 @@ kotlin {
         }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "Shared"
-            isStatic = true
+    if (isMac) {
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64()
+        ).forEach { iosTarget ->
+            iosTarget.binaries.framework {
+                baseName = "Shared"
+                isStatic = true
+            }
         }
     }
 
