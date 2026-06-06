@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias { libs.plugins.androidMultiplatformLibrary }
+    alias { libs.plugins.jetbrains.kotlin.serialization }
 }
 
 kotlin {
@@ -55,6 +56,8 @@ kotlin {
             implementation(projects.core.coreDi)
             implementation(projects.core.coreNetwork)
             implementation(projects.core.coreCommon)
+
+            implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.koin.core)
         }

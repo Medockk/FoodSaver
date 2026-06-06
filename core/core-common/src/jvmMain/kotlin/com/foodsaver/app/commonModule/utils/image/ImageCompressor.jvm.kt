@@ -8,4 +8,8 @@ actual object ImageCompressor : ImageCompressorUtils() {
     ): ByteArray {
         TODO("Not yet implemented")
     }
+
+    actual suspend fun compress(image: ByteArray, exifData: ExifData?): ByteArray {
+        TODO("Not yet implemented")
+    }
 }

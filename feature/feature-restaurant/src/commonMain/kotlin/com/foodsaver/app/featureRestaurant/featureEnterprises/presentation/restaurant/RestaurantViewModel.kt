@@ -14,6 +14,7 @@ import com.foodsaver.app.coreRestaurant.domain.repository.RestaurantRepository
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.coreProductModule.domain.repository.ReadProductRepository
 import com.foodsaver.app.navigationModule.Route
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -36,10 +37,10 @@ class RestaurantViewModel(
     private val navArgs = savedStateHandle.toRoute<Route.MainGraph.Restaurant>()
     private val restaurantId = navArgs.restaurantId
 
-    private val _state = MutableStateFlow(
-        RestaurantState(restaurantName = navArgs.restaurantName)
-    )
+    private val _state = MutableStateFlow(RestaurantState(restaurantName = navArgs.restaurantName))
     val state = _state.asStateFlow()
+
+    private val mapKitCompletableDeferred = CompletableDeferred<Unit>()
 
     private val pageSize = 10
 
@@ -115,6 +116,11 @@ class RestaurantViewModel(
                 _state.update { it.copy(
                     restaurant = restaurant
                 ) }
+
+                mapKitCompletableDeferred.await()
+                baseChannel.send(RestaurantAction.OnSetEnterpriseIcon(
+                    listOf(restaurant)
+                ))
             }
         }
     }
@@ -139,6 +145,16 @@ class RestaurantViewModel(
                         )
                     )
                 }
+            }
+
+            is RestaurantEvent.OnMapViewVisibleChange -> {
+                _state.update { it.copy(
+                    isMapViewVisible = event.isVisible
+                ) }
+            }
+
+            RestaurantEvent.OnMapKitControllerReady -> {
+                mapKitCompletableDeferred.complete(Unit)
             }
         }
     }

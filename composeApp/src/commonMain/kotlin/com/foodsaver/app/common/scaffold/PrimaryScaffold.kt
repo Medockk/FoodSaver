@@ -165,12 +165,75 @@ fun PrimaryScaffold(
 fun PrimaryScaffold(
     modifier: Modifier = Modifier,
     navigationButton: ActionButtonItem? = null,
+    actionButton: (@Composable () -> Unit)? = null,
+    backgroundContent: (@Composable () -> Unit)? = null,
+    bottomBackgroundContent: (@Composable () -> Unit)? = null,
+    content: @Composable (PaddingValues) -> Unit,
+) {
+
+    Scaffold(
+        contentWindowInsets = WindowInsets.navigationBars,
+        modifier = modifier,
+        containerColor = FoodSaverTheme.colorScheme.background,
+        topBar = {
+            Box(Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))) {
+                backgroundContent?.invoke()
+
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            start = 24.dp, end = 24.dp,
+                            top = 50.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    navigationButton?.let { navigationButton ->
+                        PrimaryFabButton(
+                            onClick = navigationButton.onClick,
+                            background = navigationButton.backgroundColor
+                        ) {
+                            Icon(
+                                imageVector = vectorResource(navigationButton.icon),
+                                contentDescription = null,
+                                tint = navigationButton.onBackgroundColor
+                            )
+                        }
+
+                        Spacer(Modifier.width(15.dp))
+                    }
+                    Spacer(Modifier.weight(1f))
+                    actionButton?.invoke()
+                }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 10.dp)
+                ) {
+                    bottomBackgroundContent?.invoke()
+                }
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .offset(y = -(25).dp)
+        ) {
+            val topPaddingValues = paddingValues.calculateTopPadding() + 25.dp
+            content(PaddingValues(top = topPaddingValues))
+        }
+    }
+}
+
+@Composable
+fun PrimaryScaffold(
+    modifier: Modifier = Modifier,
+    navigationButton: ActionButtonItem? = null,
     title: StringResource? = null,
     actionButton: (@Composable () -> Unit)? = null,
     backgroundContent: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
-)
-{
+) {
 
     Scaffold(
         contentWindowInsets = WindowInsets.navigationBars,
@@ -238,8 +301,7 @@ fun PrimaryScaffold(
     backgroundContent: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
-)
-{
+) {
 
     Scaffold(
         contentWindowInsets = WindowInsets.navigationBars,

@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
@@ -33,23 +34,32 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.foodsaver.app.common.chip.PrimaryChip
+import com.foodsaver.app.common.dropdownMenu.PrimaryDropdownMenu
+import com.foodsaver.app.common.dropdownMenu.PrimaryDropdownMenuState
 import com.foodsaver.app.common.image.ImagePageIndicator
 import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
-import com.foodsaver.app.common.chip.PrimaryChip
+import com.foodsaver.app.common.modifier.shimmerEffect
 import com.foodsaver.app.common.product.AddProductCard
 import com.foodsaver.app.common.restaurant.RestaurantSpecifications
 import com.foodsaver.app.common.scaffold.ActionButtonItem
 import com.foodsaver.app.common.scaffold.PrimaryScaffold
-import com.foodsaver.app.common.modifier.shimmerEffect
+import com.foodsaver.app.coreRestaurant.domain.model.CameraPositionModel
+import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantAction
 import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantEvent
 import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantState
 import com.foodsaver.app.featureRestaurant.featureEnterprises.presentation.restaurant.RestaurantViewModel
 import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.ui.FoodSaverTheme
 import com.foodsaver.app.ui.LocalFoodSaverThemeComposition
+import com.foodsaver.app.utils.MapKit
+import com.foodsaver.app.utils.MapKitController
+import com.foodsaver.app.utils.MapKitEvent
+import com.foodsaver.app.utils.MapKitObjectFactory
+import com.foodsaver.app.utils.MapKitObjectType
+import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.back_icon
-import foodsaver.composeapp.generated.resources.more_icon
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -59,12 +69,59 @@ fun RestaurantScreenRoot(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var mapKitController by retain { mutableStateOf<MapKitController?>(null) }
 
     RestaurantScreen(
         state = state,
         onEvent = viewModel::onEvent,
         navController = navController
     )
+
+    if (MapKit.isMapKitSupported && state.isMapViewVisible) {
+        MapKit.DrawMap(
+            initialPosition = state.restaurant?.let {
+                CameraPositionModel(
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    zoom = 17.5f
+                )
+            },
+            onMapKitControllerReady = {
+                mapKitController = it
+                viewModel.onEvent(RestaurantEvent.OnMapKitControllerReady)
+            },
+            onEvent = { event ->
+                when (event) {
+                    is MapKitEvent.OnCameraChanged -> { /*TODO()*/ }
+                    MapKitEvent.OnLocationAccessDenied -> { /*TODO()*/ }
+                }
+            }
+        )
+    }
+
+    ObserveActions(viewModel.channel) {
+        when (it) {
+            is RestaurantAction.OnError -> { /*TODO()*/ }
+            is RestaurantAction.OnSetEnterpriseIcon -> {
+                mapKitController?.let { mapKitController ->
+                    val mapKitObject = MapKitObjectFactory.createMapKitObject(
+                        mapKitObjectType = MapKitObjectType.ENTERPRISE_ICON
+                    )
+                    it.enterprises.forEach { restaurant ->
+                        mapKitController.setPoint(
+                            id = restaurant.id,
+                            latitude = restaurant.latitude,
+                            longitude = restaurant.longitude,
+                            mapKitObject = mapKitObject,
+                            onClick = { true }
+                        )
+                    }
+                }
+            }
+            is RestaurantAction.OnUpdateUserLocation -> { /*TODO()*/ }
+            is RestaurantAction.OnZoom -> { /*TODO()*/ }
+        }
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -97,12 +154,23 @@ private fun RestaurantScreen(
     }
 
     PrimaryScaffold(
-        actionButton = ActionButtonItem(
-            onClick = {
-                /*TODO()*/
-            },
-            icon = Res.drawable.more_icon
-        ),
+        actionButton = {
+            PrimaryDropdownMenu(
+                dropdownMenuItems = listOf(
+                    PrimaryDropdownMenuState(
+                        item = {
+                            Text(
+                                text = "View is map"
+                            )
+                        },
+                        onItemClick = {
+                            onEvent(RestaurantEvent.OnMapViewVisibleChange(true))
+                        }
+                    )
+                )
+            )
+        },
+
         bottomBackgroundContent = {
             ImagePageIndicator(
                 items = state.restaurant?.photoUris?.size ?: 0,

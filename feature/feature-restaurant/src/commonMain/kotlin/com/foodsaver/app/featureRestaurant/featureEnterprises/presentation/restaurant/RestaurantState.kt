@@ -19,5 +19,7 @@ data class RestaurantState(
     val restaurantProducts: List<ProductModel> = emptyList(),
     val productInCartIds: Set<ProductInCartResponseModel> = emptySet(),
     val isProductsLoading: Boolean = true,
+
+    val isMapViewVisible: Boolean = false,
 )
 

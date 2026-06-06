@@ -10,6 +10,8 @@ import androidx.core.net.toUri
 import com.foodsaver.app.commonModule.apiResult.onFailure
 import com.foodsaver.app.commonModule.apiResult.onSuccess
 import com.foodsaver.app.core.module.core.fcm.R
+import com.foodsaver.app.coreFcm.dto.FirebaseUpdateTokenDto
+import com.foodsaver.app.coreFcm.dto.FirebaseUpdateTokenRequest
 import com.foodsaver.app.utils.HttpConstants
 import com.foodsaver.app.utils.saveNetworkCall
 import com.google.firebase.messaging.FirebaseMessaging
@@ -18,6 +20,8 @@ import com.google.firebase.messaging.RemoteMessage
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -122,8 +126,8 @@ actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmServ
 
     actual override suspend fun saveFcmToken(token: String): Unit = withContext(Dispatchers.IO) {
         saveNetworkCall<Unit> {
-            httpClient.post(HttpConstants.FCM_URL) {
-                parameter("token", token)
+            httpClient.put(HttpConstants.FCM_URL + "/token/update") {
+                setBody(FirebaseUpdateTokenDto(token))
             }
         }.onSuccess {
             println("FCM saveFcmToken() onSuccess")
