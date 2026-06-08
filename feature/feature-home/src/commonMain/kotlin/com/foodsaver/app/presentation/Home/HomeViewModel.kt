@@ -45,7 +45,7 @@ class HomeViewModel(
             restaurantRepository.getCachedRestaurants()
         },
         onNetworkRequest = { page ->
-            restaurantRepository.getAllRestaurants(page, 10)
+            restaurantRepository.getAllRestaurants(page, 100)
         },
         onSuccess = { _, result ->
             _state.update {

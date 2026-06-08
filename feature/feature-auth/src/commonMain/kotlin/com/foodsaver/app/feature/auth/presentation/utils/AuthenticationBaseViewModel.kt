@@ -5,8 +5,10 @@ import com.foodsaver.app.commonModule.presentation.AppAction
 import com.foodsaver.app.commonModule.presentation.BaseViewModel
 import com.foodsaver.app.coreAuth.AuthUserManager
 import com.foodsaver.app.coreFcm.service.FcmService
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class AuthenticationBaseViewModel<A: AppAction>(
     private val fcmService: FcmService,
@@ -14,15 +16,16 @@ abstract class AuthenticationBaseViewModel<A: AppAction>(
 ): BaseViewModel<A>() {
 
     protected open suspend fun onSaveFcmToken() {
-        viewModelScope.async {
-            fcmService.getFcmToken { token ->
-                if (token != null) {
-                    launch {
-                        fcmService.saveFcmToken(token)
-                    }
+        val token = fcmService.getFcmToken()
+        token?.let { token ->
+            withContext(NonCancellable) {
+                try {
+                    fcmService.saveFcmToken(token)
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-        }.await()
+        }
     }
 
     protected open fun checkFields(fields: List<String>): Boolean {

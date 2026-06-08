@@ -1,5 +1,7 @@
 package com.foodsaver.app.manager
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
@@ -52,7 +54,9 @@ actual class AccessTokenManager actual constructor() {
         return try {
             if (!refreshTokenFile.exists()) return null
 
-            val file = Files.readAllBytes(refreshTokenFile)
+            val file = withContext(Dispatchers.IO) {
+                Files.readAllBytes(refreshTokenFile)
+            }
             if (file.size < 13) return null
 
             val iv = file.copyOfRange(0, 12)
@@ -75,7 +79,9 @@ actual class AccessTokenManager actual constructor() {
 
         val encryptedData = cipher.doFinal(refreshToken.toByteArray(Charsets.UTF_8))
 
-        Files.write(refreshTokenFile, iv + encryptedData)
+        withContext(Dispatchers.IO) {
+            Files.write(refreshTokenFile, iv + encryptedData)
+        }
         refreshTokenFile.setPermission()
     }
 
@@ -83,7 +89,9 @@ actual class AccessTokenManager actual constructor() {
         return try {
             if (!jwtTokenFile.exists()) return null
 
-            val file = Files.readAllBytes(jwtTokenFile)
+            val file = withContext(Dispatchers.IO) {
+                Files.readAllBytes(jwtTokenFile)
+            }
             if (file.size < 13) return null
 
             val iv = file.copyOfRange(0, 12)
@@ -106,19 +114,27 @@ actual class AccessTokenManager actual constructor() {
 
         val encryptedData = cipher.doFinal(jwtToken.toByteArray(Charsets.UTF_8))
 
-        Files.write(jwtTokenFile, iv + encryptedData)
+        withContext(Dispatchers.IO) {
+            Files.write(jwtTokenFile, iv + encryptedData)
+        }
         jwtTokenFile.setPermission()
     }
 
     actual suspend fun clearTokens() {
         if (refreshTokenFile.exists()) {
-            Files.delete(refreshTokenFile)
+            withContext(Dispatchers.IO) {
+                Files.delete(refreshTokenFile)
+            }
         }
         if (jwtTokenFile.exists()) {
-            Files.delete(jwtTokenFile)
+            withContext(Dispatchers.IO) {
+                Files.delete(jwtTokenFile)
+            }
         }
         if (csrfTokenFile.exists()) {
-            Files.delete(csrfTokenFile)
+            withContext(Dispatchers.IO) {
+                Files.delete(csrfTokenFile)
+            }
         }
     }
 
@@ -185,7 +201,9 @@ actual class AccessTokenManager actual constructor() {
         return try {
             if (!csrfTokenFile.exists()) return null
 
-            val file = Files.readAllBytes(csrfTokenFile)
+            val file = withContext(Dispatchers.IO) {
+                Files.readAllBytes(csrfTokenFile)
+            }
             if (file.size < 13) return null
 
             val iv = file.copyOfRange(0, 12)
@@ -208,7 +226,9 @@ actual class AccessTokenManager actual constructor() {
 
         val encryptedData = cipher.doFinal(csrfToken.toByteArray(Charsets.UTF_8))
 
-        Files.write(csrfTokenFile, iv + encryptedData)
+        withContext(Dispatchers.IO) {
+            Files.write(csrfTokenFile, iv + encryptedData)
+        }
         csrfTokenFile.setPermission()
     }
 }

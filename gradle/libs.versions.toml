@@ -40,6 +40,7 @@ coil3 = "3.3.0"
 material3Version = "1.9.0"
 kmpalette = "4.0.0-beta02"
 paletteKamel = "1.0.9"
+qrcodeGeneration = "1.1.2"
 
 #database
 sqldelight = "2.3.2"
@@ -176,6 +177,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 palette-kamel = { module = "media.kamel:kamel-image", version.ref = "paletteKamel" }
 palette-kamel-default = { module = "media.kamel:kamel-image-default", version.ref = "paletteKamel" }
 kmpalette-kmpalette-core = { module = "com.kmpalette:kmpalette-core", version.ref = "kmpaletteCore" }
+qrcode-generation = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrcodeGeneration" }
 
 
 [bundles]

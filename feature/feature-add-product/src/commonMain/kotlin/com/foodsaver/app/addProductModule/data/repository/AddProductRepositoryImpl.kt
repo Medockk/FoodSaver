@@ -92,7 +92,8 @@ internal class AddProductRepositoryImpl(
                             unit = unit,
                             restaurantId = restaurantId,
                             ingredientIds = ingredientIds,
-                            expiresAt = expiresAt
+                            expiresAt = expiresAt,
+                            count = count
                         )
                     }
                 )

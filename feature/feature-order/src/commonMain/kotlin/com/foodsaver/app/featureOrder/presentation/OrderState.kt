@@ -7,4 +7,6 @@ data class OrderState(
 
     val ongoingOrders: List<OrderModel> = emptyList(),
     val historyOrders: List<OrderModel> = emptyList(),
+
+    val isQrCodeDialogVisible: Boolean = false,
 )

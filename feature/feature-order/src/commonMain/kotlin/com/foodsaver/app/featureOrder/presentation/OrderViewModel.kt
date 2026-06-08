@@ -48,6 +48,10 @@ class OrderViewModel(
             is OrderEvent.OnTabIndexChange -> {
                 _state.update { it.copy(tabIndex = event.index) }
             }
+
+            is OrderEvent.OnQrCodeDialogVisibilityChange -> {
+                _state.update { it.copy(isQrCodeDialogVisible = event.isVisible) }
+            }
         }
     }
 

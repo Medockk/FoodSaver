@@ -5,6 +5,8 @@ sealed interface FoodDetailEvents {
     data object OnAddProductToCart: FoodDetailEvents
     data object OnRemoveProductFromCart: FoodDetailEvents
 
+    data object OnFavoriteStatusChange: FoodDetailEvents
+
     data object OnIncreaseCountClick: FoodDetailEvents
     data object OnDecreaseCountClick: FoodDetailEvents
 

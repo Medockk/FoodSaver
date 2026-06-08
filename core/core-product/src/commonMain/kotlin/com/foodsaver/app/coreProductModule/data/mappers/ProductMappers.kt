@@ -38,7 +38,7 @@ internal fun ProductCacheEntity.mapEntityToModel() = ProductModel(
     expiresAt = expiresAt,
     price = price,
     discount = discount,
-    count = 1L,
+    count = count,
     unit = unit,
     currency = currency,
     restaurantId = restaurantId,
@@ -59,7 +59,8 @@ internal fun ProductDto.mapDtoToEntity() = ProductCacheEntity(
     unit = unit,
     restaurantId = restaurantId,
     expiresAt = expiresAt,
-    ingredientIds = ingredientIds
+    ingredientIds = ingredientIds,
+    count = count
 )
 
 internal fun UpdateProductRequest.mapRequestToDto() = UpdateProductDto(

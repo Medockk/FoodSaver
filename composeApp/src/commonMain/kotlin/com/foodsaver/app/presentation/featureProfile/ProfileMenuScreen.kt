@@ -10,8 +10,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,10 +26,12 @@ import com.foodsaver.app.navigationModule.Route
 import com.foodsaver.app.presentation.featureProfile.component.MenuItemState
 import com.foodsaver.app.presentation.featureProfile.component.MenuItems
 import com.foodsaver.app.presentation.featureProfile.component.ProfileHeader
+import com.foodsaver.app.presentation.profileMenu.ProfileMenuAction
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuEvent
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuState
 import com.foodsaver.app.presentation.profileMenu.ProfileMenuViewModel
 import com.foodsaver.app.ui.FoodSaverTheme
+import com.foodsaver.app.utils.ObserveActions
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.add_new_product
 import foodsaver.composeapp.generated.resources.addresses_icon
@@ -62,13 +68,30 @@ fun ProfileMenuScreenRoot(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbar = remember { SnackbarHostState() }
 
     ProfileMenuScreen(
         navController = navController,
         state = state,
         onEvent = viewModel::onEvent,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        snackbarHostState = snackbar
     )
+
+    ObserveActions(viewModel.channel) {
+        when (it) {
+            is ProfileMenuAction.OnError -> {
+                snackbar.showSnackbar(it.message, withDismissAction = true)
+            }
+            ProfileMenuAction.OnSuccessLogout -> {
+                navController.navigate(Route.AuthGraph) {
+                    popUpTo<Route.MainGraph> {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -76,6 +99,7 @@ private fun ProfileMenuScreen(
     navController: NavController,
     state: ProfileMenuState,
     onEvent: (ProfileMenuEvent) -> Unit,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit
 ) {
 
@@ -164,6 +188,9 @@ private fun ProfileMenuScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.navigationBars,
         containerColor = FoodSaverTheme.colorScheme.background,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
         topBar = {
             PrimaryTopBar(
                 title = stringResource(Res.string.profile),

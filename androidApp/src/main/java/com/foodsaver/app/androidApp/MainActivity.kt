@@ -3,6 +3,8 @@ package com.foodsaver.app.androidApp
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +20,7 @@ import com.foodsaver.app.AppViewModel
 import com.foodsaver.app.AuthenticationState
 import com.foodsaver.app.navigationModule.Route
 import org.koin.android.ext.android.inject
+import kotlin.jvm.java
 
 class MainActivity : ComponentActivity() {
 
@@ -49,11 +52,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberNavController()
 
-//            val navigationUri = intent.data ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
-//            } else {
-//                intent.getParcelableExtra(Intent.EXTRA_STREAM)
-//            }
+            val navigationUri = intent.data ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
             var deepLinkAction = retain {
                 val extras = intent.extras?.getString("product_id")
                 if (extras != null) {

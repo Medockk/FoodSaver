@@ -31,6 +31,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
@@ -299,7 +300,6 @@ private fun HomeScreen(
                         Spacer(Modifier.height(20.dp))
                     }
 
-                    // TODO add transition animation
                     // restaurants skeleton shimmers
                     if (shouldShowRestaurantSkeletonCards) {
                         items(3) {
@@ -314,8 +314,11 @@ private fun HomeScreen(
 
                             Spacer(Modifier.height(25.dp))
                         }
-                    } else {
-                        items(state.restaurants) { restaurant ->
+                    }
+                    else {
+                        items(state.restaurants, key = {
+                            it.id
+                        }) { restaurant ->
                             RestaurantCard(
                                 restaurant = restaurant,
                                 onRestaurantClick = {

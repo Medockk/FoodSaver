@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.foodsaver.app.common.image.asyncImage.AsyncImageWithShimmerLoading
 import com.foodsaver.app.common.button.PrimaryFabButton
 import com.foodsaver.app.coreModel.model.ProductModel
 import com.foodsaver.app.ui.FoodSaverTheme
+import com.foodsaver.app.utils.format.format2
 import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.remove_icon
 import org.jetbrains.compose.resources.vectorResource
@@ -49,6 +51,10 @@ fun AddProductCard(
 
     val priceTextStyle = FoodSaverTheme.typography.bodyRegularBold
     val priceTextColor = FoodSaverTheme.colorScheme.onBackground
+
+    val actualPrice by remember(product.price, product.discount) {
+        mutableStateOf(product.price - (product.price * product.discount))
+    }
 
     val plusIconRotation by animateFloatAsState(
         targetValue = if (isProductInCart) 0f
@@ -114,7 +120,7 @@ fun AddProductCard(
                     color = priceTextColor
                 )
                 Text(
-                    text = product.price.toString(),
+                    text = actualPrice.format2(),
                     color = priceTextColor,
                     style = priceTextStyle
                 )

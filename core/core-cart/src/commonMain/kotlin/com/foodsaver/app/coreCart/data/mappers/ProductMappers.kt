@@ -15,5 +15,6 @@ internal fun ProductDto.mapDtoToEntity() = ProductCacheEntity(
     unit = unit,
     restaurantId = restaurantId,
     expiresAt = expiresAt,
-    ingredientIds = ingredientIds
+    ingredientIds = ingredientIds,
+    count = count
 )

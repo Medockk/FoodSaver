@@ -27,9 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.coroutines.resume
 
 actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmService {
 
@@ -46,7 +48,8 @@ actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmServ
             message.notification?.let {
                 it.body?.let { body ->
                     val productId = message.data["product_id"]
-                    sendNotification(message = body, productId)
+                    val productName = message.data["product_name"]
+                    sendNotification(message = body, productId, productName)
                 }
             }
         }
@@ -61,8 +64,8 @@ actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmServ
         }
     }
 
-    private fun sendNotification(message: String, productId: String?) {
-        val uri = "foodsaver://app/productDetails/$productId/true".toUri()
+    private fun sendNotification(message: String, productId: String?, productName: String?) {
+        val uri = "foodsaver://app/productDetails/$productId/$productName".toUri()
 
         val requestCode = 0
 
@@ -112,20 +115,23 @@ actual class FcmServiceImpl : FirebaseMessagingService(), KoinComponent, FcmServ
         serviceJob.cancel()
     }
 
-    actual override suspend fun getFcmToken(onComplete: (String?) -> Unit): Unit = withContext(Dispatchers.IO) {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (it.isSuccessful) {
-                println("FCM getFcmToken() isSuccessful")
-                onComplete(it.result)
-            } else {
-                println("FCM getFcmToken() isFailure")
-                onComplete(null)
+    actual override suspend fun getFcmToken(): String? = withContext(Dispatchers.IO) {
+        suspendCancellableCoroutine<String?> { continuation ->
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    println("FCM getFcmToken() isSuccessful")
+                    continuation.resume(task.result)
+                } else {
+                    println("FCM getFcmToken() isFailure")
+                    continuation.resume(null)
+                }
             }
         }
     }
 
     actual override suspend fun saveFcmToken(token: String): Unit = withContext(Dispatchers.IO) {
-        saveNetworkCall<Unit> {
+        println("FCM try to send request to save fcm token")
+        saveNetworkCall<Unit?> {
             httpClient.put(HttpConstants.FCM_URL + "/token/update") {
                 setBody(FirebaseUpdateTokenDto(token))
             }

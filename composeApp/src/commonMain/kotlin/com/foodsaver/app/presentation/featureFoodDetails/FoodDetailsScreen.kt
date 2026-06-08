@@ -79,6 +79,7 @@ import foodsaver.composeapp.generated.resources.analyze_ingredients
 import foodsaver.composeapp.generated.resources.back_icon
 import foodsaver.composeapp.generated.resources.favorite_icon
 import foodsaver.composeapp.generated.resources.ingredients
+import foodsaver.composeapp.generated.resources.product_available_count
 import foodsaver.composeapp.generated.resources.selected_favorite_icon
 import foodsaver.composeapp.generated.resources.size
 import org.jetbrains.compose.resources.stringResource
@@ -157,14 +158,29 @@ private fun FoodDetailsScreen(
                     }
                 },
                 actions = {
-                    PrimaryFabButton(
-                        onClick = {/*TODO()*/ }
-                    ) {
-                        Icon(
-                            imageVector = if (state.isFavoriteProduct) vectorResource(Res.drawable.selected_favorite_icon)
-                            else vectorResource(Res.drawable.favorite_icon),
-                            contentDescription = null
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(FoodSaverTheme.colorScheme.background)
+                                .padding(5.dp)
+                        ) {
+                            Text(
+                                text = state.expiresTime,
+                                style = FoodSaverTheme.typography.bodyRegular,
+                                color = FoodSaverTheme.colorScheme.onBackground
+                            )
+                        }
+                        Spacer(Modifier.width(5.dp))
+                        PrimaryFabButton(
+                            onClick = { onEvent(FoodDetailEvents.OnFavoriteStatusChange) }
+                        ) {
+                            Icon(
+                                imageVector = if (state.isFavoriteProduct) vectorResource(Res.drawable.selected_favorite_icon)
+                                else vectorResource(Res.drawable.favorite_icon),
+                                contentDescription = null
+                            )
+                        }
                     }
                 },
                 collapsingImage = { progress ->
@@ -230,6 +246,7 @@ private fun FoodDetailsScreen(
             state.product?.let { product ->
                 FoodDetailsBottomBar(
                     price = product.price,
+                    discount = product.discount,
                     productCount = state.productCount,
                     onIncreaseClick = { onEvent(FoodDetailEvents.OnIncreaseCountClick) },
                     onDecreaseClick = { onEvent(FoodDetailEvents.OnDecreaseCountClick) },
@@ -331,6 +348,26 @@ private fun FoodDetailsScreen(
                             color = FoodSaverTheme.colorScheme.onBackgroundTertiary,
                             textAlign = TextAlign.Justify
                         )
+                    }
+
+                    item {
+                        if (state.product != null) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = stringResource(Res.string.product_available_count) + ":",
+                                    color = FoodSaverTheme.colorScheme.onBackground,
+                                    style = FoodSaverTheme.typography.bodyRegular
+                                )
+                                Spacer(Modifier.width(5.dp))
+                                println("Product ${state.product}")
+                                println("Product count ${state.product?.count}")
+                                Text(
+                                    text = state.product?.count.toString(),
+                                    color = FoodSaverTheme.colorScheme.onBackground,
+                                    style = FoodSaverTheme.typography.bodyRegular
+                                )
+                            }
+                        }
                     }
 
                     // food sizes

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 
 class FoodDetailViewModel(
     savedStateHandle: SavedStateHandle,
@@ -63,6 +64,15 @@ class FoodDetailViewModel(
 
     init {
         loadProduct(productId = navArgs.productId)
+        fetchProduct(navArgs.productId)
+    }
+
+    private fun fetchProduct(productId: String) {
+        viewModelScope.launch {
+            productRepository.fetchProductById(productId).onSuccess { product ->
+                _state.update { it.copy(product = product) }
+            }
+        }
     }
 
     private fun loadProduct(productId: String): Job {
@@ -70,18 +80,45 @@ class FoodDetailViewModel(
             productRepository.observeProductById(productId)
                 .collectRequest(
                     onSuccess = { product ->
-                        println(
-                            "Get info about product ${product.productId}\n" +
-                                    "ImageUris for this product: ${product.imageUris}"
-                        )
                         _state.update {
-                            it.copy(
-                                product = product
-                            )
+                            it.copy(product = product)
                         }
 
                         loadIngredients(product)
+                        startExpiresTimer(product)
                     })
+        }
+    }
+
+    private fun startExpiresTimer(product: ProductModel) {
+        viewModelScope.launch {
+            while (true) {
+                val remainingDuration = product.expiresAt - Clock.System.now()
+
+                if (remainingDuration.isNegative()) {
+                    _state.update { it.copy(expiresTime = "Срок истёк") }
+                    break
+                }
+
+                val days = remainingDuration.inWholeDays
+                val hours = remainingDuration.inWholeHours % 24
+                val minutes = remainingDuration.inWholeMinutes % 60
+                val seconds = remainingDuration.inWholeSeconds % 60
+
+                val formatNum = fun(num: Long): String {
+                    return num.toString().padStart(2, '0')
+                }
+
+                val timeString = if (days > 0) {
+                    "${days}д ${formatNum(hours)}:${formatNum(minutes)}:${formatNum(seconds)}"
+                } else {
+                    "${formatNum(hours)}:${formatNum(minutes)}:${formatNum(seconds)}"
+                }
+
+                _state.update { it.copy(expiresTime = timeString) }
+
+                delay(1000)
+            }
         }
     }
 
@@ -221,6 +258,10 @@ class FoodDetailViewModel(
                         selectedImageIndex = events.index
                     )
                 }
+            }
+
+            FoodDetailEvents.OnFavoriteStatusChange -> {
+                _state.update { it.copy(isFavoriteProduct = !it.isFavoriteProduct) }
             }
         }
     }

@@ -58,6 +58,7 @@
     <string name="ingredients">Ингредиенты</string>
     <string name="ingredients_allergy">Аллергия</string>
     <string name="analyze_ingredients">Анализ ингредиентов</string>
+    <string name="product_available_count">Всего продукта доступно</string>
 
     <string name="cart">Корзина</string>
     <string name="edit_items">ИЗМЕНИТЬ позиции</string>

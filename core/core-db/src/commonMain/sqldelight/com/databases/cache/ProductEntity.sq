@@ -13,7 +13,9 @@ CREATE TABLE productCacheEntity (
     unit TEXT NOT NULL,
     restaurantId TEXT NOT NULL,
     ingredientIds TEXT AS List<String> NOT NULL,
-    expiresAt INTEGER AS Instant NOT NULL
+    expiresAt INTEGER AS Instant NOT NULL,
+
+    count INTEGER NOT NULL DEFAULT 0
 );
 
 upsertProduct:

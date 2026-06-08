@@ -132,7 +132,8 @@ internal class SearchRepositoryImpl(
         unit = unit,
         restaurantId = restaurantId,
         expiresAt = expiresAt,
-        ingredientIds = ingredientIds
+        ingredientIds = ingredientIds,
+        count = count
     )
 
     override suspend fun onRecentKeywordSearch(recentKeywordId: String) {

@@ -80,6 +80,7 @@ you just place the orer we do the rest</string>
     <string name="popular_item">Popular %1$s</string>
     <string name="products">products</string>
     <string name="nothing_not_found">Nothing not found</string>
+    <string name="product_available_count">Available products</string>
 
     <string name="add_card">Add Card</string>
     <string name="add_and_make_payment"><![CDATA[Add & Make Payment]]></string>

@@ -2,6 +2,7 @@ package com.foodsaver.app.data.repository
 
 import com.foodsaver.app.commonModule.apiResult.ApiResult
 import com.foodsaver.app.coreAuth.AuthUserManager
+import com.foodsaver.app.coreAuth.requireUserId
 import com.foodsaver.app.coreDb.domain.repository.DatabaseProvider
 import com.foodsaver.app.domain.repository.LogoutRepository
 import com.foodsaver.app.manager.AccessTokenManager
@@ -13,6 +14,8 @@ internal class LogoutRepositoryImpl(
 ) : LogoutRepository {
 
     override suspend fun logout(): ApiResult<Unit> {
-        TODO()
+        accessTokenManager.clearTokens()
+        authUserManager.logout()
+        return ApiResult.success(Unit)
     }
 }

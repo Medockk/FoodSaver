@@ -5,6 +5,7 @@ package com.foodsaver.app.presentation.featureOrder.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import foodsaver.composeapp.generated.resources.Res
 import foodsaver.composeapp.generated.resources.back_icon
 import foodsaver.composeapp.generated.resources.more_icon
 import foodsaver.composeapp.generated.resources.my_orders
+import foodsaver.composeapp.generated.resources.qrcode_icon
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -58,9 +60,10 @@ fun OrderTopBar(
                 onClick = onMoreClick
             ) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.more_icon),
+                    imageVector = vectorResource(Res.drawable.qrcode_icon),
                     contentDescription = null,
-                    tint = FoodSaverTheme.colorScheme.onBackground
+                    modifier = Modifier.size(24.dp),
+                    tint = FoodSaverTheme.colorScheme.primary
                 )
             }
         },

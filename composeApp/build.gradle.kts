@@ -164,6 +164,8 @@ kotlin {
             implementation(libs.palette.kamel.default)
 
             implementation(libs.kmpalette.kmpalette.core)
+            // qr code generation
+            implementation(libs.qrcode.generation)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
